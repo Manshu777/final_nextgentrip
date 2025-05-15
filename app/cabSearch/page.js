@@ -8,10 +8,12 @@ import CabFilter from "../Component/Filter/CabFilter";
 import { FaFilter, FaTimes } from "react-icons/fa";
 import Link from "next/link";
 import CabsComp from "../Component/AllComponent/formMaincomp/CabsComp";
-
+import { useSelector } from "react-redux";
 const page = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+const searchResults = useSelector((state) => state.cabSearch?.info?.searchResults);
 
+ console.log("searchResults", searchResults);
   // Toggle popup function
   const togglePopup = () => {
     setIsPopupOpen(!isPopupOpen);

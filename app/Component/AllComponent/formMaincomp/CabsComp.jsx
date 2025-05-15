@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCabCityApi } from "../../Store/slices/cabSearchSlice";
+import { getCabCityApi,searchCabApi } from "../../Store/slices/cabSearchSlice";
 import { Calendar } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import { FaCalendarAlt } from "react-icons/fa";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import { getDestinationSearchData, setSearchParams } from "../../Store/slices/destinationSearchSlice";
-// Language enumeration mapping
+
 const languageMap = {
   NotSpecified: 0,
   Arabic: 1,
@@ -114,8 +114,8 @@ useEffect(() => {
     return time.replace(":", "");
   };
 
-  // Handle search
-  const handleSearch = () => {
+  
+const handleSearch = async () => {
     // Validation
     if (!endUserIp) {
       alert("End user IP is required.");
@@ -139,28 +139,13 @@ useEffect(() => {
     }
 
     const searchData = {
-      endUserIp,
-      tokenId,
-      countryCode,
-      pickup,
-      dropoff,
-      transferDate: transferDate.toISOString().split("T")[0],
-      transferTime,
-      adultCount,
-      preferredLanguage,
-      alternateLanguage,
-      preferredCurrency: "INR", // Fixed as per docs
-    };
-    localStorage.setItem("cabSearch", JSON.stringify(searchData));
-
-    const queryParams = new URLSearchParams({
       EndUserIp: endUserIp,
       TokenId: tokenId,
       CountryCode: countryCode,
       CityId: pickup.CityId,
       PickUpCode: pickup.PickUpCode,
-      DropOffCode: dropoff.DropOffCode,
       PickUpPointCode: pickup.PickUpPointCode,
+      DropOffCode: dropoff.DropOffCode,
       DropOffPointCode: dropoff.DropOffPointCode,
       TransferDate: transferDate.toISOString().split("T")[0],
       TransferTime: transferTime,
@@ -168,10 +153,24 @@ useEffect(() => {
       PreferredLanguage: preferredLanguage,
       AlternateLanguage: alternateLanguage,
       PreferredCurrency: "INR",
-    }).toString();
+      IsBaseCurrencyRequired: false,
+    };
 
-    router.push(`/cabs?${queryParams}`);
+    // Save to localStorage
+    localStorage.setItem("cabSearch", JSON.stringify(searchData));
+
+    try {
+      setLoading(true);
+      await dispatch(searchCabApi(searchData)).unwrap();
+      setIsPopupOpen(true); // Open popup to show results
+    } catch (error) {
+      console.error("Cab search failed:", error);
+      alert("Failed to perform cab search. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   // Handle pickup and dropoff selection
   const handlePickup = (data) => {
