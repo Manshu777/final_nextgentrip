@@ -576,7 +576,7 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                 <div className="flex  gap-5 flex-col  md:flex-row items-start  justify-between space-y-4 lg:space-y-0 lg:space-x-4">
                   <div className="flex items-center gap-4 ">
                     <img
-                      src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.png`}
+                      src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.gif`}
                       alt=""
                       className="h-10 w-10 rounded-lg"
                     />
@@ -656,7 +656,7 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                     <div className="flex justify-start items-center w-[35%] gap-6">
                       <div className="flex  items-center   md:bg-transparent px-3 rounded-t-lg md:rounded-t-none py-4 md:py-0">
                         <img
-                          src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.png`}
+                          src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.gif`}
                           alt="refund policy"
                           className="h-7 w-h-7 rounded-lg"
                         />
