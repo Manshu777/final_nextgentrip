@@ -11,6 +11,7 @@ import { FaCalendarAlt } from "react-icons/fa";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import { getDestinationSearchData, setSearchParams } from "../../Store/slices/destinationSearchSlice";
 
+
 const languageMap = {
   NotSpecified: 0,
   Arabic: 1,
@@ -30,6 +31,7 @@ const languageMap = {
 };
 
 const CabComp = () => {
+
   const [selected, setSelected] = useState("");
   const defaultStore = JSON.parse(localStorage.getItem("cabSearch")) || {};
   const [loading, setLoading] = useState(true);
@@ -156,21 +158,32 @@ const handleSearch = async () => {
       IsBaseCurrencyRequired: false,
     };
 
+    // Construct URL with query parameters
+    const queryParams = new URLSearchParams({
+      EndUserIp: searchData.EndUserIp,
+      TokenId: searchData.TokenId,
+      CountryCode: searchData.CountryCode,
+      CityId: searchData.CityId,
+      PickUpCode: searchData.PickUpCode,
+      PickUpPointCode: searchData.PickUpPointCode,
+      DropOffCode: searchData.DropOffCode,
+      DropOffPointCode: searchData.DropOffPointCode,
+      TransferDate: searchData.TransferDate,
+      TransferTime: searchData.TransferTime,
+      AdultCount: searchData.AdultCount.toString(),
+      PreferredLanguage: searchData.PreferredLanguage,
+      AlternateLanguage: searchData.AlternateLanguage,
+      PreferredCurrency: searchData.PreferredCurrency,
+      IsBaseCurrencyRequired: searchData.IsBaseCurrencyRequired.toString(),
+    }).toString();
+
+    const searchUrl = `/cabSearch?${queryParams}`;
+
     // Save to localStorage
     localStorage.setItem("cabSearch", JSON.stringify(searchData));
-
-    try {
-      setLoading(true);
-      await dispatch(searchCabApi(searchData)).unwrap();
-      setIsPopupOpen(true); // Open popup to show results
-    } catch (error) {
-      console.error("Cab search failed:", error);
-      alert("Failed to perform cab search. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+ 
+    router.push(searchUrl);
+};
 
   // Handle pickup and dropoff selection
   const handlePickup = (data) => {
