@@ -141,7 +141,7 @@ const Header = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   const [selectedOption, setSelectedOption] = useState("");
-  const [preferredAirline,setPreferredAirline]=useState(null)
+  const [preferredAirline, setPreferredAirline] = useState(null)
 
   const handleTabClick = (tabIndex) => {
     setjurnytype(tabIndex);
@@ -384,7 +384,7 @@ const Header = () => {
     cheapFlight: {
       isOpen: false,
       selected: "Cheap Flights",
-      data: [{name:"AirAsia",code:"AK"}, {name:"IndiGo",code:"6E"},{ code:"SG",name:"SpiceJet" } , {name:"AkasaAir",code:"QP"}],
+      data: [{ name: "AirAsia", code: "AK" }, { name: "IndiGo", code: "6E" }, { code: "SG", name: "SpiceJet" }, { name: "AkasaAir", code: "QP" }],
     },
   });
   const dropCoachandCheap = useRef(null);
@@ -441,7 +441,7 @@ const Header = () => {
 
 
 
-  
+
 
 
   const [topDropdown, setTopDropdown] = useState(null);
@@ -471,7 +471,7 @@ const Header = () => {
   });
 
   useEffect(() => {
-    
+
     const updatedCalData = {
       JourneyType: 1,
       EndUserIp: '223.178.208.151',
@@ -600,16 +600,16 @@ const Header = () => {
                 {t("roundtrip")}
               </button>
 
-             
 
 
 
 
 
-           
+
+
             </div>
 
-        
+
 
             <div className="tabs FromDateDeapt grid grid-cols-1 gap-5 xl:grid-cols-2 xl:gap-3">
               <div className="grid relative gap-3 md:grid-cols-2">
@@ -631,7 +631,7 @@ const Header = () => {
                     </button>
                     <div className="flex flex-col">
                       <span className="text-[18px] lg:text-xl  text-black font-bold">
-                       { console.log('fromCity.city',fromCity)}
+                        {console.log('fromCity.city', fromCity)}
                         {(fromCity.city || fromCity.municipality) ?? 'Unknown'}
                       </span>
                       <p className="text-black text-[10px] truncate">
@@ -680,8 +680,8 @@ const Header = () => {
 
                     <div className="flex flex-col">
                       <span className="text-[18px] lg:text-xl  text-black font-bold">
-            
-                          {(toCity.city || toCity.municipality) ?? 'Unknown'}
+
+                        {(toCity.city || toCity.municipality) ?? 'Unknown'}
                       </span>
                       <p className="text-black text-[10px] truncate">
                         [{toCity.name}] {toCity.iata}
@@ -767,9 +767,8 @@ const Header = () => {
                       setSelectedOption("return");
                       setIsVisible(true);
                     }}
-                    className="flex items-center h-[4rem] gap-2 px-4 py-1 border-2 text-black border-slate-200 rounded-md"
+                    className="flex items-center h-[4rem] gap-2 px-4 py-1 border-2 border-slate-200 rounded-md cursor-pointer"
                   >
-                    <FaCalendarAlt className="" />
                     <div className="text-slate-400">
                       {selectedReturn ? (
                         <>
@@ -777,10 +776,10 @@ const Header = () => {
                             <span className="text-xl py-1 pr-1 text-black font-bold">
                               {selectedReturn.getDate()}
                             </span>
-                            <span className="text-xs  font-semibold">
+                            <span className="text-xs font-semibold">
                               {selectedReturn.toLocaleString("default", { month: "short" })}'
                             </span>
-                            <span className="text-xs  font-semibold">
+                            <span className="text-xs font-semibold">
                               {selectedReturn.getFullYear()}
                             </span>
                           </div>
@@ -789,13 +788,18 @@ const Header = () => {
                           </p>
                         </>
                       ) : (
-                        <div className="text-black text-sm font-bold"> Return Date</div>
+                        <div className="text-black">
+                          <p className="text-[10px] font-bold">Return Date</p>
+                          <p className="text-[11px] text-slate-400 -mt-1">
+                            Tap to add a Return date 
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
 
                   {isVisible && selectedOption === "return" && (
-                    <div className="bg-white w-[352px] p-2  lg:w-[400px]  text-black shadow-2xl text-[10px] md:text-lg absolute top-full mt-2 z-10 left-0 lg:-left-4 md:left-0  ">
+                    <div className="bg-white w-[352px] p-2 lg:w-[400px] text-black shadow-2xl text-[10px] md:text-lg absolute top-full mt-2 z-10 left-0 lg:-left-4 md:left-0">
                       <Calendar
                         onChange={handleReturnDateChange}
                         value={selectedReturn}
@@ -806,24 +810,25 @@ const Header = () => {
                 </div>
 
 
-                <div className="flex items-start gap-2 px-3 py-2 border-2 text-black border-slate-200 rounded-md relative" onMouseLeave={()=>setIsVisible(false)}>
+
+                <div className="flex items-start gap-2 px-3 py-2 border-2 text-black border-slate-200 rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
                   <FaUserLarge className="text-lg mt-1" />
                   <div className="text-slate-400">
                     <h5 className="font-bold text-lg text-black">{adultCount + childCount + infantCount}</h5>
                     <p className="text-slate-400 text-xs">Traveller(s)</p>
                   </div>
-                  <button onClick={() =>{ setIsVisible(true),setSelectedOption("count")}}>Edit</button>
-                  {isVisible &&  selectedOption==="count" &&
-                   <div className="absolute top-[80%]  min-w-full min-h-[10rem] left-1 md:-left-10  z-10 " >
+                  <button onClick={() => { setIsVisible(true), setSelectedOption("count") }}>Edit</button>
+                  {isVisible && selectedOption === "count" &&
+                    <div className="absolute top-[80%]  min-w-full min-h-[10rem] left-1 md:-left-10  z-10 " >
                       <div className="shadow-2xl rounded-md  bg-white mt-[10%]  flex flex-col gap-4 p-4">
-                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Adult Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={()=>{adultCount>1?setAdultCount(adultCount-1):null}}>-</button> <p className=" px-2 border">{adultCount}</p> <button className="px-2 border"onClick={()=>setAdultCount(adultCount+1)} >+</button> </div> </div>
-                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Child Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={()=>{childCount>0?setChildCount(childCount-1):null}}>-</button> <p className=" px-2 border">{childCount}</p> <button className="px-2 border"onClick={()=>setChildCount(childCount+1)} >+</button> </div> </div>
-                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Infant Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={()=>{infantCount>0?setInfantCount(infantCount-1):null}}>-</button> <p className=" px-2 border">{infantCount}</p> <button className="px-2 border"onClick={()=>setInfantCount(infantCount+1)} >+</button> </div> </div>
+                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Adult Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { adultCount > 1 ? setAdultCount(adultCount - 1) : null }}>-</button> <p className=" px-2 border">{adultCount}</p> <button className="px-2 border" onClick={() => setAdultCount(adultCount + 1)} >+</button> </div> </div>
+                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Child Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { childCount > 0 ? setChildCount(childCount - 1) : null }}>-</button> <p className=" px-2 border">{childCount}</p> <button className="px-2 border" onClick={() => setChildCount(childCount + 1)} >+</button> </div> </div>
+                        <div className="flex gap-3 justify-between"><p className="text-nowrap">Infant Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { infantCount > 0 ? setInfantCount(infantCount - 1) : null }}>-</button> <p className=" px-2 border">{infantCount}</p> <button className="px-2 border" onClick={() => setInfantCount(infantCount + 1)} >+</button> </div> </div>
 
 
                       </div>
-                  </div>
-}
+                    </div>
+                  }
                 </div>
 
 
@@ -1256,9 +1261,9 @@ const Header = () => {
                           {dropdowns.cheapFlight.data.map((airline, index) => (
                             <div
                               key={index}
-                              onClick={() =>{
+                              onClick={() => {
                                 setPreferredAirline(airline.code),
-                                handleDropdownToggle("cheapFlight")
+                                  handleDropdownToggle("cheapFlight")
                               }
                               }
                               className="flex items-center justify-start px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer transition-all duration-200"

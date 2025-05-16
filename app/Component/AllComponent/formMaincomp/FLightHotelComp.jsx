@@ -238,17 +238,17 @@ const FLightHotelComp = () => {
                     </label>
                     <div className="flex items-baseline text-black">
                       <span className="text-xl py-1 pr-1 text-black font-bold">
-                        {" "}
+                    
                         {futureDateComponents.day}
                       </span>
                       <span className="text-sm font-semibold">
-                        {" "}
+                
                         {months[futureDateComponents.month]}'
                       </span>
                       <span className="text-sm font-semibold">
                         {futureDateComponents.year}
                       </span>
-                      <FaCalendarWeek className="text-[#d3cfcf] ml-2 text-xl" />
+                
                     </div>
                     <p className="text-black text-xs">
                       {futureDateComponents.dayOfWeek}

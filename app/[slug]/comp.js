@@ -60,22 +60,22 @@ const comp = ({ slug }) => {
   const r_localFormattedDate = params.get("returndate");
   const date = new Date(selectedMinDate);
   const currencylist = useSelector((state) => state.currencySlice);
-let defaultcurrency = {
-  symble: "₹",
-  code: "INR",
-  country: "India",
-};
+  let defaultcurrency = {
+    symble: "₹",
+    code: "INR",
+    country: "India",
+  };
 
-if (typeof window !== "undefined") {
-  const stored = localStorage.getItem("usercurrency");
-  if (stored) {
-    try {
-      defaultcurrency = JSON.parse(stored);
-    } catch (e) {
-      console.error("Failed to parse usercurrency:", e);
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("usercurrency");
+    if (stored) {
+      try {
+        defaultcurrency = JSON.parse(stored);
+      } catch (e) {
+        console.error("Failed to parse usercurrency:", e);
+      }
     }
   }
-}
 
   const cuntryprice = currencylist?.info?.rates?.[`${defaultcurrency.code}`];
 
@@ -973,7 +973,7 @@ if (typeof window !== "undefined") {
           <div className="myshadow w-full md:flex bg-white gap-1 px-4 overflow-hidden">
             {!state2 ? (
               // Show skeleton loader while data is being fetched
-            <SkeletonLoader />
+              <SkeletonLoader />
             ) : (
               state2?.map((flightinfo) => {
 
@@ -1019,12 +1019,12 @@ if (typeof window !== "undefined") {
                                         </p>
                                       </div>
 
-                                      
-                                      
+
+
                                     </div>
 
                                     <div className="text-center">
-                                      <p className="mb-1 text-sm md:text-lg font-semibold">
+                                      <p className="mb-1 text-md font-semibold">
                                         {info.Origin.DepTime.split(
                                           "T"
                                         )[1].slice(0, 5)}
@@ -1035,7 +1035,7 @@ if (typeof window !== "undefined") {
                                     </div>
 
                                     <div className="text-center">
-                                      <p className="text-center text-sm md:text-lg">
+                                      <p className="text-center text-md">
                                         {Math.floor(info.Duration / 60)} h
                                         <font color="#757575"></font>
                                         {info.Duration % 60} Min
@@ -1057,7 +1057,7 @@ if (typeof window !== "undefined") {
                                     </div>
 
                                     <div className="text-center">
-                                      <p className="mb-1 text-sm md:text-lg font-semibold">
+                                      <p className="mb-1 text-md font-semibold">
                                         {info.Destination.ArrTime.split(
                                           "T"
                                         )[1].slice(0, 5)}
@@ -1078,7 +1078,7 @@ if (typeof window !== "undefined") {
                               <div className="flex items-center justify-between gap-x-3">
                                 <div className="text-right ">
                                   <div className="text-black text-lg font-bold whitespace-nowrap ">
-                                    <span className="text-sm md:text-lg font-bold">
+                                    <span className="text-md font-bold">
                                       {defaultcurrency.symble}
                                       {(() => {
                                         const offeredFare =
@@ -1206,8 +1206,8 @@ if (typeof window !== "undefined") {
                                       onClick={() => setActiveTab(1)}
                                       aria-selected={activeTab == "1"}
                                       className={`cursor-pointer float-left p-2 list-none text-black text-sm  w-[23%] text-center font-medium${activeTab == "1"
-                                          ? " text-white rounded-full bg-[#2196f3]"
-                                          : ""
+                                        ? " text-white rounded-full bg-[#2196f3]"
+                                        : ""
                                         }`}
                                     >
                                       FLIGHT DETAILS
@@ -1216,8 +1216,8 @@ if (typeof window !== "undefined") {
                                       onClick={() => setActiveTab(2)}
                                       aria-selected={activeTab == "2"}
                                       className={`cursor-pointer float-left p-2 list-none text-black text-sm  w-[23%] text-center font-medium${activeTab == "2"
-                                          ? " text-white rounded-full bg-[#2196f3]"
-                                          : ""
+                                        ? " text-white rounded-full bg-[#2196f3]"
+                                        : ""
                                         }`}
                                     >
                                       FARE SUMMARY
@@ -1226,8 +1226,8 @@ if (typeof window !== "undefined") {
                                       onClick={() => setActiveTab(3)}
                                       aria-selected={activeTab == "3"}
                                       className={`cursor-pointer float-left p-2 list-none text-black text-sm  w-[23%] text-center font-medium${activeTab === "3"
-                                          ? " text-white rounded-full bg-[#2196f3]"
-                                          : ""
+                                        ? " text-white rounded-full bg-[#2196f3]"
+                                        : ""
                                         }`}
                                     >
                                       CANCELLATION
@@ -1236,8 +1236,8 @@ if (typeof window !== "undefined") {
                                       onClick={() => setActiveTab(4)}
                                       aria-selected={activeTab == "4"}
                                       className={`cursor-pointer float-left p-2 list-none text-black text-sm  w-[23%] text-center font-medium${activeTab == "4"
-                                          ? " text-white rounded-full bg-[#2196f3]"
-                                          : ""
+                                        ? " text-white rounded-full bg-[#2196f3]"
+                                        : ""
                                         }`}
                                     >
                                       DATE CHANGE
@@ -1291,7 +1291,10 @@ if (typeof window !== "undefined") {
                                               </span>
                                             </span>
                                             <span className="border border-gray-400 text-xs px-2 rounded-full text-gray-400">
-                                              Airbus A350
+                                              {
+                                                flight.Segments[0][0].Airline
+                                                  .FlightNumber
+                                              }
                                             </span>
                                           </div>
 
@@ -1307,6 +1310,7 @@ if (typeof window !== "undefined") {
                                                     minute: "2-digit",
                                                     hour12: true,
                                                   })}
+                                                   { console.log('flight',flight.Segments[0][0].Origin.DepTime)}
                                                 </p>
                                                 <p className="text-sm font-bold mb-2">
                                                   {new Date(
@@ -1332,7 +1336,7 @@ if (typeof window !== "undefined") {
                                                     "3px solid rgb(245, 166, 34)",
                                                 }}
                                               >
-                                                <p className="text-center text-sm md:text-lg">
+                                                <p className="text-center text-md">
                                                   {Math.floor(
                                                     flight.Segments[0][0]
                                                       .Duration / 60
@@ -1699,30 +1703,30 @@ if (typeof window !== "undefined") {
                                           : "/images/logo-flight.webp"
                                       }
                                       alt={`${flight.Segments[0][0].Airline
-                                          .AirlineName || "Default"
+                                        .AirlineName || "Default"
                                         } Logo`}
                                     />
 
-                                  
 
-                                        <div className="">
-                                        <p className="font-bold text-black ">
-                                          {flight.Segments[0][0].Airline.AirlineName}
-                                          
-                                          {/* { console.log('flight.Airline',flight.Segments[0][0].Airline.AirlineName)} */}
-                                        </p>
-                                        <p className="text-black text-xs">
-                                          {flight.Segments[0][0].Airline.FlightNumber}
-                                        </p>
-                                      </div>
+
+                                    <div className="">
+                                      <p className="font-bold text-md text-black ">
+                                        {flight.Segments[0][0].Airline.AirlineName}
+
+                                        {/* { console.log('flight.Airline',flight.Segments[0][0].Airline.AirlineName)} */}
+                                      </p>
+                                      <p className="text-black text-xs">
+                                        {flight.Segments[0][0].Airline.FlightNumber}
+                                      </p>
+                                    </div>
 
                                   </div>
-                                    
+
 
 
                                   <div className=" w-full flex md:hidden lg:hidden  ">
                                     <div className="text-center w-1/3 sm:w-auto">
-                                      <p className="mb-1 text-sm md:text-lg font-semibold">
+                                      <p className="mb-1 text-md font-semibold">
                                         {flight.Segments[0][0].Origin.DepTime.split(
                                           "T"
                                         )[1].slice(0, 5)}
@@ -1736,7 +1740,7 @@ if (typeof window !== "undefined") {
                                     </div>
 
                                     <div className="text-center w-1/3 sm:w-auto">
-                                      <p className="text-sm md:text-lg">
+                                      <p className="text-md">
                                         {Math.floor(
                                           flight.Segments[0][0].Duration / 60
                                         )}{" "}
@@ -1751,24 +1755,24 @@ if (typeof window !== "undefined") {
                                           }}
                                         >
 
-                                          
+
 
 
                                         </p>
                                       </div>
                                       <p className="text-black text-xs mt-1">
-                                     
+
                                       </p>
                                     </div>
 
                                     <div className="text-center w-1/3 sm:w-auto">
-                                      <p className="mb-1 text-sm md:text-lg font-semibold">
+                                      <p className="mb-1 text-md font-semibold">
                                         {flight.Segments[0][0].Destination.ArrTime.split(
                                           "T"
                                         )[1].slice(0, 5)}
                                       </p>
 
-                                       <p className="text-black text-xs">
+                                      <p className="text-black text-xs">
                                         {
                                           flight.Segments[0][0].Destination
                                             .Airport.CityName
@@ -1779,7 +1783,7 @@ if (typeof window !== "undefined") {
                                   </div>
 
                                   <div className="text-center w-1/3 sm:w-auto  hidden md:block lg:block">
-                                    <p className="mb-1 text-sm md:text-lg font-semibold">
+                                    <p className="mb-1 text-md font-semibold">
                                       {flight.Segments[0][0].Origin.DepTime.split(
                                         "T"
                                       )[1].slice(0, 5)}
@@ -1793,7 +1797,7 @@ if (typeof window !== "undefined") {
                                   </div>
 
                                   <div className="text-center w-1/3 sm:w-auto hidden md:block lg:block">
-                                    <p className="text-sm md:text-lg">
+                                    <p className="text-md">
                                       {Math.floor(
                                         flight.Segments[0][0].Duration / 60
                                       )}{" "}
@@ -1814,7 +1818,7 @@ if (typeof window !== "undefined") {
                                   </div>
 
                                   <div className="text-center w-1/3 sm:w-auto hidden md:block lg:block ">
-                                    <p className="mb-1 text-sm md:text-lg font-semibold">
+                                    <p className="mb-1 text-md font-semibold">
                                       {flight.Segments[0][0]?.Destination?.ArrTime?.split(
                                         "T"
                                       )[1].slice(0, 5)}
@@ -1826,7 +1830,7 @@ if (typeof window !== "undefined") {
                                       }
 
                                     </p>
-                                     <p className="text-black text-xs mt-1">
+                                    <p className="text-black text-xs mt-1">
                                       {flight.stop}
                                     </p>
                                   </div>
@@ -1834,22 +1838,21 @@ if (typeof window !== "undefined") {
                                   <div className="flex items-center gap-3 w-full justify-between lg:justify-center sm:w-auto">
                                     <div className="text-right ">
                                       <div className="text-black text-lg font-bold whitespace-nowrap">
-                                        <span className="text-sm md:text-lg font-bold">
-                                          {defaultcurrency.symble}
-                                          {(() => {
-                                            const offeredFare =
-                                              flight.Fare?.OfferedFare || 0;
-                                            const price =
-                                              Number(offeredFare) *
-                                              Number(cuntryprice);
-                                            const priceString =
-                                              price.toFixed(2);
-                                            const [integerPart, decimalPart] =
-                                              priceString.split(".");
-                                            return `${integerPart}.${(
-                                              decimalPart || "00"
-                                            ).slice(0, 2)}`;
-                                          })()}
+                                        <span className="text-md font-bold">
+                                          <span className="text-md font-bold">
+                                            {defaultcurrency.symble}
+                                            {(() => {
+                                              const offeredFare = Number(flight.Fare?.OfferedFare) || 0;
+                                              const countryPrice = Number(cuntryprice) || 1; // Fix typo to countryPrice
+                                              const price = offeredFare * countryPrice;
+
+                                              return new Intl.NumberFormat('en-IN', {
+                                                style: 'decimal',
+                                                minimumFractionDigits: 0, // No decimals if whole number
+                                                maximumFractionDigits: 0, // No decimals
+                                              }).format(price);
+                                            })()}
+                                          </span>
                                         </span>
                                         <p className="text-sm text-gray-700 font-light leading-tight">
                                           Total Price
@@ -1916,8 +1919,8 @@ if (typeof window !== "undefined") {
                                       <button
                                         onClick={() => setActiveTab("1")}
                                         className={`cursor-pointer float-left p-2 list-none text-black text-sm w-[23%] text-center font-medium ${activeTab == "1"
-                                            ? "text-white rounded-full bg-[#2196f3]"
-                                            : ""
+                                          ? "text-white rounded-full bg-[#2196f3]"
+                                          : ""
                                           }`}
                                       >
                                         FLIGHT DETAILS
@@ -1925,8 +1928,8 @@ if (typeof window !== "undefined") {
                                       <button
                                         onClick={() => setActiveTab("2")}
                                         className={`cursor-pointer float-left p-2 list-none text-black text-sm w-[23%] text-center font-medium ${activeTab == "2"
-                                            ? "text-white rounded-full bg-[#2196f3]"
-                                            : ""
+                                          ? "text-white rounded-full bg-[#2196f3]"
+                                          : ""
                                           }`}
                                       >
                                         FARE SUMMARY
@@ -1934,8 +1937,8 @@ if (typeof window !== "undefined") {
                                       <button
                                         onClick={() => setActiveTab("3")}
                                         className={`cursor-pointer float-left p-2 list-none text-black text-sm w-[23%] text-center font-medium ${activeTab == "3"
-                                            ? "text-white rounded-full bg-[#2196f3]"
-                                            : ""
+                                          ? "text-white rounded-full bg-[#2196f3]"
+                                          : ""
                                           }`}
                                       >
                                         CANCELLATION
@@ -1943,8 +1946,8 @@ if (typeof window !== "undefined") {
                                       <button
                                         onClick={() => setActiveTab("4")}
                                         className={`cursor-pointer float-left p-2 list-none text-black text-sm w-[23%] text-center font-medium ${activeTab == "4"
-                                            ? "text-white rounded-full bg-[#2196f3]"
-                                            : ""
+                                          ? "text-white rounded-full bg-[#2196f3]"
+                                          : ""
                                           }`}
                                       >
                                         DATE CHANGE
@@ -1998,7 +2001,10 @@ if (typeof window !== "undefined") {
                                                 </span>
                                               </span>
                                               <span className="border border-gray-400 text-xs px-2 rounded-full text-gray-400">
-                                                Airbus A350
+                                                {
+                                                  flight.Segments[0][0]
+                                                    .Airline.FlightNumber
+                                                }
                                               </span>
                                             </div>
 
@@ -2018,13 +2024,14 @@ if (typeof window !== "undefined") {
                                                     })}
                                                   </p>
                                                   <p className="text-sm font-bold mb-2">
-                                                    {new Date(
-                                                      flight.Segments[0][0].Origin.DepTime
-                                                    ).toLocaleTimeString([], {
+                                                    {new Date(flight.Segments[0][0].Origin.DepTime).toLocaleDateString([], {
                                                       year: "numeric",
                                                       month: "long",
                                                       day: "numeric",
                                                     })}
+
+                                                   { console.log('flight',flight.Segments[0][0].Origin.DepTime)}
+
                                                   </p>
                                                   <p className="text-gray-600">
                                                     Terminal  {flight.Segments[0][0].Origin.Airport.Terminal}
@@ -2040,7 +2047,7 @@ if (typeof window !== "undefined") {
                                                       "3px solid rgb(245, 166, 34)",
                                                   }}
                                                 >
-                                                  <p className="text-center text-sm md:text-lg">
+                                                  <p className="text-center text-md">
                                                     {Math.floor(
                                                       flight.Segments[0][0]
                                                         .Duration / 60
@@ -2050,11 +2057,12 @@ if (typeof window !== "undefined") {
                                                     {flight.Segments[0][0]
                                                       .Duration % 60}{" "}
                                                     h
-                                                    <font color="#757575">
-                                                      {" "}
-                                                    </font>
+
                                                   </p>
                                                 </div>
+
+                                              {  console.log('flighDestination.ArrTime',flight.Segments[0][0]
+                                                        .Destination.ArrTime)}
 
                                                 <div className="">
                                                   <p className="text-lg font-bold">
