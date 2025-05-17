@@ -49,6 +49,8 @@ const HotelSlugComp = ({ slugs }) => {
   const [showingsection, setShowingsection] = useState("");
   const [viewmore, setViewmore] = useState(false);
 
+   const [loading, setLoading] = useState(false);
+
   useEffect(() => {
     dispatch(getSingleHotel({ HotelCode, checkIn, checkOut, adults, children, roomes }));
   }, []);
@@ -57,16 +59,32 @@ const HotelSlugComp = ({ slugs }) => {
     sethotelinfo(state);
   }, [state]);
 
-  const handelprebooking = (BookingCode) => {
-    dispatch(gethotelPreBookingApi({ BookingCode }));
-    setIsOpen(true);
+  const handelprebooking = async (BookingCode) => {
+
+
+    setLoading(true); // step 2
+    try {
+      await dispatch(gethotelPreBookingApi({ BookingCode }));
+      setIsOpen(true);
+    } finally {
+      setLoading(false); // step 3
+    }
   };
+
 
   useEffect(() => {
     sethotel(preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]);
   }, [preBookinghotelState]);
 
   const togglePopup = () => setIsOpen(!isOpen);
+
+ const routeCheckOutPage = () => {
+  setIsOpen(false);
+
+   localStorage.setItem("hotelinfo", JSON.stringify(hotelinfo));
+  localStorage.setItem("hotelcheckdata", JSON.stringify(hotel));
+  router.push('/hotels/checkout');
+};
 
   return (
     <>
@@ -129,7 +147,7 @@ const HotelSlugComp = ({ slugs }) => {
             </div>
             <div className="mt-6">
               <button
-                onClick={() => router.push('/hotelcheckout')}
+                onClick={() => routeCheckOutPage()}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition-all"
               >
                 Book Now
@@ -392,11 +410,40 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div className="mt-5 flex items-center">
                         <button
-                          onClick={() => handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
-                          className="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
-                        >
-                          BOOK THIS NOW
-                        </button>
+      onClick={() =>
+        handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)
+      }
+      className={`px-5 py-2 text-white font-bold rounded-xl transition-all duration-200 ${
+        loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
+      }`}
+      disabled={loading} // prevent multiple clicks
+    >
+      {loading ? (
+        <span className="flex items-center gap-2">
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          Loading...
+        </span>
+      ) : (
+        "BOOK THIS NOW"
+      )}
+    </button>
                         <button className="ml-8 text-blue-600" onClick={() => sethandelpriceSection("price")}>Price List</button>
                       </div>
                     </div>
