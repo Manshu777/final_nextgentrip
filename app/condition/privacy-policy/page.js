@@ -5,6 +5,17 @@ import React from "react";
 const PrivacyPolicy = () => {
   return (
     <>
+
+        <head>
+    <title>
+
+    NextGenTrip Privacy Policy – Your Data, Our Priority
+    </title>
+
+    <meta name="description" content="Your privacy matters to us. Review the NextGenTrip Privacy Policy to understand how your data is collected, stored, protected, and used during your journey." />
+    </head>
+
+
       <section className="bg-gray-50 py-10">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">

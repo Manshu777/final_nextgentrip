@@ -3,7 +3,18 @@ import { FaCheckCircle } from "react-icons/fa";
 
 const TermsAndConditions = () => {
   return (
-    <div className="container mx-auto px-4 py-10">
+    <>
+
+      <head>
+    <title>
+       NextGenTrip User Terms – Safe & Clear Bookings
+
+    </title>
+
+    <meta name="description" content="By using NextGenTrip, you agree to our Terms & Conditions. Learn about service usage, booking policies, cancellations, user rights, and legal obligations." />
+    </head>
+
+     <div className="container mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6">Terms & Conditions</h1>
       
       <section className="mb-8">
@@ -71,6 +82,9 @@ const TermsAndConditions = () => {
         <p>Last updated: February 2025</p>
       </div>
     </div>
+    
+    
+    </>
   );
 };
 

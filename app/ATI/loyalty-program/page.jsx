@@ -142,6 +142,20 @@ const page = () => {
   
   return (
     <>
+
+      <head>
+    <title>
+
+    NextGenTrip Loyalty – Travel More, Earn More Rewards
+    </title>
+
+    <meta name="description" content="NextGenTrip’s Loyalty Program rewards you for every journey. Travel more, earn more points, and unlock premium perks, upgrades, discounts, and VIP deals." />
+    </head>
+
+
+
+
+
      <section className="bg-gradient-to-tr py-5 lg:py-10 from-[#1c265e] via-[#062c61] to-[#031932] relative bg-no-repeat bg-cover min-h-[70vh] space-y-5 lg:space-y-20 flex flex-col justify-center items-center px-5 text-white">
   <h5 className="text-2xl pt-5 md:text-3xl lg:text-4xl text-white text-center font-bold">
     Welcome to Exclusive{" "}

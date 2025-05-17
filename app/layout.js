@@ -18,11 +18,6 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 
-export const metadata = {
-  title: "My Website",
-  description: "Welcome to my awesome website built with Next.js",
-  keywords: ["Next.js", "React", "SEO", "Layout"],
-};
 
 
 
@@ -42,6 +37,10 @@ export default async function RootLayout({ children }) {
     <html lang={locale} >
 
 <head>
+
+   <title>Plan Your Dream Journey Today with Next Gen Trip Now</title>
+
+   <meta name="description" content="Next Gen Trip is all about making your travel dreams come true. Explore amazing destinations, try new adventures, and create memories that last a lifetime!" />
         {/* FontAwesome */}
         <link
           rel="stylesheet"
