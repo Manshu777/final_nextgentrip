@@ -1,7 +1,7 @@
 
 
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState,useCallback } from "react";
 
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,7 +19,7 @@ import { RxCross2 } from "react-icons/rx";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import MiniNav from "../MiniNav";
 
-
+import { debounce } from 'lodash';
 
 
 const BusComp = () => {
@@ -306,32 +306,16 @@ const BusComp = () => {
 
 export default BusComp;
 
+
 const SearchCompnents = ({ handelcity }) => {
-  const [searchparam, setsearchparam] = useState("")
-  const state = useSelector(state => state.busCityslice)
-  const [loading, setLoading] = useState(true)
-  const [busdata, setbusData] = useState()
+  const [searchparam, setsearchparam] = useState('');
+  const dispatch = useDispatch();
+  const { info, isLoading } = useSelector((state) => state.busCityslice);
 
+  // Fetch cities when searchparam changes
   useEffect(() => {
-    setLoading(true);
-    setbusData(state?.info?.BusCities)
-    setLoading(false);
-  }, [state])
-
-
-  useEffect(() => {
-    const newArray = state?.info?.BusCities?.filter((item) =>
-      item.CityName.toLowerCase().includes(searchparam.toLowerCase())
-    );
-
-
-    setbusData(newArray);
-
-  }, [searchparam]);
-
-
-
-
+    dispatch(getBuscityapi({ limit: 100, offset: 0, search: searchparam }));
+  }, [dispatch, searchparam]);
 
   return (
     <div className="absolute top-full bg-white w-full z-30 shadow-md rounded-md mt-1">
@@ -342,26 +326,24 @@ const SearchCompnents = ({ handelcity }) => {
         placeholder="Search city..."
         onChange={(e) => setsearchparam(e.target.value)}
       />
-
       <div className="max-h-60 overflow-y-scroll custom-scroll">
-        {loading ? (
-          // Show 5 skeleton items when loading is true
+        {isLoading ? (
           [...Array(5)].map((_, i) => (
             <div key={i} className="p-2 border-b animate-pulse">
               <div className="h-4 bg-gray-300 rounded w-3/4"></div>
             </div>
           ))
         ) : (
-          busdata?.map((item, idx) => (
+          info?.BusCities?.map((item) => (
             <p
-              key={idx}
+              key={item.CityId}
               className="border-b px-3 py-2 cursor-pointer hover:bg-gray-100 transition-all"
-              onClick={() => {
+              onClick={() =>
                 handelcity({
                   CityId: item.CityId,
                   CityName: item.CityName,
-                });
-              }}
+                })
+              }
             >
               {item.CityName}
             </p>
@@ -369,8 +351,5 @@ const SearchCompnents = ({ handelcity }) => {
         )}
       </div>
     </div>
-  )
-
-
-
-}
+  );
+};

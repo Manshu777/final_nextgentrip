@@ -124,18 +124,7 @@ const booknow=async()=>{
 
       {busSeatInfo && <div className='flex  flex-col lg:flex-row gap-10  lg:justify-between' >
 
-        <div
-
-          className='mt-10'
-
-          dangerouslySetInnerHTML={{
-            __html: busSeatInfo?.SeatLayoutDetails?.HTMLLayout
-          }}
-
-        >
-
-
-        </div>
+       
         <div className='overflow-auto'>
 
           <p className="text-3xl font-bold text-center mb-6">Bus Seat Layout</p>

@@ -8,8 +8,8 @@ import { FaLock, FaRupeeSign, FaSpinner } from "react-icons/fa";
 
 import { FaBusAlt } from "react-icons/fa";
 import { apilink } from '../../../Component/common';
-
-
+import Swal from "sweetalert2";
+import axios from 'axios'
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState(null);
@@ -41,6 +41,15 @@ const CheckoutPage = () => {
       }
     }
   };
+
+
+   useEffect(() => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }, []);
+  
   
   
 
@@ -192,7 +201,7 @@ const CheckoutPage = () => {
 
 
 
- const handleBooking = async () => {
+const handleBooking = async () => {
   setIsLoading(true);
   try {
     // Basic validation
@@ -208,6 +217,11 @@ const CheckoutPage = () => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false);
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please fill out all required fields and fix the errors before submitting.",
+      });
       return;
     }
 
@@ -249,7 +263,9 @@ const CheckoutPage = () => {
           OfferedPriceRoundedOff: selectedBusData?.BusPrice?.OfferedPriceRoundedOff || -17,
           AgentCommission: selectedBusData?.BusPrice?.AgentCommission || 30,
           AgentMarkUp: selectedBusData?.BusPrice?.AgentMarkUp || 0,
-          TDS: selectedBusData?.BusPrice?.TDS || 12,
+          TDS:
+
+ selectedBusData?.BusPrice?.TDS || 12,
           GST: {
             CGSTAmount: selectedBusData?.BusPrice?.GST?.CGSTAmount || 0,
             CGSTRate: selectedBusData?.BusPrice?.GST?.CGSTRate || 0,
@@ -287,37 +303,80 @@ const CheckoutPage = () => {
     }
 
     const blockResult = await blockResponse.json();
-    console.log('Bus block result:', blockResult);
 
-    // Step 2: Proceed to Book API using blockResult details
+    // Step 2: Proceed to Book API
     const bookPayload = {
       ...blockPayload,
       BlockKey: blockResult?.BlockKey,
-      BookingId: blockResult?.BookingId, // if required
-      InventoryItems: blockResult?.InventoryItems, // if required
+      BookingId: blockResult?.BookingId,
+      InventoryItems: blockResult?.InventoryItems,
     };
 
-    const bookResponse = await fetch(`${apilink}/bus/busbook`, {
+    const bookResponse = await fetch(`${apilink}/bus/book`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(bookPayload),
     });
 
-  
+    if (!bookResponse.ok) {
+      throw new Error('Failed to book bus');
+    }
 
     const bookResult = await bookResponse.json();
-    console.log('Bus book result:', bookResult);
-    // You can now redirect or show confirmation
+
+    // Step 3: Proceed to payment
+    const leadPassenger = passengers[0];
+    const amount = (selectedBusData?.BusPrice?.PublishedPriceRoundedOff || 13) * passengers.length * 100;
+
+    const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
+      amount,
+      currency: "INR",
+      receipt: `bus_booking_${Date.now()}`,
+      user_email: leadPassenger.Email,
+      user_name: `${leadPassenger.FirstName} ${leadPassenger.LastName}`,
+      user_phone: leadPassenger.ContactNo || "9999999999",
+    });
+
+    const { order_id } = orderResponse.data;
+
+    const options = {
+      key: "rzp_test_Bi57EMsQ6K7ZZH",
+      amount,
+      currency: "INR",
+      name: "Next Gen Trip",
+      description: "Bus Booking Payment",
+      order_id,
+      handler: async (response) => {
+        Swal.fire({
+          icon: "success",
+          title: "Payment Successful",
+          text: `Payment ID: ${response.razorpay_payment_id}`,
+        });
+      },
+      prefill: {
+        name: `${leadPassenger.FirstName} ${leadPassenger.LastName}`,
+        email: leadPassenger.Email,
+        contact: leadPassenger.ContactNo || "",
+      },
+      theme: {
+        color: "#0086da",
+      },
+    };
+
+    const razorpay = new window.Razorpay(options);
+    razorpay.open();
 
   } catch (error) {
-    setError('Error booking bus: ' + error.message);
     console.error('Booking error:', error);
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: error.message || "Something went wrong during booking or payment.",
+    });
   } finally {
     setIsLoading(false);
   }
 };
-
-
     
   return (
     <div className="grid max-w-[100rem] mx-auto justify-content-center grid-cols-1 md:grid-cols-3 gap-4 p-4">
