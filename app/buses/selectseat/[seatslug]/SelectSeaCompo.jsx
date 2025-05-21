@@ -39,7 +39,7 @@ const SelectSeaCompo = ({ slug }) => {
 
   useEffect(() => {
     setBusSeatInfo(state && state.info && state.info?.buslayout?.GetBusSeatLayOutResult);
-
+    console.log(state?.info?.busbording)
     setBusBoarding(state?.info?.busbording?.GetBusRouteDetailResult)
   }, [state])
 
@@ -367,6 +367,9 @@ const booknow=async()=>{
 
           </form>
         </div> */}
+
+
+    {    console.log('busBoarding',busBoarding)}
 
 {busBoarding && (
   <div className="mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg max-w-screen-xl">
