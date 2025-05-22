@@ -90,7 +90,8 @@ const HotelsComp = () => {
   };
 
 
-
+const maxAdultsPerRoom = 8;
+const maxChildrenPerRoom = 4;
 
 
   return (
@@ -244,21 +245,139 @@ const HotelsComp = () => {
                 </div>
               </div>
 
-              {isVisible == "roomcheck" && (
-                <div
-                  className="absolute w-fit top-full p-4 bg-white rounded-lg shadow-md z-50"
-                  onMouseLeave={() => setIsVisible("")}
-                >
-                  <div className="shadow-2xl rounded-md  bg-white mt-[10%]  flex flex-col gap-4 p-4">
-                    <div className="flex gap-3 justify-between"><p className="text-nowrap">Adult Count </p> <div className="flex items-center gap-3"> <button className="px-2 border text-black" onClick={() => { adultcount > 1 ? setadultcount(adultcount - 1) : null }}>-</button> <p className=" px-2 border">{adultcount}</p> <button className="px-2 text-black border" onClick={() => setadultcount(adultcount + 1)} >+</button> </div> </div>
-                    <div className="flex gap-3 justify-between"><p className="text-nowrap">Child Count </p> <div className="flex items-center gap-3"> <button className="px-2 border text-black" onClick={() => { childcount > 0 ? setchildcount(childcount - 1) : null }}>-</button> <p className=" px-2 border">{childcount}</p> <button className="px-2 text-black border" onClick={() => setchildcount(childcount + 1)} >+</button> </div> </div>
-                    <div className="flex gap-3 justify-between"><p className="text-nowrap">Room Count </p> <div className="flex items-center gap-3"> <button className="px-2 border text-black" onClick={() => { numberOfRoom > 0 ? setNumberOfRoom(numberOfRoom - 1) : null }}>-</button> <p className=" px-2 border">{numberOfRoom}</p> <button className="px-2 text-black border" onClick={() => setNumberOfRoom(numberOfRoom + 1)} >+</button> </div>
-                    </div>
+
+              {isVisible === "roomcheck" && (
+  <div
+    className="absolute w-fit top-full p-4 bg-white rounded-lg shadow-md z-50"
+    onMouseLeave={() => setIsVisible("")}
+  >
+    <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-4">
+      <div className="flex gap-3 justify-between">
+        <p className="text-nowrap">Adult Count</p>
+        <div className="flex items-center gap-3">
+          <button
+            className="px-2 border text-black"
+            onClick={() => {
+              if (adultcount > 1) {
+                setadultcount(adultcount - 1);
+                // Recalculate minimum rooms required
+                const totalPeople = adultcount - 1 + childcount;
+                const requiredRooms = Math.max(
+                  Math.ceil(totalPeople / 8),
+                  Math.ceil(childcount / 4)
+                );
+                // Update room count only if it's less than the current numberOfRoom
+                if (requiredRooms <= numberOfRoom) {
+                  setNumberOfRoom(requiredRooms);
+                }
+              }
+            }}
+          >
+            -
+          </button>
+          <p className="px-2 border">{adultcount}</p>
+          <button
+            className="px-2 text-black border"
+            onClick={() => {
+              const newAdultCount = adultcount + 1;
+              const totalPeople = newAdultCount + childcount;
+              const requiredRooms = Math.max(
+                Math.ceil(totalPeople / 8),
+                Math.ceil(childcount / 4)
+              );
+              setadultcount(newAdultCount);
+              // Update room count if more rooms are needed
+              if (requiredRooms > numberOfRoom) {
+                setNumberOfRoom(requiredRooms);
+              }
+            }}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-3 justify-between">
+        <p className="text-nowrap">Child Count</p>
+        <div className="flex items-center gap-3">
+          <button
+            className="px-2 border text-black"
+            onClick={() => {
+              if (childcount > 0) {
+                setchildcount(childcount - 1);
+                // Recalculate minimum rooms required
+                const totalPeople = adultcount + (childcount - 1);
+                const requiredRooms = Math.max(
+                  Math.ceil(totalPeople / 8),
+                  Math.ceil((childcount - 1) / 4)
+                );
+                // Update room count only if it's less than the current numberOfRoom
+                if (requiredRooms <= numberOfRoom) {
+                  setNumberOfRoom(requiredRooms);
+                }
+              }
+            }}
+          >
+            -
+          </button>
+          <p className="px-2 border">{childcount}</p>
+          <button
+            className="px-2 text-black border"
+            onClick={() => {
+              const newChildCount = childcount + 1;
+              const totalPeople = adultcount + newChildCount;
+              const requiredRooms = Math.max(
+                Math.ceil(totalPeople / 8),
+                Math.ceil(newChildCount / 4)
+              );
+              setchildcount(newChildCount);
+              // Update room count if more rooms are needed
+              if (requiredRooms > numberOfRoom) {
+                setNumberOfRoom(requiredRooms);
+              }
+            }}
+          >
+            +
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-3 justify-between">
+        <p className="text-nowrap">Room Count</p>
+        <div className="flex items-center gap-3">
+          <button
+            className="px-2 border text-black"
+            onClick={() => {
+              const totalPeople = adultcount + childcount;
+              const requiredRooms = Math.max(
+                Math.ceil(totalPeople / 8),
+                Math.ceil(childcount / 4)
+              );
+              // Only decrease if the new room count is sufficient
+              if (numberOfRoom > requiredRooms) {
+                setNumberOfRoom(numberOfRoom - 1);
+              }
+            }}
+          >
+            -
+          </button>
+          <p className="px-2 border">{numberOfRoom}</p>
+          <button
+            className="px-2 text-black border"
+            onClick={() => {
+              setNumberOfRoom(numberOfRoom + 1);
+            }}
+          >
+            +
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
 
-                  </div>
-                </div>
-              )}
+
+
+
             </div>
 
             {/* Search Hotels Button */}
