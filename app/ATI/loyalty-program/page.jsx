@@ -117,7 +117,7 @@ const page = () => {
 
   const apkaTripInfo = {
     loyaltyProgramCTA: "Join the NextGen Loyalty Program today",
-    introduction: "Are you ready to turn your passion for travel into fantastic rewards? Whether you're an avid traveler or just starting out, the Loyalty Program from NextGen offers you unbeatable value and unmatched benefits.",
+    introduction: "Join the NextGen fidelity Program  moment  Are you ready to turn your passion for  trip into fantastic  prices? Whether you are an  avaricious  rubberneck or just starting out, the fidelity Program from NextGen offers you  unstoppable value and unmatched benefits.   About NextGen  NextGen is one of the world's most trusted  trip agencies, believing every trip should be memorable, smooth, and  satisfying. Our fidelity Program is our  bid to make your  trip experience as unique as possible with exclusive  prices and  substantiated services that help you find and explore the world and enjoy great benefits along the way.",
     ctaButtons: [
       { text: "Start Earning, Start Exploring", link: "#" },
       { text: "Sign up now", link: "#" },
@@ -171,14 +171,7 @@ const page = () => {
         Travel More Earn More <br /> and Enjoy Superior Rewards
       </h5>
       <p className="text-base lg:text-lg text-justify text-[#bbbbbb] ">
-        In other words, loyalty should be repaid. Whether you're a frequent
-        traveler or a beginner venturing into this amazing world, our Loyalty
-        Program is here to make your travels better and more rewarding every
-        step with NextGen. Book with us and unlock a world of privilege, with
-        exclusive rewards and personalized services, making each journey even
-        more memorable. Join the NextGen Loyalty Program today and start earning
-        all those points, perks, and privileges that will make your travel dreams
-        come true.
+       That is to say, loyalty must be rewarded. As a seasoned traveler or an inaugural one who is exploring this wonderful world, our Loyalty Program is designed to improve and enrich your journeys every step with NextGen. Stay with us and experience a world of privilege with special rewards and individualized services to make every journey more unforgettable. Join NextGen Loyalty Program today and begin earning all those points, benefits, and advantages that will turn your travel fantasies into reality.
       </p>
     </div>
 

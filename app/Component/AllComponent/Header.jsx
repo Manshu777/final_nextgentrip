@@ -309,49 +309,57 @@ const Header = () => {
 
 
   const handelSearch = () => {
-    localStorage.setItem(
-      "defaultflight",
-      JSON.stringify({
-        from: fromCity,
-        to: toCity,
-        timeDate: selected,
-        retuntime: selectedReturn,
-        journytype: JourneyType,
-      })
-    );
+ 
 
-    const date = new Date(selected);
+      localStorage.setItem(
+    "defaultflight",
+    JSON.stringify({
+      from: fromCity,
+      to: toCity,
+      timeDate: selected,
+      retuntime: selectedReturn,
+      journytype: JourneyType, // Consider renaming to 'journeyType'
+    })
+  );
 
-    const offset = 6 * 60 * 55 * 1000;
+  // Format departure date to midnight (local timezone)
+  const date = new Date(selected);
+  date.setHours(0, 0, 0, 0); // Set to midnight
+  const localFormattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
+  console.log('localFormattedDate', localFormattedDate);
 
-    const localDate = new Date(date.getTime() + offset);
-    const localFormattedDate = localDate.toISOString().slice(0, 19);
-    let searchUrl;
-    if (JourneyType == 1) {
-      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&PreferredAirlines=${preferredAirline}`;
-    } else if (JourneyType == 2) {
-      if (!selectedReturn) {
-        toast.warn("Select Return Date", {
-          position: "top-right",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
-      } else {
-        const retundate = new Date(selectedReturn);
+  let searchUrl;
+  if (JourneyType === 1) {
+    // One-way trip
+    searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&PreferredAirlines=${preferredAirline}`;
+  } else if (JourneyType === 2) {
+    // Round trip
+    if (!selectedReturn) {
+      toast.warn("Select Return Date", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } else {
+      // Format return date to midnight (local timezone)
+      const returnDate = new Date(selectedReturn);
+      returnDate.setHours(0, 0, 0, 0); // Set to midnight
+      const returnFormattedDate = `${returnDate.getFullYear()}-${String(returnDate.getMonth() + 1).padStart(2, '0')}-${String(returnDate.getDate()).padStart(2, '0')}T00:00:00`;
+      console.log('returnFormattedDate', returnFormattedDate);
 
-        const r_localDate = new Date(retundate.getTime() + offset);
-        const r_localFormattedDate = r_localDate.toISOString().slice(0, 19);
-        searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&returndate=${r_localFormattedDate}&PreferredAirlines=${preferredAirline}`;
-      }
+      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&returndate=${returnFormattedDate}&PreferredAirlines=${preferredAirline}`;
     }
+  }
 
-    route.push(searchUrl);
+  route.push(searchUrl);
+
+  
   };
 
 

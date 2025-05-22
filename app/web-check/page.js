@@ -201,10 +201,7 @@ const page = () => {
         <p className="font-bold bg-[#fff3cd] px-3 py-2 rounded">
           Important Information:
           <span className="font-normal text-sm">
-            &nbsp; Airlines may change their rules without notice, at their
-            discretion, please refer to airline policies for the most recent
-            update. For any amendments and cancellations, you will be charged as
-            per the latest airline policy applicable.
+            &nbsp; Airlines can modify their rules at discretion without notice, please see airline policies for the latest update. You will be charged for any changes and cancellations according to the current airline policy.
           </span>
         </p>
 

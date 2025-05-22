@@ -84,6 +84,8 @@ const comp = ({ slug }) => {
   const localDate = new Date(date.getTime() + offset);
   const localFormattedDate = localDate.toISOString().slice(0, 19);
 
+  console.log('localFormattedDate',localFormattedDate)
+
   useEffect(() => {
     const getIp = async () => {
       try {
@@ -226,18 +228,32 @@ const comp = ({ slug }) => {
     setShowDetailsIndex(showDetailsIndex === index ? null : index);
   };
 
-  const handelFilter = (value) => {
-    if (value === "All") {
-      setstate2([state?.data?.Response?.Results?.[0] || []]);
-    } else {
-      const filterdata =
-        state?.data?.Response?.Results?.[0]?.filter(
-          (info) => info.Segments[0][0].Airline.AirlineName === value
-        ) || [];
+const handelFilter = (value) => {
+  if (value === "All") {
+    setstate2([state?.data?.Response?.Results?.[0] || []]);
+  } else if (value === "Morning" || value === "Evening") {
+    console.log(state?.data.Response.Results[0])
+    const timeFilter = state?.data.Response.Results[0]?.filter((info) => {
 
-      setstate2([filterdata]);
-    }
-  };
+      const depTime =  info.Segments[0]?.[0]?.Origin?.DepTime?.split("T")[1].slice(0, 5);
+
+      const hours = parseInt(depTime.split(":")[0], 10); 
+      if (value === "Morning") {
+        return hours >= 0 && hours < 12; 
+      } else {
+        return hours >= 12 && hours < 24; 
+      }
+    }) || [];
+    setstate2([timeFilter]);
+  } else {
+    // Airline-based filtering
+    const filterdata =
+      state?.data?.Response?.Results?.[0]?.filter(
+        (info) => info.Segments[0][0].Airline.AirlineName === value
+      ) || [];
+    setstate2([filterdata]);
+  }
+};
 
   const handelnonstop = (e) => {
     if (e.target.defaultValue == "direct") {

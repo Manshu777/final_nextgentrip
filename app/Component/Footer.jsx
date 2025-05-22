@@ -165,9 +165,9 @@ const Footer = () => {
           Footer
         </h2>
 
-        <div className="mx-auto max-w-7xl lg:py-10 px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-10">
+        <div className="mx-auto max-w-7xl lg:py-10 px-6 pb-8 pt-5 sm:pt-5 lg:px-8 lg:pt-5">
          <div className="Recomended TabChanges space-y-4">
-            <p className="text-sm font-semibold text-gray-700 lg:text-3xl ">
+            <p className="text-2xl font-semibold text-gray-700 lg:text-3xl ">
               Recommended by <span className="text-blue-500">Nextgentrip.com</span>
             </p>
 
@@ -197,7 +197,7 @@ const Footer = () => {
               {activeTab == 1 ? (
                 <ul className=" w-full overflow-x-auto tab-content px-3 text-xs grid grid-cols-2 lg:grid-cols-5   gap-4 rounded-md py-8">
                   {tabsContent.bestCheapFlight.map((elm, index) => (
-                    <li key={index} className="ml-0   lg:text-md lg:ml-20 text-sm">
+                    <li key={index} className="ml-0 text-sm">
                       <h5>{elm.name}</h5>
                     </li>
                   ))}
@@ -206,7 +206,7 @@ const Footer = () => {
                 <ul className="tab-content text-xs w-full overflow-x-auto   grid grid-cols-2 lg:grid-cols-4 gap-4  px-5 py-8 rounded-md">
                   {tabsContent.FavouriteAirlineAndAirports.map(
                     (item, index) => (
-                      <li key={index} className="ml-0 lg:ml-20">
+                      <li key={index} className="ml-0 text-sm">
                         <h3>
                           {item.name} 
                         </h3>

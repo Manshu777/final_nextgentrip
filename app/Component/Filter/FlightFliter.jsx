@@ -10,6 +10,8 @@ const FlightFliter = ({airlines,handelFilter,handelnonstop}) => {
     morningDepartures: false,
   });
 
+  const filterOptions = ["All", "Morning", "Evening", ...airlines];
+
 
   const handleFilterChange = (event) => {
     const { name, checked } = event.target;
@@ -33,34 +35,42 @@ const FlightFliter = ({airlines,handelFilter,handelnonstop}) => {
         </p>
        
        
-        <div data-testid="" className="flex justify-between w-full mb-6">
-          <span className="checkmarkOuter flex items-center">
-            <input type="radio" className="mr-3 h-5 w-5 accent-blue-500" name="airlines" value="Indigo" onClick={(e)=>handelFilter(e.target.value)} />
-            <label className="font-medium text-[14px] text-gray-700 font-sans flex items-center">
-              <FaPlaneDeparture className="mr-2 text-indigo-500" /> IndiGo
-            </label>
-          </span>
-        </div>
+        
 
-        <div data-testid="" className="flex justify-between w-full mb-6">
-          <span className="checkmarkOuter flex items-center">
-            <input type="radio" className="mr-3 h-5 w-5 accent-blue-500" name="airlines" value="Indigo" onClick={(e)=>handelFilter(e.target.value)} />
-            <label className="font-medium text-[14px] text-gray-700 font-sans flex items-center">
-              <FaSun className="mr-2 text-yellow-500" /> Morning Departures
-            </label>
-          </span>
-        </div>
 
-        <div data-testid="" className="flex justify-between w-full mb-6">
-          <span className="checkmarkOuter flex items-center">
-            <input type="radio" className="mr-3 h-5 w-5 accent-blue-500" name="airlines" value="Indigo" onClick={(e)=>handelFilter(e.target.value)} />
-            <label className="font-medium text-[14px] text-gray-700 font-sans flex items-center">
-              <FaMoon className="mr-2 text-purple-500" /> Evening Departures
-            </label>
-          </span>
-        </div>
+        <div data-testid="morning-filter" className="flex justify-between w-full mb-6">
+        <span className="checkmarkOuter flex items-center">
+          <input
+            type="radio"
+            className="mr-3 h-5 w-5 accent-blue-500"
+            name="timeFilter"
+            value="Morning"
+            onChange={(e) => handelFilter(e.target.value)}
+          />
+          <label className="font-medium text-[14px] text-gray-700 font-sans flex items-center">
+            <FaSun className="mr-2 text-yellow-500" /> Morning Departures
+          </label>
+        </span>
       </div>
 
+      <div data-testid="evening-filter" className="flex justify-between w-full mb-6">
+        <span className="checkmarkOuter flex items-center">
+          <input
+            type="radio"
+            className="mr-3 h-5 w-5 accent-blue-500"
+            name="timeFilter"
+            value="Evening"
+            onChange={(e) => handelFilter(e.target.value)}
+          />
+          <label className="font-medium text-[14px] text-gray-700 font-sans flex items-center">
+            <FaMoon className="mr-2 text-purple-500" /> Evening Departures
+          </label>
+        </span>
+      </div>
+
+      </div>
+
+       
       <div className="mb-12">
         <p className="font-extrabold text-[14px] mb-6 text-gray-800 flex items-center">
           <FaPlane className="mr-3 text-blue-500" /> Stops
