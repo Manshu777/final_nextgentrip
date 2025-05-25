@@ -318,7 +318,7 @@ const SearchCompnents = ({ handelcity }) => {
   }, [dispatch, searchparam]);
 
   return (
-    <div className="absolute top-full bg-white w-full z-30 shadow-md rounded-md mt-1">
+    <div className="absolute top-[53%] bg-white w-full z-30 shadow-md rounded-md mt-1">
       <input
         type="text"
         value={searchparam}

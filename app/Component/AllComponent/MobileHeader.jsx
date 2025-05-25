@@ -184,7 +184,7 @@ const [searchport,setsearchport]=useState( {info:[],isLoading:false})
 
   return (
     <>
-      <div className="block md:hidden p-3 ">
+      <div className="hidden p-3 ">
         <div className="flex space-x-4">
           <button
             className={`h-8 font-semibold text-sm px-4 rounded ${
