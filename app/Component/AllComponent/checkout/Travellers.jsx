@@ -111,25 +111,31 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     setShowForms(updatedShowForms);
   };
 
-  const validateAllForms = () => {
-    const newErrors = {};
+const validateAllForms = () => {
+  const newErrors = {};
+  let checckMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
 
-    passengers.forEach((passenger, index) => {
-      if (!passenger.Title) {
-        newErrors[`Title_${index}`] = "Title is required.";
-      }
-      if (!passenger.FirstName) {
-        newErrors[`FirstName_${index}`] = "First Name is required.";
-      }
-      if (!passenger.LastName) {
-        newErrors[`LastName_${index}`] = "Last Name is required.";
-      }
-      if (!passenger.Gender) {
-        newErrors[`Gender_${index}`] = "Gender is required.";
-      }
-      if (!passenger.DateOfBirth) {
-        newErrors[`DateOfBirth_${index}`] = "Date of Birth is required.";
-      }
+  console.log('IsPassportRequiredAtBook', checckMEEE.data.IsPassportRequiredAtBook);
+
+  passengers.forEach((passenger, index) => {
+    if (!passenger.Title) {
+      newErrors[`Title_${index}`] = "Title is required.";
+    }
+    if (!passenger.FirstName) {
+      newErrors[`FirstName_${index}`] = "First Name is required.";
+    }
+    if (!passenger.LastName) {
+      newErrors[`LastName_${index}`] = "Last Name is required.";
+    }
+    if (!passenger.Gender) {
+      newErrors[`Gender_${index}`] = "Gender is required.";
+    }
+    if (!passenger.DateOfBirth) {
+      newErrors[`DateOfBirth_${index}`] = "Date of Birth is required.";
+    }
+
+    // Only validate passport fields if IsPassportRequiredAtBook is true
+    if (checckMEEE.data.IsPassportRequiredAtBook) {
       if (!passenger.PassportNo) {
         newErrors[`PassportNo_${index}`] = "Passport Number is required.";
       } else if (passenger.PassportNo.length !== 8) {
@@ -144,27 +150,29 @@ const Page = ({ setActiveTab, fdatas, price }) => {
           newErrors[`PassportExpiry_${index}`] = "Passport Expiry Date must be in the future.";
         }
       }
-      if (!passenger.AddressLine1) {
-        newErrors[`AddressLine1_${index}`] = "Address is required.";
-      }
-      if (!passenger.City) {
-        newErrors[`City_${index}`] = "City is required.";
-      }
-      if (!passenger.ContactNo) {
-        newErrors[`ContactNo_${index}`] = "Contact Number is required.";
-      } else if (!/^\d{10}$/.test(passenger.ContactNo)) {
-        newErrors[`ContactNo_${index}`] = "Phone Number must be 10 digits long.";
-      }
-      if (!passenger.Email) {
-        newErrors[`Email_${index}`] = "Email is required.";
-      } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(passenger.Email)) {
-        newErrors[`Email_${index}`] = "Invalid Email Address.";
-      }
-    });
+    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    if (!passenger.AddressLine1) {
+      newErrors[`AddressLine1_${index}`] = "Address is required.";
+    }
+    if (!passenger.City) {
+      newErrors[`City_${index}`] = "City is required.";
+    }
+    if (!passenger.ContactNo) {
+      newErrors[`ContactNo_${index}`] = "Contact Number is required.";
+    } else if (!/^\d{10}$/.test(passenger.ContactNo)) {
+      newErrors[`ContactNo_${index}`] = "Phone Number must be 10 digits long.";
+    }
+    if (!passenger.Email) {
+      newErrors[`Email_${index}`] = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(passenger.Email)) {
+      newErrors[`Email_${index}`] = "Invalid Email Address.";
+    }
+  });
+
+  setErrors(newErrors);
+  return Object.keys(newErrors).length === 0;
+};
 
   const now = new Date(Date.now());
   const addate = new Date(fdatas?.addat);
@@ -233,6 +241,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   const handlebook = async (e) => {
     e.preventDefault();
 
+
     const isValid = validateAllForms();
 
     if (!isValid) {
@@ -297,8 +306,13 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       };
 
       const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+
       const isLCC = checkOutFlightDetail?.IsLCC === true;
+
           console.log('checkOutFlightDetail',checkOutFlightDetail?.IsLCC)
+          console.log('IsPassportRequiredAtBook',checkOutFlightDetail?.IsPassportRequiredAtBook)
+
+
 
       const apiEndpoint = isLCC
         ? `${apilink}/flight-book-llc`
@@ -548,10 +562,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       </div>
       <div className="md:grid md:grid-cols-6 gap-5 mt-3">
         <div className="col-span-4 leftSide space-y-6">
-          {isLoading ? (
-            <SkeletonLoader />
-          ) : (
-            <>
+        
               <div className="FirstChild border rounded-lg shadow-lg">
                 <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg">
                   <div className="flex items-center gap-3">
@@ -886,15 +897,11 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                   <FaLock /> Secure Booking & Data Protection
                 </div>
               </div>
-            </>
-          )}
+           
         </div>
         <div className="w-full md:col-span-2 rightSide space-y-4 md:px-4">
           <div className="sticky top-0">
-            {isLoading ? (
-              <SkeletonLoader />
-            ) : (
-              <>
+          
                 <div className="priceBoxAndDetails border rounded shadow-lg">
                   <div className="border rounded-t flex items-center px-3 py-2 bg-[#D1EAFF]">
                     <h3>Price Summary</h3>
@@ -926,8 +933,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                     )}
                   </button>
                 </div>
-              </>
-            )}
+            
           </div>
         </div>
       </div>
