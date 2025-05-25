@@ -196,45 +196,54 @@ export default function InsuranceHeader() {
               </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium">Plan Category</label>
-              <select
-                className="w-full p-2 border border-gray-300 rounded"
-                value={alldata.Plan_Category.id}
-                onChange={(e) =>
-                  setAllData({
-                    ...alldata,
-                    Plan_Category: planCategories.find((cat) => cat.id == e.target.value),
-                  })
-                }
-              >
-                {planCategories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.title}
-                  </option>
-                ))}
-              </select>
-            </div>
+          <div>
+  <label className="text-sm font-medium">Plan Category</label>
+  <select
+    className="w-full p-2 border border-gray-300 rounded"
+    value={alldata.Plan_Category.id}
+    onChange={(e) => {
+      const selectedCategory = planCategories.find((cat) => cat.id == e.target.value);
+      let updatedCoverage = alldata.Plan_Coverage;
 
-            <div>
-              <label className="text-sm font-medium">Plan Coverage</label>
-              <select
-                className="w-full p-2 border border-gray-300 rounded"
-                value={alldata.Plan_Coverage.id}
-                onChange={(e) =>
-                  setAllData({
-                    ...alldata,
-                    Plan_Coverage: planCoverage.find((cov) => cov.id == e.target.value),
-                  })
-                }
-              >
-                {planCoverage.map((coverage) => (
-                  <option key={coverage.id} value={coverage.id}>
-                    {coverage.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+      // If "Overseas Travel Insurance" (id: 2) is selected, set coverage to "World Wide" (id: 3)
+      if (selectedCategory.id === 2) {
+        updatedCoverage = planCoverage.find((cov) => cov.id === 3);
+      }
+
+      setAllData({
+        ...alldata,
+        Plan_Category: selectedCategory,
+        Plan_Coverage: updatedCoverage,
+      });
+    }}
+  >
+    {planCategories.map((category) => (
+      <option key={category.id} value={category.id}>
+        {category.title}
+      </option>
+    ))}
+  </select>
+</div>
+
+<div>
+  <label className="text-sm font-medium">Plan Coverage</label>
+  <select
+    className="w-full p-2 border border-gray-300 rounded"
+    value={alldata.Plan_Coverage.id}
+    onChange={(e) =>
+      setAllData({
+        ...alldata,
+        Plan_Coverage: planCoverage.find((cov) => cov.id == e.target.value),
+      })
+    }
+  >
+    {planCoverage.map((coverage) => (
+      <option key={coverage.id} value={coverage.id}>
+        {coverage.name}
+      </option>
+    ))}
+  </select>
+</div>
 
             <div>
               <label className="text-sm font-medium">Plan Type</label>
