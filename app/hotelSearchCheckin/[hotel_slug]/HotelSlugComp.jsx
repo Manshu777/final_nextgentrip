@@ -92,7 +92,7 @@ const HotelSlugComp = ({ slugs }) => {
     <>
       {isOpen && hotel && (
         <div className='fixed top-0 left-0 w-screen h-screen flex justify-center items-center bg-[#0000008a] z-50 overflow-y-scroll md:pt-16'>
-          <div className="bg-white rounded-lg shadow-xl w-full max-h-[80vh] overflow-y-auto max-w-3xl mx-4 p-6">
+          <div className="bg-white  shadow-xl w-full max-h-[80vh] overflow-y-auto max-w-3xl mx-4 p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-gray-800">{hotel.Rooms[0].Name[0]}</h2>
               <button onClick={togglePopup} className="text-red-500 font-bold text-xl">×</button>
@@ -150,7 +150,7 @@ const HotelSlugComp = ({ slugs }) => {
             <div className="mt-6">
               <button
                 onClick={() => routeCheckOutPage()}
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-500 transition-all"
+                className="w-full bg-blue-600 text-white py-2  hover:bg-blue-500 transition-all"
               >
                 Book Now
               </button>
@@ -182,7 +182,7 @@ const HotelSlugComp = ({ slugs }) => {
                 </div>
                 {/* Images Skeleton */}
                 <div className="lg:flex gap-5 mb-5">
-                  <div className="w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4 bg-gray-200 rounded-lg"></div>
+                  <div className="w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4 bg-gray-200 "></div>
                   <div>
                     <div className="w-full lg:w-[280px] h-40 mb-4 bg-gray-200 rounded-2xl"></div>
                     <div className="w-full lg:w-[280px] h-40 bg-gray-200 rounded-2xl"></div>
@@ -238,7 +238,7 @@ const HotelSlugComp = ({ slugs }) => {
               <div className="h-6 w-32 bg-gray-200 rounded mb-2"></div>
               <div className="h-4 w-48 bg-gray-200 rounded mb-4"></div>
               <div className="flex flex-col lg:flex-row gap-10">
-                <div className="w-full h-96 bg-gray-200 rounded-lg"></div>
+                <div className="w-full h-96 bg-gray-200 "></div>
                 <div className="lg:w-2/6 space-y-4">
                   <div className="h-6 w-24 bg-gray-200 rounded"></div>
                   <div className="h-6 w-24 bg-gray-200 rounded"></div>
@@ -296,9 +296,10 @@ const HotelSlugComp = ({ slugs }) => {
                           <img
                              src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
                             alt="hotel image"
+                            className="lg:w-[600px] h-[200px] lg:h-[340px] "
                             layout="fill"
                             objectFit="cover"
-                            className="rounded-lg"
+                    
                           />
                           <div onClick={() => setimgToggle(true)} className="cursor-pointer absolute bottom-0 left-0 w-full p-2 rounded-b-lg bg-opacity-75 bg-gray-800 text-white text-center">
                             +{hotelinfo.info.hoteldetail1[0]?.images?.length} property photos
@@ -312,7 +313,8 @@ const HotelSlugComp = ({ slugs }) => {
                                   <img
                                     src={image || '/images/not_found_img.png'}
                                     alt={`Image ${index + 1}`}
-                                    className="rounded-lg h-[20rem] w-full"
+                                      className=" h-[20rem] w-full lg:w-[600px]  lg:h-[340px] "
+                                 
                                   />
                                 </div>
                               ))}
@@ -327,7 +329,7 @@ const HotelSlugComp = ({ slugs }) => {
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
-                            className="rounded-lg"
+                            className="w-full lg:w-[280px] h-40 "
                           />
                           <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
                             Room photos
@@ -339,7 +341,7 @@ const HotelSlugComp = ({ slugs }) => {
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
-                            className="rounded-lg"
+                            className="w-full lg:w-[280px] h-40"
                           />
                         </div>
                       </div>
@@ -492,7 +494,7 @@ const HotelSlugComp = ({ slugs }) => {
                     )}
                   </div>
                 </div>
-                <div className="p-6 bg-white rounded-lg my-5 myshadow">
+                <div className="p-6 bg-white  my-5 myshadow">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-lg font-semibold">Change Dates and Guest(s)</p>
