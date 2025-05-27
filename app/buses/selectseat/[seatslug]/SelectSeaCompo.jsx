@@ -152,7 +152,7 @@ const booknow=async()=>{
                       />
 
 
-                      <span className="mt-2 text-lg font-semibold text-gray-800">
+                      <span className="mt-2 text-lg font-semibold text-nowrap text-gray-800">
                         Seat {seat.SeatName}
                       </span>
                       <span className="text-sm text-gray-500">

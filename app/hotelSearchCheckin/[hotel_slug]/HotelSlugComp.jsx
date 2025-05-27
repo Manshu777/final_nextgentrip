@@ -63,6 +63,8 @@ const HotelSlugComp = ({ slugs }) => {
 
 
     setLoading(true); // step 2
+
+    
     try {
       await dispatch(gethotelPreBookingApi({ BookingCode }));
       setIsOpen(true);

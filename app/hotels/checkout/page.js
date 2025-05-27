@@ -21,42 +21,80 @@ export default function Page() {
   const [hotelData, setHotelData] = useState(null);
 
   // Fetch hotel data from localStorage
-  useEffect(() => {
-    const hotelCheckData = JSON.parse(localStorage.getItem("hotelcheckdata"));
-    const searchData = JSON.parse(localStorage.getItem("hotelSearchData")); // Assuming check-in/out dates are stored here
-    console.log("Hotel Check Data:", hotelCheckData.Rooms[0].Name[0]);
-    if (hotelCheckData) {
-      // Map the JSON data to the expected hotelData structure
-      const mappedHotelData = {
-        HotelName: hotelCheckData.Rooms[0].Name[0] || "Unknown Hotel",
-        CheckInDate: searchData?.CheckInDate || "2025-06-01", // Fallback or from search data
-        CheckOutDate: searchData?.CheckOutDate || "2025-06-05", // Fallback or from search data
-        BookingCode: hotelCheckData.Rooms[0].BookingCode || "BOOK12345",
-        Price: {
-          TotalDisplayFare: hotelCheckData.Rooms[0].TotalFare || 0,
-        },
-        IsPackageFare: hotelCheckData.Rooms[0].WithTransfers || false,
-        IsPackageDetailsMandatory: false, // Adjust based on RateConditions if needed
-        HotelRoomsDetails: hotelCheckData.Rooms?.map((room, index) => ({
+ useEffect(() => {
+  const hotelCheckData = JSON.parse(localStorage.getItem("hotelcheckdata"));
+  const searchData = JSON.parse(localStorage.getItem("hotelSearchData")); 
+  const hotelItems = JSON.parse(localStorage.getItem("hotelItems"));
+
+  console.log("Hotel Items Data:", hotelCheckData.Rooms[0]);
+  if (hotelCheckData && hotelItems) {
+    const mappedHotelData = {
+      HotelName: hotelCheckData.Rooms[0].Name[0] || "Unknown Hotel",
+      CheckInDate: searchData?.CheckInDate || "2025-06-01",
+      CheckOutDate: searchData?.CheckOutDate || "2025-06-05",
+      BookingCode: hotelCheckData.Rooms[0].BookingCode || "BOOK12345",
+      Price: {
+        TotalDisplayFare: hotelCheckData.Rooms[0].TotalFare || 0,
+      },
+      IsPackageFare: hotelCheckData.Rooms[0].WithTransfers || false,
+      IsPackageDetailsMandatory: false,
+      HotelRoomsDetails: hotelCheckData.Rooms?.map((room, index) => {
+        // Get adult and child count for the current room (assuming hotelItems is an array of room data)
+        const roomData = Array.isArray(hotelItems) ? hotelItems[index] : hotelItems;
+        const adultCount = roomData?.adultcount || 1;
+        const childCount = roomData?.childcount || 0;
+
+        // Create GuestDetails array dynamically
+        const guestDetails = [
+          // Adults
+          ...Array(adultCount).fill().map((_, guestIndex) => ({
+            PaxType: 1, // Adult
+            LeadPassenger: guestIndex === 0, // First adult is the lead passenger
+            Title: "",
+            FirstName: "",
+            MiddleName: "",
+            LastName: "",
+            Phoneno: "",
+            Email: "",
+            PassportNo: "",
+            PAN: "",
+          })),
+          // Children
+          ...Array(childCount).fill().map(() => ({
+            PaxType: 2, // Child
+            LeadPassenger: false,
+            Title: "",
+            FirstName: "",
+            MiddleName: "",
+            LastName: "",
+            Phoneno: "",
+            Email: "",
+            PassportNo: "",
+            PAN: "",
+            Age: "", // Age is required for children
+          })),
+        ];
+
+        return {
           RoomIndex: index + 1,
           RoomTypeName: room.Name?.[0] || "Standard Room",
           Price: {
             PublishedPrice: room.PriceBreakUp?.[0]?.RoomRate || 0,
           },
-          GuestDetails: [
-            { PaxType: 1 }, // Adult (assuming at least 1 adult per room)
-            { PaxType: 1 }, // Second adult for "2 Twin Beds"
-            // Add more guests dynamically based on room type or user input
-          ],
-        })) || [],
-      };
-      setHotelData(mappedHotelData);
-    } else {
-      console.error("No hotel data found in localStorage");
-      // Optionally redirect or show an error
-      // router.push("/hotels");
-    }
-  }, []);
+          GuestDetails: guestDetails,
+        };
+      }) || [],
+    };
+    setHotelData(mappedHotelData);
+    // Initialize rooms state with the same structure as HotelRoomsDetails
+    setRooms(mappedHotelData.HotelRoomsDetails);
+  } else {
+    console.error("No hotel data found in localStorage");
+    // Optionally redirect or show an error
+    // router.push("/hotels");
+  }
+}, []);
+
 
   // Initialize rooms based on hotel data
   useEffect(() => {
@@ -85,21 +123,7 @@ export default function Page() {
     }
   }, [hotelData]);
 
-  // Fetch user data (unchanged)
-  // useEffect(() => {
-  //   const userid = JSON.parse(localStorage.getItem("NextGenUser"));
-  //   if (!userid) router.push("/user/login");
 
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const data = await axios.get(`${apilink}/user/${userid}`);
-  //       if (data.data.success) setUser(data.data.user);
-  //     } catch (error) {
-  //       console.error("Error fetching user data:", error);
-  //     }
-  //   };
-  //   fetchUserData();
-  // }, [router]);
 
   const handleChange = (e, roomIndex, guestIndex) => {
     const { name, value } = e.target;
@@ -168,74 +192,85 @@ export default function Page() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleBookHotel = async (e) => {
-    e.preventDefault();
-    const isValid = validateAllForms();
+const handleBookHotel = async (e) => {
+  e.preventDefault();
+  const isValid = validateAllForms();
 
-    const traceID = localStorage.getItem("selectedHotelTraceId");
-    const bookingCode = hotelData?.BookingCode;
+  const traceID = localStorage.getItem("selectedHotelTraceId");
+  const bookingCode = hotelData?.BookingCode;
 
-    if (isValid) {
-      setIsLoading(true);
-      const payload = {
-        EndUserIp: "192.168.1.1",
-        BookingCode: bookingCode || "BOOK12345",
-        GuestNationality: "IN",
-        IsVoucherBooking: true,
-        NetAmount: hotelData?.Price?.TotalDisplayFare || 0,
-        HotelRoomsDetails: rooms.map((room) => ({
-          RoomIndex: room.RoomIndex,
-          RoomTypeName: room.RoomTypeName,
-          HotelPassenger: room.Guests.map((guest) => ({
-            Title: guest.Title,
-            FirstName: guest.FirstName,
-            MiddleName: guest.MiddleName,
-            LastName: guest.LastName,
-            Phoneno: guest.Phoneno,
-            Email: guest.Email,
-            PaxType: parseInt(guest.PaxType, 10),
-            LeadPassenger: guest.LeadPassenger,
-            Age: guest.PaxType === 2 ? parseInt(guest.Age, 10) : null,
-            PassportNo: guest.PassportNo || null,
-            PassportIssueDate: guest.PassportIssueDate,
-            PassportExpDate: guest.PassportExpDate,
-            PAN: guest.PAN || null,
-          })),
+  if (isValid) {
+    setIsLoading(true);
+    const payload = {
+      EndUserIp: "192.168.1.1",
+      BookingCode: bookingCode || "BOOK12345",
+      GuestNationality: "IN",
+      IsVoucherBooking: true,
+      RequestedBookingMode: 5,
+      NetAmount: hotelData?.Price?.TotalDisplayFare || 0,
+      HotelRoomsDetails: rooms.map((room) => ({
+        HotelPassenger: room.Guests.map((guest) => ({
+          Title: guest.Title.endsWith(".") ? guest.Title : `${guest.Title}.`, // Ensure Title ends with a dot
+          FirstName: guest.FirstName,
+          MiddleName: guest.MiddleName || "",
+          LastName: guest.LastName,
+          Phoneno: guest.Phoneno,
+          Email: guest.Email,
+          PaxType: parseInt(guest.PaxType, 10),
+          LeadPassenger: guest.LeadPassenger,
+          Age: parseInt(guest.Age, 10) || (guest.PaxType === 1 ? 30 : 10), // Default ages: 30 for adults, 10 for children
+          PassportNo: guest.PassportNo || null,
+          PassportIssueDate: guest.PassportIssueDate || null,
+          PassportExpDate: guest.PassportExpDate || null,
+          PAN: guest.PAN || null,
+          RoomIndex: parseInt(room.RoomIndex, 10) || null, // Move RoomIndex to HotelPassenger
         })),
-        IsPackageFare: hotelData?.IsPackageFare || false,
-        IsPackageDetailsMandatory: hotelData?.IsPackageDetailsMandatory || false,
-        ArrivalTransport: hotelData?.IsPackageDetailsMandatory
-          ? {
-              ArrivalTransportType: 0,
-              TransportInfoId: "",
-              Time: "0001-01-01T00:00:00",
-            }
-          : null,
-        TraceId: traceID || "TRACE12345",
-      };
+      })),
+      IsPackageFare: hotelData?.IsPackageFare || false,
+      IsPackageDetailsMandatory: hotelData?.IsPackageDetailsMandatory || false,
+      ArrivalTransport: hotelData?.IsPackageDetailsMandatory
+        ? {
+            ArrivalTransportType: 0,
+            TransportInfoId: "",
+            Time: "0001-01-01T00:00:00",
+          }
+        : null,
+      TraceId: traceID || null, // Include TraceId if required
+    };
 
-      try {
-        const response = await axios.post(`${apilink}/hotel-book`, payload);
-        setBookingResponse(response.data);
-        setShowModal(true);
-        setIsLoading(false);
-      } catch (error) {
-        setIsLoading(false);
-        Swal.fire({
-          icon: "error",
-          title: "Booking Failed",
-          text:
-            error.response?.data?.message ||
-            "An error occurred while booking the hotel.",
-          confirmButtonText: "OK",
-        });
+    try {
+      const response = await axios.post(`${apilink}/hotel/book`, payload);
+      setBookingResponse(response.data);
+      setShowModal(true);
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      let errorMessage = "An error occurred while booking the hotel.";
+      if (error.response?.data?.errors) {
+        // Handle validation errors from backend
+        errorMessage = Object.values(error.response.data.errors)
+          .flat()
+          .join(" ");
+      } else if (error.response?.data?.message) {
+        // Handle other API errors
+        errorMessage = error.response.data.message;
       }
-    } else {
-      alert(
-        "Please fill out all required fields and fix the errors before submitting."
-      );
+      Swal.fire({
+        icon: "error",
+        title: "Booking Failed",
+        text: errorMessage,
+        confirmButtonText: "OK",
+      });
     }
-  };
+  } else {
+    Swal.fire({
+      icon: "warning",
+      title: "Invalid Input",
+      text: "Please fill out all required fields and fix the errors before submitting.",
+      confirmButtonText: "OK",
+    });
+  }
+};
 
   const closeModal = () => setShowModal(false);
 
@@ -283,6 +318,8 @@ export default function Page() {
       </div>
     );
   };
+
+  console.log('Hotels darta',hotelData?.HotelRoomsDetails)
 
   return (
     <>

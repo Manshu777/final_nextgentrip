@@ -67,13 +67,16 @@ const HotelsComp = () => {
 
   const handelhotelSearch = () => {
     localStorage.setItem(
-      "hotelItems",
-      JSON.stringify({
-        place: { Name: city.Name, Code: city.Code },
-        checkIntime: arivitime,
-        checkouttime: checkOut,
-      })
-    );
+    "hotelItems",
+    JSON.stringify({
+      place: { Name: city.Name, Code: city.Code },
+      checkIntime: arivitime,
+      checkouttime: checkOut,
+      adultcount,
+      childcount,
+      numberOfRoom,
+    })
+  );
     const offset = 6 * 60 * 55 * 1000;
     const check = new Date(arivitime);
 
