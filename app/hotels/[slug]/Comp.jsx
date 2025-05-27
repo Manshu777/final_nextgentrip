@@ -284,13 +284,15 @@ const Comp = ({ slug }) => {
                       </div>
                     )}
 
+
+        {   console.log('hotel.hotelDetails.HotelDetails[',hotel?.hotelDetails?.HotelDetails?.[0])}
                     <div className="block md:flex relative p-5">
                       <div className="relative">
                         <div className="relative">
                           <img
                             src={
-                              hotel.hotelDetails.HotelDetails[0].images
-                                ? hotel.hotelDetails.HotelDetails[0]
+                              hotel?.hotelDetails?.HotelDetails?.[0].images
+                                ? hotel?.hotelDetails?.HotelDetails?.[0]
                                     .images[0] || "/images/not_found_img.png"
                                 : "/images/not_found_img.png"
                             }
@@ -307,8 +309,8 @@ const Comp = ({ slug }) => {
                         </div>
 
                         <div className="flex justify-center md:justify-start mt-2 space-x-2">
-                          {hotel.hotelDetails.HotelDetails[0].images &&
-                            hotel.hotelDetails.HotelDetails[0].images.slice(
+                          {hotel?.hotelDetails?.HotelDetails?.[0].images &&
+                            hotel?.hotelDetails?.HotelDetails?.[0].images.slice(
                               1,
                               5
                             ).map((image, index) => (
@@ -335,30 +337,30 @@ const Comp = ({ slug }) => {
                       <div className="flex-1 pl-0 md:pl-5">
                         <div className=" my-5 md:my-0 flex justify-between items-center">
                           <p className="text-base md:text-2xl font-black">
-                            {hotel.hotelDetails.HotelDetails[0].HotelName}
+                            {hotel?.hotelDetails?.HotelDetails?.[0].HotelName}
                           </p>
                           <div>
                             <div className="flex items-center">
                               <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
-                                {hotel.hotelDetails.HotelDetails[0].HotelRating}
+                                {hotel?.hotelDetails?.HotelDetails?.[0].HotelRating}
                               </span>
                               <span className=" ml-2 text-blue-600">
-                                {hotel.hotelDetails.HotelDetails[0].HotelRating}
+                                {hotel?.hotelDetails?.HotelDetails?.[0].HotelRating}
                               </span>
                             </div>
                             <div className="hidden md:flex items-center justify-center mt-2">
-                              {renderStars(
-                                hotel.hotelDetails.HotelDetails[0].HotelRating
-                              )}
+                              {/* {renderStars(
+                                hotel?.hotelDetails?.HotelDetails?.[0].HotelRating
+                              )} */}
                             </div>
                           </div>
                         </div>
 
                         <div className="text-gray-500">
                           <span className="text-blue-600">
-                            {hotel.hotelDetails.HotelDetails[0].Address}
+                            {/* {hotel?.hotelDetails?.HotelDetails?.[0].Address} */}
                           </span>{" "}
-                          | {hotel.hotelDetails.HotelDetails[0].distance}
+                          {/* | {hotel?.hotelDetails?.HotelDetails?.[0].distance} */}
                         </div>
 
                         <div className="mt-2 hidden md:flex space-x-4 text-gray-500"></div>
