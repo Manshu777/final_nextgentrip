@@ -294,7 +294,7 @@ const HotelSlugComp = ({ slugs }) => {
                       <div>
                         <div className="relative w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4">
                           <img
-                            src={hotelinfo.info?.hoteldetail1[0]?.images?.[0]}
+                             src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
@@ -310,7 +310,7 @@ const HotelSlugComp = ({ slugs }) => {
                               {hotelinfo.info.hoteldetail1[0].images.map((image, index) => (
                                 <div key={index} className="relative w-full h-full">
                                   <img
-                                    src={image}
+                                    src={image || '/images/not_found_img.png'}
                                     alt={`Image ${index + 1}`}
                                     className="rounded-lg h-[20rem] w-full"
                                   />
@@ -323,7 +323,7 @@ const HotelSlugComp = ({ slugs }) => {
                       <div>
                         <div className="relative w-full lg:w-[280px] h-40 mb-4 rounded-2xl">
                           <img
-                            src={hotelinfo.info.hoteldetail1[0]?.images?.[1]}
+                            src={hotelinfo.info.hoteldetail1[0]?.images?.[1] || '/images/not_found_img.png'}
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
@@ -335,7 +335,7 @@ const HotelSlugComp = ({ slugs }) => {
                         </div>
                         <div className="relative w-full lg:w-[280px] h-40">
                           <img
-                            src={hotelinfo.info.hoteldetail1[0]?.images?.[2]}
+                            src={hotelinfo.info.hoteldetail1[0]?.images?.[2] || '/images/not_found_img.png'}
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
