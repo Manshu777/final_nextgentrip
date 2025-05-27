@@ -109,9 +109,9 @@ export default function Page() {
           LastName: "",
           Phoneno: "",
           Email: "",
-          PaxType: guest.PaxType || 1, // Adult = 1, Child = 2
-          LeadPassenger: guestIndex === 0, // First guest in each room is lead
-          Age: guest.PaxType === 2 ? "" : null, // Required for children
+          PaxType: guest.PaxType || 1,
+          LeadPassenger: guestIndex === 0, 
+          Age: guest.PaxType === 2 ? "" : null,
           PassportNo: "",
           PassportIssueDate: "0001-01-01T00:00:00",
           PassportExpDate: "0001-01-01T00:00:00",
