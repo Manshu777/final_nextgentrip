@@ -107,6 +107,15 @@ const Comp = ({ slug }) => {
     <>
       <HotelsComp />
 
+      {allhoteldata.isLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+          <div className="loader"></div>
+          <p className="ml-4 text-lg font-semibold text-gray-700">
+            Loading
+          </p>
+        </div>
+      )}
+
       <div className="p-2 flex gap-2 relative ">
         <div className=" hidden  w-1/6 ps-3 pt-2 sticky top-24 h-[85vh] p-1 mx-5 mt-4 myshadow rounded-sm bg-white border hover:border-blue-600  lg:flex flex-col">
           <p className="flex items-center gap-3">
