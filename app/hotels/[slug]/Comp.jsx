@@ -243,203 +243,146 @@ const Comp = ({ slug }) => {
           </div>
         </div>
 
-        <div className="lg:w-5/6">
-          {allhoteldata && allhoteldata.isLoading && (
-           <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
-           <div className="text-center">
-             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
-             <h4 className="mt-4 text-white text-lg font-semibold">Loading...</h4>
-           </div>
-         </div>
-         
-          )}
+          <div className='w-[77%] flex flex-col'>
 
-          <div className="p-4 flex flex-col gap-3">
-            {allhotel && !allhoteldata.isLoading && !allhotel.length && (
-              <div className="text-center text-4xl p-10 ">
-                Hotels not <span className="text-red-800">Found !</span>
+
+                  {allhotel &&
+  !allhoteldata.isLoading &&
+  allhotel?.map((hotel, index_num) => {
+    console.log('Hotel data:', hotel); // Debug hotel structure
+    return (
+      <div
+        key={index_num} // Use index_num as key since hotel.id is not in data
+        className="myshadow bg-white border hover:border-blue-600 mb-5"
+      >
+        {showimg === index_num && (
+          <div className="fixed top-16 left-0 z-40 w-full h-[90vh] border-8 border-white bg-white overflow-scroll grid grid-cols-3 gap-2">
+            <MdOutlineCancel
+              onClick={() => setshowImg(null)}
+              className="fixed top-24 cursor-pointer right-10 text-orange-500 text-5xl"
+            />
+            {hotel?.hotelDetails?.HotelDetails?.[0]?.images?.map((imgs) => (
+              <img key={imgs} src={imgs} className="h-[25rem] w-full" />
+            ))}
+          </div>
+        )}
+
+        <div className="block md:flex relative p-5">
+          <div className="relative">
+            <div className="relative">
+              <img
+                src={
+                  hotel?.hotelDetails?.HotelDetails?.[0]?.images?.[0] ||
+                  "/images/not_found_img.png"
+                }
+                alt="hotelImg"
+                className="object-cover w-full h-[10rem] lg:w-[35rem] lg:h-[15rem] rounded-md"
+              />
+              <div className="absolute bottom-2 right-2">
+                <button className="bg-blue-600 text-white rounded-full w-20 h-8 flex items-center justify-center">
+                  <span className="text-xs flex items-center gap-2">
+                    Share <FaShareAlt />
+                  </span>
+                </button>
               </div>
-            )}
-            {allhotel &&
-              !allhoteldata.isLoading &&
-              allhotel?.map((hotel, index_num) => {
-                return (
-                  <div
-                    key={hotel.id}
-                    className="myshadow bg-white border hover:border-blue-600  mb-5"
-                  >
-                    {showimg == index_num && (
-                      <div className="fixed top-16  left-0 z-40 w-full  h-[90vh] border-8 border-white bg-white overflow-scroll grid grid-cols-3 gap-2">
-                        <MdOutlineCancel
-                          onClick={() => setshowImg(null)}
-                          className="fixed top-24 cursor-pointer right-10 text-orange-500 text-5xl"
-                        />
-                        {hotel?.hotelDetails?.HotelDetails[0]?.images?.map(
-                          (imgs) => {
-                            return (
-                              <img src={imgs} className="h-[25rem] w-full" />
-                            );
-                          }
-                        )}
-                      </div>
+            </div>
+
+            <div className="flex justify-center md:justify-start mt-2 space-x-2">
+              {hotel?.hotelDetails?.HotelDetails?.[0]?.images?.slice(1, 5).map(
+                (image, index) => (
+                  <div key={index} className="relative rounded-sm">
+                    <img
+                      src={image}
+                      alt={`hotel_image_${index + 1}`}
+                      className="object-cover rounded-sm h-[3rem] w-[5rem]"
+                    />
+                    {index === 3 && (
+                      <span
+                        onClick={() => setshowImg(index_num)}
+                        className="cursor-pointer absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center text-xs rounded-sm"
+                      >
+                        View All
+                      </span>
                     )}
-
-
-        {   console.log('hotel.hotelDetails.HotelDetails[',hotel?.hotelDetails?.HotelDetails?.[0])}
-                    <div className="block md:flex relative p-5">
-                      <div className="relative">
-                        <div className="relative">
-                          <img
-                            src={
-                              hotel?.hotelDetails?.HotelDetails?.[0].images
-                                ? hotel?.hotelDetails?.HotelDetails?.[0]
-                                    .images[0] || "/images/not_found_img.png"
-                                : "/images/not_found_img.png"
-                            }
-                            alt="hotelImg"
-                            className="object-cover w-full h-[10rem] lg:w-[35rem] lg:h-[15rem] rounded-md"
-                          />
-                          <div className="absolute bottom-2 right-2">
-                            <button className="bg-blue-600 text-white rounded-full w-20 h-8 flex items-center justify-center">
-                              <span className="text-xs flex items-center gap-2">
-                                Share <FaShareAlt />
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-
-                        <div className="flex justify-center md:justify-start mt-2 space-x-2">
-                          {hotel?.hotelDetails?.HotelDetails?.[0].images &&
-                            hotel?.hotelDetails?.HotelDetails?.[0].images.slice(
-                              1,
-                              5
-                            ).map((image, index) => (
-                              <div key={index} className="relative rounded-sm">
-                                <img
-                                  src={image}
-                                  alt={`hotel_image_${index + 1}`}
-                                  //  onMouseEnter={()=>hotel.HotelDetails.images[0]=image}
-                                  className="object-cover rounded-sm h-[3rem] w-[5rem]"
-                                />
-                                {index === 3 && (
-                                  <span
-                                    onClick={() => setshowImg(index_num)}
-                                    className=" cursor-pointer absolute inset-0 bg-black bg-opacity-50 text-white flex items-center justify-center text-xs rounded-sm"
-                                  >
-                                    View All
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-                        </div>
-                      </div>
-
-                      <div className="flex-1 pl-0 md:pl-5">
-                        <div className=" my-5 md:my-0 flex justify-between items-center">
-                          <p className="text-base md:text-2xl font-black">
-                            {hotel?.hotelDetails?.HotelDetails?.[0].HotelName}
-                          </p>
-                          <div>
-                            <div className="flex items-center">
-                              <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
-                                {hotel?.hotelDetails?.HotelDetails?.[0].HotelRating}
-                              </span>
-                              <span className=" ml-2 text-blue-600">
-                                {hotel?.hotelDetails?.HotelDetails?.[0].HotelRating}
-                              </span>
-                            </div>
-                            <div className="hidden md:flex items-center justify-center mt-2">
-                              {/* {renderStars(
-                                hotel?.hotelDetails?.HotelDetails?.[0].HotelRating
-                              )} */}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="text-gray-500">
-                          <span className="text-blue-600">
-                            {/* {hotel?.hotelDetails?.HotelDetails?.[0].Address} */}
-                          </span>{" "}
-                          {/* | {hotel?.hotelDetails?.HotelDetails?.[0].distance} */}
-                        </div>
-
-                        <div className="mt-2 hidden md:flex space-x-4 text-gray-500"></div>
-
-                        {hotel.searchResults.Status.Code == 200 ? (
-                          hotel.searchResults.HotelResult[0].Rooms.map(
-                            (items_price) => {
-                              return (
-                                <>
-                                  <div className="flex items-end justify-between">
-                                    <div className="mt-4 ">
-                                      <p className="text-xl font-black">
-                                        ₹
-                                        {Math.floor(
-                                          items_price.TotalFare -
-                                            items_price.TotalTax
-                                        )}
-                                      </p>
-                                      <p className="text-gray-500">
-                                        + ₹{items_price.TotalTax} taxes & fees
-                                      </p>
-                                      <p className="text-sm text-gray-500 mt-2">
-                                        Per Night
-                                      </p>
-                                    </div>
-                                    <Link
-                                      href={`/hotelSearchCheckin/cityName=${cityName}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelResult[0].HotelCode}`}
-                                      className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center"
-                                    >
-                                      <span className="text-xs flex items-center gap-2">
-                                        View Room
-                                      </span>
-                                    </Link>
-                                  </div>
-                                  <div className="hidden md:block  bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
-                                    <span className="text-gray-700">
-                                      Exclusive offer on Canara Bank Credit
-                                      Cards. Get INR 241 off
-                                    </span>
-                                  </div>
-                                </>
-                              );
-                            }
-                          )
-                        ) : (
-                          <div className=" p-5 mt-10">No Available rooms</div>
-                        )}
-                      </div>
-                    </div>
                   </div>
-                );
-              })}
+                )
+              )}
+            </div>
+          </div>
 
-            {hotalbackup && hotalbackup.info && seepagination && (
-              <div className="flex justify-between p-2 px-5">
-                <button
-                  className={`${
-                    page == 0 ? "bg-gray-700 cursor-not-allowed" : "bg-black"
-                  } text-white font-semibold p-2 px-3 rounded-md `}
-                  onClick={handelPrevpage}
-                >
-                  {" "}
-                  Prev
-                </button>
-                <button
-                  className={`${
-                    page >= hotalbackup.info.count - 1
-                      ? "bg-gray-700 cursor-not-allowed"
-                      : "bg-black"
-                  } text-white font-semibold p-2 px-3 rounded-md `}
-                  onClick={handelNextpage}
-                >
-                  {" "}
-                  Next
-                </button>
+          <div className="flex-1 pl-0 md:pl-5">
+            <div className="my-5 md:my-0 flex justify-between items-center">
+              <p className="text-base md:text-2xl font-black">
+                {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelName}
+              </p>
+              <div>
+                <div className="flex items-center">
+                  <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
+                    {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating}
+                  </span>
+                  <span className="ml-2 text-blue-600">
+                    {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating}
+                  </span>
+                </div>
+                <div className="hidden md:flex items-center justify-center mt-2">
+                  {renderStars(
+                    hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating
+                  )}
+                </div>
               </div>
+            </div>
+
+            <div className="text-gray-500">
+              <span className="text-blue-600">
+                {hotel?.hotelDetails?.HotelDetails?.[0]?.Address}
+              </span>
+            </div>
+
+            <div className="mt-2 hidden md:flex space-x-4 text-gray-500"></div>
+
+            {hotel?.searchResults?.Status?.Code === 200 &&
+            hotel?.searchResults?.Rooms?.length > 0 ? (
+              hotel.searchResults.Rooms.map((items_price, roomIndex) => (
+                <div key={roomIndex}>
+                  <div className="flex items-end justify-between">
+                    <div className="mt-4">
+                      <p className="text-xl font-black">
+                        ₹{Math.floor(items_price.TotalFare - items_price.TotalTax)}
+                      </p>
+                      <p className="text-gray-500">
+                        + ₹{items_price.TotalTax} taxes & fees
+                      </p>
+                      <p className="text-sm text-gray-500 mt-2">Per Night</p>
+                    </div>
+                    <Link
+                      href={`/hotelSearchCheckin/cityName=${cityName}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelCode}`}
+                      className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center"
+                    >
+                      <span className="text-xs flex items-center gap-2">
+                        View Room
+                      </span>
+                    </Link>
+                  </div>
+                  <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
+                    <span className="text-gray-700">
+                      Exclusive offer on Canara Bank Credit Cards. Get INR 241 off
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="p-5 mt-10">No available rooms</div>
             )}
           </div>
         </div>
+      </div>
+    );
+  })}
+
+
+          </div>
+
+      
       </div>
     </>
   );
