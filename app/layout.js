@@ -9,7 +9,7 @@ import {getLocale, getMessages} from 'next-intl/server';
 import { development } from "./Component/common";
 import { redirect } from "next/navigation";
 import Maintenance from "./Component/AllComponent/Maintenance"
-
+import { Montserrat } from "next/font/google";
 import LayoutCompo from "./LayoutCompo"
 
 
@@ -17,6 +17,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 
 
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"], // Add more weights if needed
+  display: "swap",
+});
 
 
 
@@ -124,7 +129,7 @@ export default async function RootLayout({ children }) {
 
 
      
-      <body className={inter.className}>
+      <body className={montserrat.className}>
       <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-P6DBCLHP"

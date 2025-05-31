@@ -6,7 +6,7 @@ import { GiAirplaneDeparture } from "react-icons/gi";
 import { IoAirplaneSharp } from "react-icons/io5";
 import { IoIosThumbsUp } from "react-icons/io";
 import { MdOutlineSecurity } from "react-icons/md";
-import { FaArrowDown, FaRupeeSign } from "react-icons/fa";
+import { FaArrowDown, FaRupeeSign,FaSpinner } from "react-icons/fa";
 import { RiArrowDropDownLine, RiHospitalLine } from "react-icons/ri";
 import { FaArrowDown19, FaCheck } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
@@ -16,11 +16,11 @@ import Image from "next/image";
 import axios from "axios";
 import { apilink } from "../../common";
 import { useRouter } from "next/navigation";
-import { FaSpinner } from "react-icons/fa";
+
 
 const Page = ({ setActiveTab, fdatas, price }) => {
   const router = useRouter();
-
+   console.log('fdatas', fdatas);
   const [user, setUser] = useState();
   const [cardDetailsError, setCardDetailsError] = useState(false);
   const [showAdult, setShowAdult] = useState(true);
@@ -442,6 +442,8 @@ const validateAllForms = () => {
     const passenger = Passenger[0];
     const segment = FlightItinerary.Segments[0];
 
+ 
+
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white max-h-[70vh] overflow-y-auto p-6 rounded-lg shadow-lg w-11/12 max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
@@ -553,6 +555,8 @@ const validateAllForms = () => {
     </div>
   );
 
+
+  console.log('fdatas?.data?.Segments',fdatas?.data.Fare.CommissionEarned)
   return (
     <div className="">
       <div className="flex justify-end mb-4">
@@ -578,124 +582,135 @@ const validateAllForms = () => {
                   </div>
                 </div>
                 <div className="">
-                  <div className="rounded-sm border px-3 py-4 relative space-y-5">
-                    <h3 className="bg-gray-600 text-white text-xs w-fit px-3 font-bold rounded-br-xl absolute top-0 left-0">
-                      Depart
-                    </h3>
-                    <div className="flex items-center gap-3 text-md md:text-xl">
-                      <IoAirplaneSharp className="font-bold -rotate-45" />
-                      <div className="flex items-center gap-1">
-                        <h4 className="">{fdatas?.data?.Segments[0][0]?.Origin?.Airport?.CityName} - {fdatas?.data?.Segments[0][0]?.Destination?.Airport?.CityName}</h4>
-                        <p className="border-s-2 border-black px-2 text-sm">
-                          {formatDate(fdatas?.data?.Segments[0][0]?.Origin?.DepTime)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-5 flex-col md:flex-row items-start justify-between space-y-4 lg:space-y-0 lg:space-x-4">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.gif`}
-                          alt=""
-                          className="h-10 w-10 rounded-lg"
-                        />
-                        <div>
-                          <p className="text-sm md:text-lg">{fdatas?.data?.Segments[0][0]?.Airline?.AirlineName}</p>
-                          <p className="text-xs">{fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}-{fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}</p>
-                          <p className="text-xs">{[
-                            "All",
-                            "Economy",
-                            "PremiumEconomy",
-                            "Business",
-                            "PremiumBusiness",
-                            "First",
-                          ].filter((inf, ind) => ind + 1 === fdatas?.data?.Segments[0][0]?.CabinClass)}</p>
-                        </div>
-                      </div>
-                      <div className="flex w-full gap-2 justify-between md:w-[70%] md:px-3">
-                        <div className="flex flex-col gap-1 items-start">
-                          <h4 className="font-extrabold text-md md:text-xl">
-                            {formatDateTime(fdatas?.data?.Segments[0][0]?.Origin?.DepTime).formattedTime}
-                          </h4>
-                          <div className="flex flex-col text-xs">
-                            <span className="font-bold text-nowrap">
-                              {fdatas?.data?.Segments[0][0]?.Origin?.Airport?.CityName} ({fdatas?.data?.Segments[0][0]?.Origin?.Airport?.AirportCode})
-                            </span>
-                            <span>{formatDate(fdatas?.data?.Segments[0][0]?.Origin?.DepTime)}</span>
-                            <span>Terminal -1</span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-4 items-center">
-                          <p className="text-xs">{Math.floor(fdatas?.data?.Segments[0][0]?.Duration / 60)}h-{fdatas?.data?.Segments[0][0]?.Duration % 60}m</p>
-                          <div className="border-t-2 border-black border-dotted w-full flex justify-center relative">
-                            <div className="absolute -top-3 bg-white text-lg rounded-full">
-                              <GiAirplaneDeparture />
-                            </div>
-                          </div>
-                          {fdatas?.data?.IsRefundable ? (
-                            <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                              REFUNDABLE
-                            </span>
-                          ) : (
-                            <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                              NO REFUNDABLE
-                            </span>
-                          )}
-                        </div>
-                        <div className="flex flex-col gap-1 items-start">
-                          <h4 className="font-extrabold text-sm md:text-xl">
-                            {formatDateTime(fdatas?.data?.Segments[0][0]?.Destination?.ArrTime).formattedTime}
-                          </h4>
-                          <div className="flex flex-col text-xs">
-                            <span className="text-nowrap font-bold">
-                              {fdatas?.data?.Segments[0][0]?.Destination?.Airport?.CityName} ({fdatas?.data?.Segments[0][0]?.Destination?.Airport?.AirportCode})
-                            </span>
-                            <span>{formatDate(fdatas?.data?.Segments[0][0]?.Destination?.ArrTime)}</span>
-                            <span>Terminal -2</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex flex-col md:flex-row items-start gap-5">
-                      <h3 className="bg-gray-200 font-bold w-fit text-gray-800 rounded-full px-5 text-xs py-1">
-                        saver
-                      </h3>
-                      <p className="text-xs text-gray-400">Fare Rules Baggage</p>
-                    </div>
-                    <div className="border-2">
-                      <div className="p-2 bg-gray-50">
-                        <div className="flex justify-between items-center text-sm font-semibold">
-                          <p className="text-gray-400">Airline</p>
-                          <p className="text-gray-400">Check-in-Baggage</p>
-                          <p className="text-gray-400">Cabin Baggage</p>
-                        </div>
-                      </div>
-                      <div className="flex justify-between items-start p-2">
-                        <div className="flex justify-start items-center w-[35%] gap-6">
-                          <div className="flex items-center md:bg-transparent px-3 rounded-t-lg md:rounded-t-none py-4 md:py-0">
-                            <img
-                              src={`/images/${fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}.gif`}
-                              alt="refund policy"
-                              className="h-7 w-7 rounded-lg"
-                            />
-                          </div>
-                          <div>
-                            <h6 className="text-black text-sm font-semibold capitalize">
-                              {fdatas?.data?.Segments[0][0]?.Airline?.AirlineName}
-                            </h6>
-                            <p className="text-gray-500 text-[12px] font-semibold">
-                              {fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}-{fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-black text-sm font-semibold capitalize w-[28%]">
-                          {fdatas?.data?.Segments[0][0]?.Baggage}
-                        </div>
-                        <div className="text-black text-sm font-semibold capitalize w-[20%]">
-                          {fdatas?.data?.Segments[0][0]?.CabinBaggage}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                 {fdatas?.data?.Segments[0]?.map((segment, index) => (
+  <div key={index} className="rounded-sm border px-3 py-4 relative space-y-5">
+    <h3 className="bg-gray-600 text-white text-xs w-fit px-3 font-bold rounded-br-xl absolute top-0 left-0">
+      Depart
+    </h3>
+    <div className="flex items-center gap-3 text-md md:text-xl">
+      <IoAirplaneSharp className="font-bold -rotate-45" />
+      <div className="flex items-center gap-1">
+        <h4 className="">
+          {segment?.Origin?.Airport?.CityName} - {segment?.Destination?.Airport?.CityName}
+        </h4>
+        <p className="border-s-2 border-black px-2 text-sm">
+          {formatDate(segment?.Origin?.DepTime)}
+        </p>
+      </div>
+    </div>
+    <div className="flex gap-5 flex-col md:flex-row items-start justify-between space-y-4 lg:space-y-0 lg:space-x-4">
+      <div className="flex items-center gap-4">
+        <img
+          src={`/images/${segment?.Airline?.AirlineCode}.gif`}
+          alt=""
+          className="h-10 w-10 rounded-lg"
+        />
+        <div>
+          <p className="text-sm md:text-lg">{segment?.Airline?.AirlineName}</p>
+          <p className="text-xs">{segment?.Airline?.AirlineCode}-{segment?.Airline?.FlightNumber}</p>
+          <p className="text-xs">
+            {[
+              "All",
+              "Economy",
+              "PremiumEconomy",
+              "Business",
+              "PremiumBusiness",
+              "First",
+            ].filter((inf, ind) => ind + 1 === segment?.CabinClass)}
+          </p>
+        </div>
+      </div>
+      <div className="flex w-full gap-2 justify-between md:w-[70%] md:px-3">
+        <div className="flex flex-col gap-1 items-start">
+          <h4 className="font-extrabold text-md md:text-xl">
+            {formatDateTime(segment?.Origin?.DepTime).formattedTime}
+          </h4>
+          <div className="flex flex-col text-xs">
+            <span className="font-bold text-nowrap">
+              {segment?.Origin?.Airport?.CityName} ({segment?.Origin?.Airport?.AirportCode})
+            </span>
+            <span>{formatDate(segment?.Origin?.DepTime)}</span>
+            <span>{segment?.Origin?.Airport.Terminal}</span>
+
+           { console.log('wrfrwfrwfrrf4rf4',segment)}
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 items-center">
+          <p className="text-xs">{Math.floor(segment?.Duration / 60)}h-{segment?.Duration % 60}m</p>
+          <div className="border-t-2 border-black border-dotted w-full flex justify-center relative">
+            <div className="absolute -top-3 bg-white text-lg rounded-full">
+              <GiAirplaneDeparture />
+            </div>
+          </div>
+          {fdatas?.data?.IsRefundable ? (
+            <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+              REFUNDABLE
+            </span>
+          ) : (
+            <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+              NO REFUNDABLE
+            </span>
+          )}
+        </div>
+        <div className="flex flex-col gap-1 items-start">
+          <h4 className="font-extrabold text-sm md:text-xl">
+            {formatDateTime(segment?.Destination?.ArrTime).formattedTime}
+          </h4>
+          <div className="flex flex-col text-xs">
+            <span className="text-nowrap font-bold">
+              {segment?.Destination?.Airport?.CityName} ({segment?.Destination?.Airport?.AirportCode})
+            </span>
+            <span>{formatDate(segment?.Destination?.ArrTime)}</span>
+       
+
+              <span>{segment?.Destination?.Airport.Terminal}</span>
+     
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="flex flex-col md:flex-row items-start gap-5">
+      <h3 className="bg-gray-200 font-bold w-fit text-gray-800 rounded-full px-5 text-xs py-1">
+        saver
+      </h3>
+      <p className="text-xs text-gray-400">Fare Rules Baggage</p>
+    </div>
+    <div className="border-2">
+      <div className="p-2 bg-gray-50">
+        <div className="flex justify-between items-center text-sm font-semibold">
+          <p className="text-gray-400">Airline</p>
+          <p className="text-gray-400">Check-in-Baggage</p>
+          <p className="text-gray-400">Cabin Baggage</p>
+        </div>
+      </div>
+      <div className="flex justify-between items-start p-2">
+        <div className="flex justify-start items-center w-[35%] gap-6">
+          <div className="flex items-center md:bg-transparent px-3 rounded-t-lg md:rounded-t-none py-4 md:py-0">
+            <img
+              src={`/images/${segment?.Airline?.AirlineCode}.gif`}
+              alt="refund policy"
+              className="h-7 w-7 rounded-lg"
+            />
+          </div>
+          <div>
+            <h6 className="text-black text-sm font-semibold capitalize">
+              {segment?.Airline?.AirlineName}
+            </h6>
+            <p className="text-gray-500 text-[12px] font-semibold">
+              {segment?.Airline?.AirlineCode}-{segment?.Airline?.FlightNumber}
+            </p>
+          </div>
+        </div>
+        <div className="text-black text-sm font-semibold capitalize w-[28%]">
+          {segment?.Baggage}
+        </div>
+        <div className="text-black text-sm font-semibold capitalize w-[20%]">
+          {segment?.CabinBaggage}
+        </div>
+      </div>
+    </div>
+  </div>
+))}
                 </div>
               </div>
               <div className="FirstChild border rounded-lg shadow-lg">
@@ -910,7 +925,7 @@ const validateAllForms = () => {
                     <p>Adult x {passengers?.length}</p>
                     <p className="flex items-center font-bold text-xs">
                       <FaRupeeSign />
-                      {fdatas?.data?.Fare?.OfferedFare}
+                      {fdatas?.data?.Fare?.PublishedFare}
                     </p>
                   </div>
                 </div>

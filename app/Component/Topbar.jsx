@@ -403,14 +403,14 @@ const Topbar = () => {
                 </div>
             
  
-                <div className="flex flex-wrap gap-4 ">
+                <div className="flex flex-wrap justify-center gap-4 ">
                   {currency.map((currency) => (
                     <button
                       key={currency.code}
                       onClick={() => handelCurrencySEt(currency)}
-                      className={`flex items-center gap-3 px-5 py-3 text-sm font-medium border rounded-full shadow-sm transition duration-300 ${
+                      className={`flex items-center gap-3 px-3 py-2 lg:px-5 lg:py-3 text-sm font-medium border rounded-lg lg:rounded-full shadow-sm transition duration-300 ${
                         currency.code === defaultcurrency.code
-                          ? "bg-blue-500 text-white border-blue-500"
+                          ? "bg-blue-500 text-white  border-blue-500"
                           : "bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-300"
                       }`}
                     >
@@ -419,9 +419,13 @@ const Topbar = () => {
                         🌍
                       </span>
           
-                      <div>
+                      <div className={`${
+                        currency.code === defaultcurrency.code
+                          ? " !text-white  "
+                          : " text-gray-700 "
+                      }`}  >
                         <p>{currency.symble} - {currency.code}</p>
-                        <p className="text-xs text-gray-500">{currency.country}</p>
+                        <p className="text-xs ">{currency.country}</p>
                       </div>
                     </button>
                   ))}
@@ -467,7 +471,7 @@ const Topbar = () => {
                 )}
 
                 {countryOpner && (
-                  <div className="fixed flex justify-center items-center bg-[rgba(0,0,0,0.5)] inset-0 p-4">
+                  <div className="fixed flex justify-center items-center bg-[rgba(0,0,0,0.5)] z-[9999] inset-0  p-4">
                     <div className="h-[40rem] w-[800px] rounded-lg p-3 bg-white overflow-y-scroll">
                       <div className="space-y-5 ">
                         <div className="flex justify-between">

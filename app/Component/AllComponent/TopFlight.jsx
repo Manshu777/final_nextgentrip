@@ -398,7 +398,7 @@ const fetchTopport = async () => {
       </div>
 
       <div className="bg-gray-100 p-5 lg:p-20 mt-12">
-        <div className=" flex flex-col-reverse lg:flex-row justify-between items-center gap-10">
+        <div className=" flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
           <div className="">
             <div className="p-4">
               <h3 className="text-4xl font-normal">
@@ -406,7 +406,7 @@ const fetchTopport = async () => {
               </h3>
               <p className="mt-4 mb-6">{t("serviceans")}</p>
               <ul className="space-y-6">
-                <li className="flex items-start space-x-4">
+                <li className="flex flex-col items-center lg:items-start lg:flex-row space-x-4">
                   <img
                     src="/images/blog2.webp"
                     alt=""
@@ -417,7 +417,7 @@ const fetchTopport = async () => {
                     <p className="mt-2">{t("moreaboutans")}</p>
                   </div>
                 </li>
-                <li className="flex items-start space-x-4">
+                <li className="flex  flex-col items-center lg:items-start lg:flex-row space-x-4">
                   <img
                     src="/images/shield.webp"
                     alt=""
@@ -430,7 +430,7 @@ const fetchTopport = async () => {
                     <p className="mt-2">{t("serviceproviderans")}</p>
                   </div>
                 </li>
-                <li className="flex items-start space-x-4">
+                <li className="flex flex-col items-center lg:items-start lg:flex-row space-x-4">
                   <img
                     src="/images/general.webp"
                     alt=""
@@ -446,7 +446,7 @@ const fetchTopport = async () => {
               </ul>
             </div>
           </div>
-          <div className="p-4 my-5 lg:my-0">
+          <div className="p-4 my-3 lg:my-0">
             <img
               src="/images/online-booking.webp"
               alt=""
