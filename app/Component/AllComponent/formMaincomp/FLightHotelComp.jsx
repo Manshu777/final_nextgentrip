@@ -146,14 +146,14 @@ const FLightHotelComp = () => {
               >
                 One Way
               </button>
-              <button
+              {/* <button
                 className={`px-4 py-1 text-xs font-bold rounded-3xl ${
                   activeTab === 2 ? "bg-white text-[#1853a2]" : ""
                 } transition-colors duration-300 ease-in-out`}
                 onClick={() => handleTabClick(2)}
               >
                 Round Trip
-              </button>
+              </button> */}
             </div>
               <span className=" text-lg mb-2 mr-5 font-bold ">
               Book a Flight and Save upto 40%

@@ -197,7 +197,7 @@ const [searchport,setsearchport]=useState( {info:[],isLoading:false})
             One Way
           </button>
 
-          <button
+          {/* <button
             className={`h-8 font-semibold text-sm px-4 rounded ${
               selectedTab === "roundTrip"
                 ? "bg-blue-500 text-white"
@@ -206,7 +206,7 @@ const [searchport,setsearchport]=useState( {info:[],isLoading:false})
             onClick={() => setSelectedTab("roundTrip")}
           >
             Round Trip
-          </button>
+          </button> */}
         </div>
 
         {selectedTab === "oneWay" && (
