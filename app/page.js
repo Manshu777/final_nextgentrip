@@ -19,7 +19,15 @@ const page = () => {
 }
   return (
     <>
+     <head>
+        <title>Best Travel Agency in India | Budget Hotels & Tour Packages</title>
      
+        <meta
+          name="keywords"
+          content="best travel agency, budget hotels, tour agency in India, travel company in India, flight booking online, cruise booking, bus booking site, hotel booking, train ticket booking, charter plane, travel insurance"
+        />
+
+      </head>
       <Header />
       <div className='hidden md:block'>
 <CustomSlider/>

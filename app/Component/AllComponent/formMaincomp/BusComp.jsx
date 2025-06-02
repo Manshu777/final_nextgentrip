@@ -337,7 +337,7 @@ const SearchCompnents = ({ handelcity }) => {
           info?.BusCities?.map((item) => (
             <p
               key={item.CityId}
-              className="border-b px-3 py-2 cursor-pointer hover:bg-gray-100 transition-all"
+              className="border-b px-3 py-2 cursor-pointer text-gray-700 hover:bg-gray-100 transition-all"
               onClick={() =>
                 handelcity({
                   CityId: item.CityId,

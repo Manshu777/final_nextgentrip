@@ -36,6 +36,8 @@ const Page = ({ setActiveTab, fdatas, price }) => {
 
   const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
 
+  const [CheckPassprt, setCheckPassport] = useState(false);
+
   useEffect(() => {
     const fetchUserData = async (userId) => {
       try {
@@ -115,8 +117,8 @@ const validateAllForms = () => {
   const newErrors = {};
   let checckMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
 
-  console.log('IsPassportRequiredAtBook', checckMEEE.data.IsPassportRequiredAtBook);
 
+    setCheckPassport(checckMEEE.data.IsPassportRequiredAtBook)
   passengers.forEach((passenger, index) => {
     if (!passenger.Title) {
       newErrors[`Title_${index}`] = "Title is required.";
@@ -309,8 +311,7 @@ const validateAllForms = () => {
 
       const isLCC = checkOutFlightDetail?.IsLCC === true;
 
-          console.log('checkOutFlightDetail',checkOutFlightDetail?.IsLCC)
-          console.log('IsPassportRequiredAtBook',checkOutFlightDetail?.IsPassportRequiredAtBook)
+        
 
 
 
@@ -350,7 +351,7 @@ const validateAllForms = () => {
           Swal.fire({
             icon: "success",
             title: "Booking and Payment Successful",
-            text: `Your flight has been booked! PNR: ${bookingResponse.data.data.Response.PNR}`,
+            text: `Your flight has been booked!`,
             confirmButtonText: "OK",
           });
         },
@@ -726,99 +727,102 @@ const validateAllForms = () => {
                 </div>
                 <div className="p-4">
                   <h3 className="text-lg font-semibold">ADULT</h3>
-                  {passengers?.map((passenger, index) => (
-                    <div key={index} className="m-4 rounded-lg shadow-lg border-2">
-                      <div className="flex items-center justify-between p-4">
-                        <div className="flex gap-4 items-center">
-                          <input type="checkbox" className="h-6 w-6" />
-                          <h3 className="text-lg font-semibold">
-                            {passenger.Title} {passenger.FirstName}
-                          </h3>
-                        </div>
-                        <button onClick={() => toggleFormVisibility(index)}>
-                          <RiArrowDropDownLine className="text-4xl" />
-                        </button>
+
+                   {passengers?.map((passenger, index) => (
+                <div key={index} className="m-4 rounded-lg shadow-lg border-2">
+                  <div className="flex items-center justify-between p-4">
+                    <div className="flex gap-4 items-center">
+                      <input type="checkbox" className="h-6 w-6" />
+                      <h3 className="text-lg font-semibold">
+                        {passenger.Title} {passenger.FirstName}
+                      </h3>
+                    </div>
+                    <button onClick={() => toggleFormVisibility(index)}>
+                      <RiArrowDropDownLine className="text-4xl" />
+                    </button>
+                  </div>
+                  {showForms[index] && (
+                    <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border rounded-md shadow-lg">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Title</label>
+                        <select
+                          name="Title"
+                          value={passenger.Title}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        >
+                          <option value="">Select Title</option>
+                          <option value="Mr">Mr</option>
+                          <option value="Ms">Ms</option>
+                          <option value="Mrs">Mrs</option>
+                        </select>
+                        {errors[`Title_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`Title_${index}`]}</p>
+                        )}
                       </div>
-                      {showForms[index] && (
-                        <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border rounded-md shadow-lg">
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Title</label>
-                            <select
-                              name="Title"
-                              value={passenger.Title}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            >
-                              <option value="">Select Title</option>
-                              <option value="Mr">Mr</option>
-                              <option value="Ms">Ms</option>
-                              <option value="Mrs">Mrs</option>
-                            </select>
-                            {errors[`Title_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`Title_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">First Name</label>
-                            <input
-                              type="text"
-                              name="FirstName"
-                              value={passenger.FirstName}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`FirstName_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`FirstName_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Last Name</label>
-                            <input
-                              type="text"
-                              name="LastName"
-                              value={passenger.LastName}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`LastName_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`LastName_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Gender</label>
-                            <select
-                              name="Gender"
-                              value={passenger.Gender}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            >
-                              <option value="">Select Gender</option>
-                              <option value="1">Male</option>
-                              <option value="2">Female</option>
-                              <option value="3">Other</option>
-                            </select>
-                            {errors[`Gender_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`Gender_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of Birth</label>
-                            <input
-                              type="date"
-                              name="DateOfBirth"
-                              value={passenger.DateOfBirth}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`DateOfBirth_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
-                            )}
-                          </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">First Name</label>
+                        <input
+                          type="text"
+                          name="FirstName"
+                          value={passenger.FirstName}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`FirstName_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`FirstName_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Last Name</label>
+                        <input
+                          type="text"
+                          name="LastName"
+                          value={passenger.LastName}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`LastName_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`LastName_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Gender</label>
+                        <select
+                          name="Gender"
+                          value={passenger.Gender}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="1">Male</option>
+                          <option value="2">Female</option>
+                          <option value="3">Other</option>
+                        </select>
+                        {errors[`Gender_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`Gender_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of Birth</label>
+                        <input
+                          type="date"
+                          name="DateOfBirth"
+                          value={passenger.DateOfBirth}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`DateOfBirth_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
+                        )}
+                      </div>
+                      {CheckPassprt && (
+                        <>
                           <div>
                             <label className="block text-[10px] font-bold text-gray-900 mb-1">Passport No</label>
                             <input
@@ -847,66 +851,69 @@ const validateAllForms = () => {
                               <p className="text-red-500 text-sm">{errors[`PassportExpiry_${index}`]}</p>
                             )}
                           </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Address</label>
-                            <input
-                              type="text"
-                              name="AddressLine1"
-                              value={passenger.AddressLine1}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`AddressLine1_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`AddressLine1_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">City</label>
-                            <input
-                              type="text"
-                              name="City"
-                              value={passenger.City}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`City_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`City_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Contact Number</label>
-                            <input
-                              type="text"
-                              name="ContactNo"
-                              value={passenger.ContactNo}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`ContactNo_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`ContactNo_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Email</label>
-                            <input
-                              type="email"
-                              name="Email"
-                              value={passenger.Email}
-                              onChange={(e) => handleChange(e, index)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`Email_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`Email_${index}`]}</p>
-                            )}
-                          </div>
-                        </form>
+                        </>
                       )}
-                    </div>
-                  ))}
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Address</label>
+                        <input
+                          type="text"
+                          name="AddressLine1"
+                          value={passenger.AddressLine1}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`AddressLine1_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`AddressLine1_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">City</label>
+                        <input
+                          type="text"
+                          name="City"
+                          value={passenger.City}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`City_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`City_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Contact Number</label>
+                        <input
+                          type="text"
+                          name="ContactNo"
+                          value={passenger.ContactNo}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`ContactNo_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`ContactNo_${index}`]}</p>
+                        )}
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Email</label>
+                        <input
+                          type="email"
+                          name="Email"
+                          value={passenger.Email}
+                          onChange={(e) => handleChange(e, index)}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                        />
+                        {errors[`Email_${index}`] && (
+                          <p className="text-red-500 text-sm">{errors[`Email_${index}`]}</p>
+                        )}
+                      </div>
+                    </form>
+                  )}
+                </div>
+              ))}
+                  
                 </div>
                 <div className="p-4 text-gray-500 text-sm flex items-center gap-1">
                   <FaLock /> Secure Booking & Data Protection

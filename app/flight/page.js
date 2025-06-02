@@ -116,6 +116,13 @@ const Page = () => {
 
   return (
     <>
+     <head>
+
+      <meta
+          name="keywords"
+          content="best travel agency, budget hotels, tour agency in India, travel company in India, flight booking, international flight tickets to India, flight ticket booking near me, Air India ticket price, business class flights, first class flights, flight booking sites, online ticket booking, cheap plane tickets, air travel, flight status, cruise booking, bus booking site, hotel booking, train ticket booking, charter plane, travel insurance"
+        />
+     </head>
       <Header />
       <CustomSlider />
 

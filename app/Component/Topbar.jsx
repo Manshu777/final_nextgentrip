@@ -354,27 +354,12 @@ const Topbar = () => {
               </p>
             </div>
           </a>
-          <a
+          {/* <a
             href="tel:+9877579319"
             className="fixed topPhoneRingingAnime bottom-4 right-4 "
           >
-            <div
-              className="flex  relative items-center gap-4 p-2 bg-gradient-to-tr from-slate-100 via-sky-200
-  text-white rounded-full shadow-lg cursor-pointer transition-all duration-300"
-            >
-
-              <IoMdCall className="text-green-500 text-3xl absolute  bottom-0 -translate-y-2  " />
-
-
-              <div className="flex-shrink-0">
-                <img
-                  src="/images/TopPhoneRing.webp"
-                  alt="User"
-                  className="rounded-full h-12 w-12 border-2 border-white"
-                />
-              </div>
-            </div>
-          </a>
+          
+          </a> */}
 
 
           <div className=" flex justify-center items-center ">
