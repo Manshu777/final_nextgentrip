@@ -25,8 +25,8 @@ const CheckoutPage = () => {
       LastName: '',
       Gender: '',
       DateOfBirth: '',
-      PassportNo: '',
-      PassportExpiry: '',
+      // PassportNo: '',
+      // PassportExpiry: '',
       AddressLine1: '',
       City: '',
       ContactNo: '',
@@ -235,7 +235,7 @@ const handleBooking = async () => {
       Email: passenger.Email,
       FirstName: passenger.FirstName,
       Gender: passenger.Gender === 'Male' ? 1 : passenger.Gender === 'Female' ? 2 : 3,
-      IdNumber: passenger.PassportNo || 'BPL46756AA',
+      IdNumber: passenger.PassportNo || 'null',
       IdType: passenger.PassportNo ? 10 : 0,
       LastName: passenger.LastName,
       Phoneno: passenger.ContactNo,
@@ -326,7 +326,7 @@ const handleBooking = async () => {
 
     // Step 3: Proceed to payment
     const leadPassenger = passengers[0];
-    const amount = (selectedBusData?.BusPrice?.PublishedPriceRoundedOff || 13) * passengers.length * 100;
+    const amount = selectedBusData?.BusPrice?.PublishedPrice * 100;
 
     const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
       amount,
@@ -435,8 +435,8 @@ const handleBooking = async () => {
                   { name: 'LastName', type: 'text' },
                   { name: 'Gender', type: 'select', options: ['Male', 'Female', 'Other'] },
                   { name: 'DateOfBirth', type: 'date' },
-                  { name: 'PassportNo', type: 'text' },
-                  { name: 'PassportExpiry', type: 'date' },
+                  // { name: 'PassportNo', type: 'text' },
+                  // { name: 'PassportExpiry', type: 'date' },
                   { name: 'AddressLine1', type: 'text' },
                   { name: 'City', type: 'text' },
                   { name: 'ContactNo', type: 'text' },
@@ -495,7 +495,9 @@ const handleBooking = async () => {
               <p>Adult x {passengers?.length}</p>
               <p className="flex items-center font-bold text-xs">
                 <FaRupeeSign />
-                {selectedBusData?.BusPrice?.OfferedPrice}
+                {selectedBusData?.BusPrice?.PublishedPrice}
+
+               { console.log('selectedBusData',selectedBusData)}
               </p>
             </div>
           </div>
