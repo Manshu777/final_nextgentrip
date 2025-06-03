@@ -819,13 +819,14 @@ const Header = () => {
 
 
 
-                <div className="flex items-start gap-2 px-3 py-2 border-2 text-black border-slate-200 rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
+                <div className="flex items-start max-w-[115px] gap-2 px-3 py-2 border-2 text-black border-slate-200 rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
                   <FaUserLarge className="text-lg mt-1" />
                   <div className="text-slate-400">
                     <h5 className="font-bold text-lg text-black">{adultCount + childCount + infantCount}</h5>
-                    <p className="text-slate-400 text-xs">Traveller(s)</p>
+                   
                   </div>
                   <button onClick={() => { setIsVisible(true), setSelectedOption("count") }}>Edit</button>
+                   {/* <p className="text-slate-400 text-xs block md:hidden lg:block">Traveller</p> */}
                   {isVisible && selectedOption === "count" &&
                     <div className="absolute top-[80%]  min-w-full min-h-[10rem] left-1 md:-left-10  z-10 " >
                       <div className="shadow-2xl rounded-md  bg-white mt-[10%]  flex flex-col gap-4 p-4">

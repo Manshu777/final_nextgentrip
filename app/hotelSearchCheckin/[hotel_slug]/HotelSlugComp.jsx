@@ -233,7 +233,7 @@ const HotelSlugComp = ({ slugs }) => {
                 </div>
               </div>
             </div>
-            {/* Location Section Skeleton */}
+       
             <div className="p-6 bg-white rounded-3xl my-5 shadow-lg">
               <div className="h-6 w-32 bg-gray-200 rounded mb-2"></div>
               <div className="h-4 w-48 bg-gray-200 rounded mb-4"></div>
@@ -252,13 +252,15 @@ const HotelSlugComp = ({ slugs }) => {
           <>
             <ul className="flex space-x-2 text-sm text-gray-600 mt-5 mb-5" id="detpg_bread_crumbs">
               <li><Link href="/hotels" className="text-blue-600 font-semibold">Home</Link></li>
-              <li><span>/</span></li>
-              <li><span>/</span></li>
+<li><span> / {hotelinfo?.info?.hoteldetail1?.[0].CityName}</span></li>
+      
+              <li><span>/ {hotelinfo?.info?.hoteldetail1?.[0].HotelName} </span></li>
+             
               <li></li>
             </ul>
             {hotelinfo && !hotelinfo.isLoading && hotelinfo.info && hotelinfo.info.hoteldetail1 && (
               <>
-                <div className="p-6 bg-white rounded-3xl flex myshadow">
+                <div className="p-6 bg-white rounded-3xl flex justify-between myshadow">
                   <div className="lg:w-2/3 relative">
                     <div className="flex items-center justify-between mb-5" id="WBTH">
                       <h1 className="text-2xl font-bold flex items-center gap-4">
@@ -292,11 +294,11 @@ const HotelSlugComp = ({ slugs }) => {
                     </div>
                     <div className="lg:flex gap-5 mb-5">
                       <div>
-                        <div className="relative w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4">
+                        <div className="relative w-full lg:w-[450px] h-[200px] lg:h-[340px] mb-4">
                           <img
                              src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
                             alt="hotel image"
-                            className="lg:w-[600px] h-[200px] lg:h-[340px] "
+                            className="lg:w-[450px] h-[200px] lg:h-[340px] "
                             layout="fill"
                             objectFit="cover"
                     
@@ -373,7 +375,7 @@ const HotelSlugComp = ({ slugs }) => {
                     {handelpricesection === "services" && (
                       <div className='absolute top-0 left-0 h-full w-full bg-white'>
                         <ImCancelCircle className='absolute top-0 right-10 text-3xl' onClick={() => sethandelpriceSection("")} />
-                        <div className='grid grid-cols-2 p-4 overflow-y-auto h-full w-full'>
+                        <div className='grid grid-cols-3 p-4 overflow-y-auto h-full w-full'>
                           {hotelinfo.info.hoteldetail1[0].HotelFacilities.map((service_items) => (
                             <p key={service_items} className='flex flex-col gap-2 my-2 items-center'>
                               {service_items.toLowerCase().includes("wifi") ? <FaWifi  className='text-xl' /> :
@@ -395,14 +397,14 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                     )}
                   </div>
-                  <div className="lg:w-1/3 hidden lg:block lg:sticky lg:top-24 h-full">
+                  <div className="lg:w-[28%] hidden lg:block lg:sticky lg:top-24 h-full">
                     <div className="mb-5 border-2 rounded-2xl p-3">
-                      <h3 className="text-lg font-bold">Classic</h3>
+                      {/* <h3 className="text-lg font-bold">Classic</h3>
                       <p className="mt-2 text-gray-700">Fits 2 Adults</p>
                       <ul className="mt-4 space-y-2">
                         <li className="flex gap-3 items-center"><MdDinnerDining /> Complimentary Breakfast</li>
                         <li className="flex gap-3 items-center"><FaCheck className="text-green-600" /> Free Cancellation till check-in</li>
-                      </ul>
+                      </ul> */}
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}
