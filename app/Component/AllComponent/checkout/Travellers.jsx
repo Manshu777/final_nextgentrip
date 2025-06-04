@@ -241,143 +241,166 @@ const validateAllForms = () => {
   };
 
   const handlebook = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
+  const isValid = validateAllForms();
 
-    const isValid = validateAllForms();
+  if (!isValid) {
+    alert("Please fill out all required fields and fix the errors before submitting.");
+    return;
+  }
 
-    if (!isValid) {
-      alert("Please fill out all required fields and fix the errors before submitting.");
-      return;
-    }
+  setbookisLoading(true);
 
-    setbookisLoading(true);
+  try {
+    const leadPassenger = passengers.find((passenger) => passenger.IsLeadPax);
+    const fareBreakdown = fdatas?.data?.FareBreakdown;
+    const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+    const isLCC = checkOutFlightDetail?.IsLCC === true;
+    const apiEndpoint = isLCC ? `${apilink}/flight-book-llc` : `${apilink}/flight-book`;
 
-    try {
-      const leadPassenger = passengers.find((passenger) => passenger.IsLeadPax);
-      const fareBreakdown = fdatas?.data?.FareBreakdown;
-      const payload = {
-        ResultIndex: fdatas?.ResultIndex,
-        EndUserIp: fdatas?.ip,
-        TraceId: fdatas?.traceid,
-        fFareBreakdown: fareBreakdown,
-        email: leadPassenger?.Email,
-        user_id: '4',
-        Passengers: passengers.map((passenger) => {
-          const passengerFare = fareBreakdown.find(
-            (fare) => fare.PassengerType === passenger.PaxType
-          );
+    // Prepare booking payload
+    const payload = {
+      ResultIndex: fdatas?.ResultIndex,
+      EndUserIp: fdatas?.ip,
+      TraceId: fdatas?.traceid,
+      fFareBreakdown: fareBreakdown,
+      email: leadPassenger?.Email,
+      user_id: '4',
+      Passengers: passengers.map((passenger) => {
+        const passengerFare = fareBreakdown.find(
+          (fare) => fare.PassengerType === passenger.PaxType
+        );
 
-          const baseFarePerPassenger = passengerFare?.BaseFare / passengerFare?.PassengerCount;
-          const taxPerPassenger = passengerFare?.Tax / passengerFare?.PassengerCount;
+        const baseFarePerPassenger = passengerFare?.BaseFare / passengerFare?.PassengerCount;
+        const taxPerPassenger = passengerFare?.Tax / passengerFare?.PassengerCount;
 
-          return {
-            Title: passenger.Title,
-            FirstName: passenger.FirstName,
-            LastName: passenger.LastName,
-            PaxType: passenger.PaxType,
-            DateOfBirth: passenger.DateOfBirth,
-            Gender: parseInt(passenger.Gender, 10),
-            PassportNo: passenger.PassportNo,
-            PassportExpiry: passenger.PassportExpiry,
-            AddressLine1: passenger.AddressLine1,
-            City: passenger.City,
-            CellCountryCode: passenger.CountryCode,
-            CountryCode: "IN",
-            ContactNo: passenger.ContactNo,
-            Email: passenger.Email,
-            IsLeadPax: passenger.IsLeadPax,
-            Fare: {
-              Currency: passengerFare?.Currency,
-              BaseFare: baseFarePerPassenger,
-              Tax: taxPerPassenger,
-              YQTax: passengerFare?.YQTax,
-              AdditionalTxnFeePub: fdatas?.data?.Fare.AdditionalTxnFeePub,
-              AdditionalTxnFeeOfrd: fdatas?.data?.Fare.AdditionalTxnFeeOfrd,
-              OtherCharges: fdatas?.data?.Fare.OtherCharges,
-              Discount: fdatas?.data?.Fare.Discount,
-              PublishedFare: fdatas?.data?.Fare.PublishedFare,
-              OfferedFare: fdatas?.data?.Fare.OfferedFare,
-              TdsOnCommission: fdatas?.data?.Fare.TdsOnCommission,
-              TdsOnPLB: fdatas?.data?.Fare.TdsOnPLB,
-              TdsOnIncentive: fdatas?.data?.Fare.TdsOnIncentive,
-              ServiceFee: fdatas?.data?.Fare.ServiceFee,
-            },
-          };
-        }),
-      };
+        return {
+          Title: passenger.Title,
+          FirstName: passenger.FirstName,
+          LastName: passenger.LastName,
+          PaxType: passenger.PaxType,
+          DateOfBirth: passenger.DateOfBirth,
+          Gender: parseInt(passenger.Gender, 10),
+          PassportNo: passenger.PassportNo,
+          PassportExpiry: passenger.PassportExpiry,
+          AddressLine1: passenger.AddressLine1,
+          City: passenger.City,
+          CellCountryCode: passenger.CountryCode,
+          CountryCode: "IN",
+          ContactNo: passenger.ContactNo,
+          Email: passenger.Email,
+          IsLeadPax: passenger.IsLeadPax,
+          Fare: {
+            Currency: passengerFare?.Currency,
+            BaseFare: baseFarePerPassenger,
+            Tax: taxPerPassenger,
+            YQTax: passengerFare?.YQTax,
+            AdditionalTxnFeePub: fdatas?.data?.Fare.AdditionalTxnFeePub,
+            AdditionalTxnFeeOfrd: fdatas?.data?.Fare.AdditionalTxnFeeOfrd,
+            OtherCharges: fdatas?.data?.Fare.OtherCharges,
+            Discount: fdatas?.data?.Fare.Discount,
+            PublishedFare: fdatas?.data?.Fare.PublishedFare,
+            OfferedFare: fdatas?.data?.Fare.OfferedFare,
+            TdsOnCommission: fdatas?.data?.Fare.TdsOnCommission,
+            TdsOnPLB: fdatas?.data?.Fare.TdsOnPLB,
+            TdsOnIncentive: fdatas?.data?.Fare.TdsOnIncentive,
+            ServiceFee: fdatas?.data?.Fare.ServiceFee,
+          },
+        };
+      }),
+    };
 
-      const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+    // Create Razorpay order
+    const amount = fdatas?.data?.Fare?.OfferedFare;
+    const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
+      amount: amount,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+      user_email: leadPassenger?.Email,
+      user_name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
+      user_phone: leadPassenger?.ContactNo,
+    });
 
-      const isLCC = checkOutFlightDetail?.IsLCC === true;
+    const { order_id } = orderResponse.data;
 
-        
+    // Razorpay payment options
+    const options = {
+      key: 'rzp_test_Bi57EMsQ6K7ZZH', // Replace with your Razorpay key
+      amount: amount,
+      currency: "INR",
+      name: "Next Gen Trip Pvt Ltd",
+      description: "Flight Booking Payment",
+      order_id: order_id,
+      handler: async (response) => {
+        try {
+          // Optional: Verify payment on the server-side
+          const verifyResponse = await axios.post(`${apilink}/verify-razorpay-payment`, {
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+          });
 
+          if (verifyResponse.data.status !== "success") {
+            throw new Error("Payment verification failed");
+          }
 
+          // Proceed with booking after payment confirmation
+          const bookingResponse = await axios.post(apiEndpoint, payload);
 
-      const apiEndpoint = isLCC
-        ? `${apilink}/flight-book-llc`
-        : `${apilink}/flight-book`;
+          if (bookingResponse.data?.status !== "success") {
+            handleBookingError(bookingResponse.data);
+            return;
+          }
 
-      const bookingResponse = await axios.post(apiEndpoint, payload);
-
-      if (bookingResponse.data?.status !== "success") {
-        handleBookingError(bookingResponse.data);
-        setbookisLoading(false);
-        return;
-      }
-
-      const amount = fdatas?.data?.Fare?.OfferedFare;
-
-      const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
-        amount: amount,
-        currency: "INR",
-        receipt: `receipt_${Date.now()}`,
-        user_email: leadPassenger?.Email,
-        user_name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
-        user_phone: leadPassenger?.ContactNo,
-      });
-
-      const { order_id } = orderResponse.data;
-
-      const options = {
-        key: 'rzp_test_Bi57EMsQ6K7ZZH',
-        amount: amount,
-        currency: "INR",
-        name: "Next Gen Trip Pvt Ltd",
-        description: "Flight Booking Payment",
-        order_id: order_id,
-        handler: async (response) => {
+          // Show success message
           Swal.fire({
             icon: "success",
             title: "Booking and Payment Successful",
-            text: `Your flight has been booked!`,
+            text: "Your flight has been booked!",
             confirmButtonText: "OK",
           });
-        },
-        prefill: {
-          name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
-          email: leadPassenger?.Email,
-          contact: leadPassenger?.ContactNo || "",
-        },
-        theme: {
-          color: "#0086da",
-        },
-      };
+        } catch (error) {
+          console.error("Error during booking:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Booking Failed",
+            text: error?.response?.data?.error || "Something went wrong during booking",
+          });
+        } finally {
+          setbookisLoading(false);
+        }
+      },
+      prefill: {
+        name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
+        email: leadPassenger?.Email,
+        contact: leadPassenger?.ContactNo || "",
+      },
+      theme: {
+        color: "#0086da",
+      },
+    };
 
-      const razorpay = new window.Razorpay(options);
-      razorpay.open();
-    } catch (error) {
-      console.error("Error during booking or payment:", error);
+    const razorpay = new window.Razorpay(options);
+    razorpay.on('payment.failed', function (response) {
+      setbookisLoading(false);
       Swal.fire({
         icon: "error",
-        title: "Operation Failed",
-        text: error?.response?.data?.error || "Something went wrong",
+        title: "Payment Failed",
+        text: response.error.description || "Payment was not successful. Please try again.",
       });
-    } finally {
-      setbookisLoading(false);
-    }
-  };
+    });
+    razorpay.open();
+  } catch (error) {
+    console.error("Error during payment initiation:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Operation Failed",
+      text: error?.response?.data?.error || "Something went wrong",
+    });
+    setbookisLoading(false);
+  }
+};
 
   const handleBookingError = (data) => {
     Swal.fire({
