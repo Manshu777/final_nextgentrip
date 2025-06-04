@@ -27,6 +27,11 @@ import cabSearchReducer from "./slices/cabSearchSlice";
 
 import destinationSearchReducer from './slices/destinationSearchSlice';
 
+
+import countriesReducer from './slices/getCountriesApi';
+import getEsimplansReducer from './slices/getEsimplans';
+
+
 import  SliderSlice  from "./slices/SliderSlice";
 export const store = configureStore({
   reducer: { searchFlightslice, Allairport, topPortsSlice, blogslice, ipslice, searchreturn,advanceSearchFlight,
@@ -40,6 +45,8 @@ export const store = configureStore({
     sliderData:SliderSlice,
     cabSearchSlice: cabSearchReducer,
     destinations: destinationSearchReducer,
+     countries: countriesReducer,
+     esimplans: getEsimplansReducer
 
   },
 });

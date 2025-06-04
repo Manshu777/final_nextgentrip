@@ -335,7 +335,7 @@ const handelFilter = (value) => {
   };
   const SkeletonLoader = () => {
     return (
-      <div className="my-3 border p-2 md:p-5 w-full">
+      <div className="w-full">
 
 
         <div className="overflow-hidden px-4">
@@ -1067,7 +1067,10 @@ const handelFilter = (value) => {
                                               borderTop:
                                                 "3px solid rgb(245, 166, 34)",
                                             }}
-                                          ></p>
+                                          >
+
+                                            
+                                          </p>
                                         </div>
                                         <p className="text-black text-xs mt-1">
                                           {flight.stop}
@@ -1210,7 +1213,7 @@ const handelFilter = (value) => {
                               </p>
 
                               <div
-                                className="hidden md:flex justify-between items-center text-sm card-footer-v2"
+                                className="hidden cursor-pointer md:flex justify-between items-center text-sm card-footer-v2"
                                 onClick={() => toggle(index)}
                               >
                                 <span className="text-blue-600 flex items-center gap-2">
@@ -1923,7 +1926,7 @@ const handelFilter = (value) => {
                                   </p>
 
                                   <div
-                                    className="hidden md:flex justify-between items-center text-sm card-footer-v2 w-full"
+                                    className="hidden cursor-pointer md:flex justify-between items-center text-sm card-footer-v2 w-full"
                                     onClick={() => toggle(index)}
                                   >
                                     <span className="text-blue-600 flex items-center gap-2">

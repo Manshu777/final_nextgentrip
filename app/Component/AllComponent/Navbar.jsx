@@ -80,6 +80,8 @@ const Navbar = () => {
       class: "cab-icon",
       link: "/cabs",
     },
+
+
     // {
     //   name: t("activities"),
     //   className: "meuicowidth actvitymenuico",
@@ -103,7 +105,16 @@ const Navbar = () => {
       className: "meuicowidth Insurancenuico",
       class: "Inurance-icon",
       link: "/Insurance",
-    }
+    },
+
+    {
+      name: 'E-Sim',
+      className: "meuicowidth cabmenuico",
+      class: "cab-icon",
+      link: "/e-sim",
+    },
+
+
   ];
   
   return (

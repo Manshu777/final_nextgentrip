@@ -398,7 +398,7 @@ const page = () => {
                   </p>
 
                   <div
-                    className="hidden md:flex justify-between items-center text-sm card-footer-v2"
+                    className="hidden cursor-pointer md:flex justify-between items-center text-sm card-footer-v2"
                     onClick={() => toggle(index)}
                   >
                     <span className="text-blue-600 flex items-center gap-2">
