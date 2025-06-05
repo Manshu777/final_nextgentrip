@@ -116,7 +116,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
 const validateAllForms = () => {
   const newErrors = {};
   let checckMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
-
+  
 
     setCheckPassport(checckMEEE.data.IsPassportRequiredAtBook)
   passengers.forEach((passenger, index) => {
@@ -240,6 +240,8 @@ const validateAllForms = () => {
     setPassengers([...passengers, newTraveler]);
   };
 
+
+
   const handlebook = async (e) => {
   e.preventDefault();
 
@@ -312,7 +314,7 @@ const validateAllForms = () => {
     };
 
     // Create Razorpay order
-    const amount = fdatas?.data?.Fare?.OfferedFare;
+    const amount = fdatas?.data?.Fare?.PublishedFare;
     const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
       amount: amount,
       currency: "INR",
@@ -334,39 +336,73 @@ const validateAllForms = () => {
       order_id: order_id,
       handler: async (response) => {
         try {
-          // Optional: Verify payment on the server-side
-          const verifyResponse = await axios.post(`${apilink}/verify-razorpay-payment`, {
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_signature: response.razorpay_signature,
-          });
-
-          if (verifyResponse.data.status !== "success") {
-            throw new Error("Payment verification failed");
-          }
-
           // Proceed with booking after payment confirmation
           const bookingResponse = await axios.post(apiEndpoint, payload);
 
-          if (bookingResponse.data?.status !== "success") {
-            handleBookingError(bookingResponse.data);
-            return;
-          }
+          if (bookingResponse.data?.status === "success") {
+            // Show success message
+            Swal.fire({
+              icon: "success",
+              title: "Booking and Payment Successful",
+              text: "Your flight has been booked!",
+              confirmButtonText: "OK",
+            });
+          } else {
+            // Booking failed, initiate refund
+            try {
+              const refundResponse = await axios.post(`${apilink}/initiate-razorpay-refund`, {
+                razorpay_payment_id: response.razorpay_payment_id,
+                amount: amount * 100, // Razorpay expects amount in paise
+              });
 
-          // Show success message
-          Swal.fire({
-            icon: "success",
-            title: "Booking and Payment Successful",
-            text: "Your flight has been booked!",
-            confirmButtonText: "OK",
-          });
-        } catch (error) {
-          console.error("Error during booking:", error);
-          Swal.fire({
-            icon: "error",
-            title: "Booking Failed",
-            text: error?.response?.data?.error || "Something went wrong during booking",
-          });
+              if (refundResponse.data.status === "success") {
+                Swal.fire({
+                  icon: "warning",
+                  title: "Booking Failed, Refund Initiated",
+                  text: `The booking could not be completed. A refund (Ref ID: ${refundResponse.data.refund.id}) has been initiated and will be credited to your account soon.`,
+                  confirmButtonText: "OK",
+                });
+              } else {
+                throw new Error("Refund initiation failed");
+              }
+            } catch (refundError) {
+              console.error("Refund error:", refundError);
+              Swal.fire({
+                icon: "error",
+                title: "Booking and Refund Failed",
+                text: "The booking failed, and we could not initiate a refund. Please contact support.",
+                confirmButtonText: "OK",
+              });
+            }
+          }
+        } catch (bookingError) {
+          console.error("Error during booking:", bookingError);
+          // Initiate refund on booking error
+          try {
+            const refundResponse = await axios.post(`${apilink}/initiate-razorpay-refund`, {
+              razorpay_payment_id: response.razorpay_payment_id,
+              amount: amount * 100, // Razorpay expects amount in paise
+            });
+
+            if (refundResponse.data.status === "success") {
+              Swal.fire({
+                icon: "warning",
+                title: "Booking Failed, Refund Initiated",
+                text: `The booking could not be completed. A refund (Ref ID: ${refundResponse.data.refund.id}) has been initiated and will be credited to your account soon.`,
+                confirmButtonText: "OK",
+              });
+            } else {
+              throw new Error("Refund initiation failed");
+            }
+          } catch (refundError) {
+            console.error("Refund error:", refundError);
+            Swal.fire({
+              icon: "error",
+              title: "Booking and Refund Failed",
+              text: "The booking failed, and we could not initiate a refund. Please contact support.",
+              confirmButtonText: "OK",
+            });
+          }
         } finally {
           setbookisLoading(false);
         }
@@ -388,6 +424,7 @@ const validateAllForms = () => {
         icon: "error",
         title: "Payment Failed",
         text: response.error.description || "Payment was not successful. Please try again.",
+        confirmButtonText: "OK",
       });
     });
     razorpay.open();
@@ -397,6 +434,7 @@ const validateAllForms = () => {
       icon: "error",
       title: "Operation Failed",
       text: error?.response?.data?.error || "Something went wrong",
+      confirmButtonText: "OK",
     });
     setbookisLoading(false);
   }
