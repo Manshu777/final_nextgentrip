@@ -351,7 +351,7 @@ const Header = () => {
       const returnDate = new Date(selectedReturn);
       returnDate.setHours(0, 0, 0, 0); // Set to midnight
       const returnFormattedDate = `${returnDate.getFullYear()}-${String(returnDate.getMonth() + 1).padStart(2, '0')}-${String(returnDate.getDate()).padStart(2, '0')}T00:00:00`;
-      console.log('returnFormattedDate', returnFormattedDate);
+
 
       searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&returndate=${returnFormattedDate}&PreferredAirlines=${preferredAirline}`;
     }
@@ -552,8 +552,8 @@ const Header = () => {
 
   const tileContent2 = ({ date, view }) => {
     if (view === "month") {
-      const dateKey = date.toISOString().split("T")[0]; // Convert to UTC
-      const localDateKey = date.toLocaleDateString("en-CA"); // Use local format YYYY-MM-DD
+      const dateKey = date.toISOString().split("T")[0]; 
+      const localDateKey = date.toLocaleDateString("en-CA"); 
       const getFAreData = CaldataOrg?.SearchResults;
 
       if (Array.isArray(getFAreData)) {
@@ -850,7 +850,7 @@ const Header = () => {
                 <div className="flex justify-center items-center">
                   <button
                     onClick={handelSearch}
-                    className="bg-[#0A5EB0] w-full md:w-fit text-nowrap  py-2 px-3  font-semibold  text-lg rounded-md  text-white "
+                    className="bg-[#0A5EB0] w-full md:w-fit text-nowrap  py-2 px-3  font-semibold  text-md rounded-md  text-white "
                   >
                     Search Flights
                   </button>

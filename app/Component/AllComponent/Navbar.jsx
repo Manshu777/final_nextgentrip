@@ -108,9 +108,9 @@ const Navbar = () => {
     },
 
     {
-      name: 'E-Sim',
-      className: "meuicowidth cabmenuico",
-      class: "cab-icon",
+      name: 'eSIM',
+      className: "meuicowidth esim",
+      class: "esim",
       link: "/e-sim",
     },
 

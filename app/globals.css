@@ -189,7 +189,9 @@ a.text-sm {
 }
 
 
-
+.esim{
+    background: url(../public/images/sim.png);
+}
 
 
  .flightmenuico {
