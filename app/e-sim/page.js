@@ -90,7 +90,9 @@ const PlansPage = () => {
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-4">eSIM Plans </h2>
         {error ? (
-          <p className="mt-4 text-red-500">Error: {error}</p>
+          <p className="mt-4 text-red-500">
+            
+          </p>
         ) : isLoading ? (
           <div className="grid grid-cols-1 my-2 lg:my-[61px] px-[4%] lg:px-[8%] md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array(9)

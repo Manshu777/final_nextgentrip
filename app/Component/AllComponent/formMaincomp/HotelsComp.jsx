@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import { useState, useRef, useEffect } from 'react';
 
 import TravellerDropDownhotels from "../TravellerDropDownhotels";
 import Link from "next/link";
@@ -14,14 +15,17 @@ import { IoLocationSharp } from "react-icons/io5";
 // import {  FaUserLarge, FaCalendarAlt } from "react-icons/fa6";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import MiniNav from "../MiniNav";
-
+import { useDispatch, useSelector } from "react-redux";
+import { getAllCountries } from "../../Store/slices/citysearchSlice";
 
 const HotelsComp = () => {
   const route = useRouter();
+  const dropdownRef = useRef(null);
+  const dispatch = useDispatch();
   const localTimeZone = getLocalTimeZone();
   const [isVisible, setIsVisible] = useState("");
   const defalinfo = JSON.parse(localStorage.getItem("hotelItems"));
-
+const [isOpen, setIsOpen] = useState(false);
   const [city, setcity] = useState(
     (defalinfo && defalinfo.place) || { Name: "delhi", Code: "130443" }
   );
@@ -34,10 +38,14 @@ const HotelsComp = () => {
   );
   const [adultcount, setadultcount] = useState(1);
   const [childcount, setchildcount] = useState(0);
+  const [cnCoide, setcnCoide] = useState("IN");
+
   const [numberOfRoom, setNumberOfRoom] = useState(1);
 
   const handleCitySelect = (city) => {
     setcity(city);
+
+
 
     setIsVisible("");
   };
@@ -65,18 +73,30 @@ const HotelsComp = () => {
     setIsVisible("");
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+
+
   const handelhotelSearch = () => {
     localStorage.setItem(
-    "hotelItems",
-    JSON.stringify({
-      place: { Name: city.Name, Code: city.Code },
-      checkIntime: arivitime,
-      checkouttime: checkOut,
-      adultcount,
-      childcount,
-      numberOfRoom,
-    })
-  );
+      "hotelItems",
+      JSON.stringify({
+        place: { Name: city.Name, Code: city.Code },
+        checkIntime: arivitime,
+        checkouttime: checkOut,
+        adultcount,
+        childcount,
+        numberOfRoom,
+      })
+    );
     const offset = 6 * 60 * 55 * 1000;
     const check = new Date(arivitime);
 
@@ -93,8 +113,55 @@ const HotelsComp = () => {
   };
 
 
-const maxAdultsPerRoom = 8;
-const maxChildrenPerRoom = 4;
+  const maxAdultsPerRoom = 8;
+  const maxChildrenPerRoom = 4;
+
+  const [search, setSearch] = useState('');
+
+const { countries = [], isLoading = false, isError = false, error = null } = useSelector((state) => {
+
+  return state.citysearch || {};
+});
+  useEffect(() => {
+    dispatch(getAllCountries());
+      console.log(countries, "countries");
+  }, [dispatch]);
+
+useEffect(() => {
+  dispatch(getAllCountries());
+}, [dispatch]);
+
+
+const filteredCountries = countries.filter((country) =>
+    country.Name.toLowerCase().includes(search.toLowerCase())
+  );
+
+
+
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Handle country selection
+  const handleSelect = (country) => {
+ 
+    setSearch(country.Name); 
+    setcnCoide(country.Code);
+    setIsOpen(false); // Close dropdown after selection
+  };
 
 
   return (
@@ -117,7 +184,52 @@ const maxChildrenPerRoom = 4;
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
 
-            
+            <div className="relative z-10 w-full max-w-xs" ref={dropdownRef}>
+      {isLoading && <p className="text-gray-500">Loading countries...</p>}
+      {isError && <p className="text-red-500">Error: {error}</p>}
+      
+      {/* Dropdown trigger input */}
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        onClick={toggleDropdown}
+        placeholder="Select a country..."
+        className="w-full p-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        aria-expanded={isOpen}
+        aria-controls="country-dropdown"
+      />
+      
+
+      {isOpen && (
+        <ul
+          id="country-dropdown"
+          className="absolute w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-auto"
+          role="listbox"
+        >
+          {filteredCountries?.length > 0 ? (
+            filteredCountries.map((country) => (
+              <li
+                key={country.Code}
+                onClick={() => handleSelect(country)}
+                className="p-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
+                role="option"
+                aria-selected={search === country.Name}
+              >
+                {country.Name}
+              </li>
+            ))
+          ) : (
+            <li className="p-2 text-gray-500">No countries found</li>
+          )}
+        </ul>
+      )}
+    </div>
+
+        
+
+
+
             <div className="relative w-full lg:w-[27%]">
               <div
                 onClick={() => handleClick("city")}
@@ -140,12 +252,13 @@ const maxChildrenPerRoom = 4;
                     handleClosed={handleVisibilityChange}
                     onSelect={handleCitySelect}
                     visible={setIsVisible}
+               countercode={cnCoide}
                   />
                 </div>
               )}
             </div>
 
-    
+
             <div className="relative w-full lg:w-[20%] ">
               <div
                 onClick={() => handleClick("date")}
@@ -187,7 +300,7 @@ const maxChildrenPerRoom = 4;
               )}
             </div>
 
-           
+
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("checkout")}
@@ -226,14 +339,14 @@ const maxChildrenPerRoom = 4;
               )}
             </div>
 
-   
+
             <div className="relative w-full lg:w-[15%]">
               <div
                 onClick={() => setIsVisible("roomcheck")}
                 className="flex items-center justify-between px-3 py-1 border-2 text-black border-slate-200 rounded-md"
               >
                 <div className="flex items-center gap-2">
-     
+
                   <div>
                     <h5 className="font-bold text-lg text-black">{adultcount + childcount}</h5>
                     <p className="text-slate-400 text-xs">Travellers</p>
@@ -250,132 +363,132 @@ const maxChildrenPerRoom = 4;
 
 
               {isVisible === "roomcheck" && (
-                  <div
-                    className="absolute w-fit top-full  bg-white rounded-lg shadow-md z-50"
-                    onMouseLeave={() => setIsVisible("")}
-                  >
-                    <div className="shadow-2xl rounded-md bg-white  flex flex-col gap-4 p-4">
-                      <div className="flex gap-3 justify-between">
-                        <p className="text-nowrap text-gray-700">Adult Count</p>
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="px-2 border text-black"
-                            onClick={() => {
-                              if (adultcount > 1) {
-                                setadultcount(adultcount - 1);
-                                // Recalculate minimum rooms required
-                                const totalPeople = adultcount - 1 + childcount;
-                                const requiredRooms = Math.max(
-                                  Math.ceil(totalPeople / 8),
-                                  Math.ceil(childcount / 4)
-                                );
-                                // Update room count only if it's less than the current numberOfRoom
-                                if (requiredRooms <= numberOfRoom) {
-                                  setNumberOfRoom(requiredRooms);
-                                }
-                              }
-                            }}
-                          >
-                            -
-                          </button>
-                          <p className="px-2 border text-gray-700">{adultcount}</p>
-                          <button
-                            className="px-2 text-black border"
-                            onClick={() => {
-                              const newAdultCount = adultcount + 1;
-                              const totalPeople = newAdultCount + childcount;
+                <div
+                  className="absolute w-fit top-full  bg-white rounded-lg shadow-md z-50"
+                  onMouseLeave={() => setIsVisible("")}
+                >
+                  <div className="shadow-2xl rounded-md bg-white  flex flex-col gap-4 p-4">
+                    <div className="flex gap-3 justify-between">
+                      <p className="text-nowrap text-gray-700">Adult Count</p>
+                      <div className="flex items-center gap-3">
+                        <button
+                          className="px-2 border text-black"
+                          onClick={() => {
+                            if (adultcount > 1) {
+                              setadultcount(adultcount - 1);
+                              // Recalculate minimum rooms required
+                              const totalPeople = adultcount - 1 + childcount;
                               const requiredRooms = Math.max(
                                 Math.ceil(totalPeople / 8),
                                 Math.ceil(childcount / 4)
                               );
-                              setadultcount(newAdultCount);
-                              // Update room count if more rooms are needed
-                              if (requiredRooms > numberOfRoom) {
+                              // Update room count only if it's less than the current numberOfRoom
+                              if (requiredRooms <= numberOfRoom) {
                                 setNumberOfRoom(requiredRooms);
                               }
-                            }}
-                          >
-                            +
-                          </button>
-                        </div>
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <p className="px-2 border text-gray-700">{adultcount}</p>
+                        <button
+                          className="px-2 text-black border"
+                          onClick={() => {
+                            const newAdultCount = adultcount + 1;
+                            const totalPeople = newAdultCount + childcount;
+                            const requiredRooms = Math.max(
+                              Math.ceil(totalPeople / 8),
+                              Math.ceil(childcount / 4)
+                            );
+                            setadultcount(newAdultCount);
+                            // Update room count if more rooms are needed
+                            if (requiredRooms > numberOfRoom) {
+                              setNumberOfRoom(requiredRooms);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
-                      <div className="flex gap-3 justify-between">
-                        <p className="text-nowrap text-gray-700">Child Count</p>
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="px-2 border text-black"
-                            onClick={() => {
-                              if (childcount > 0) {
-                                setchildcount(childcount - 1);
-                                // Recalculate minimum rooms required
-                                const totalPeople = adultcount + (childcount - 1);
-                                const requiredRooms = Math.max(
-                                  Math.ceil(totalPeople / 8),
-                                  Math.ceil((childcount - 1) / 4)
-                                );
-                                // Update room count only if it's less than the current numberOfRoom
-                                if (requiredRooms <= numberOfRoom) {
-                                  setNumberOfRoom(requiredRooms);
-                                }
-                              }
-                            }}
-                          >
-                            -
-                          </button>
-                          <p className="px-2 border">{childcount}</p>
-                          <button
-                            className="px-2 text-black border"
-                            onClick={() => {
-                              const newChildCount = childcount + 1;
-                              const totalPeople = adultcount + newChildCount;
+                    </div>
+                    <div className="flex gap-3 justify-between">
+                      <p className="text-nowrap text-gray-700">Child Count</p>
+                      <div className="flex items-center gap-3">
+                        <button
+                          className="px-2 border text-black"
+                          onClick={() => {
+                            if (childcount > 0) {
+                              setchildcount(childcount - 1);
+                              // Recalculate minimum rooms required
+                              const totalPeople = adultcount + (childcount - 1);
                               const requiredRooms = Math.max(
                                 Math.ceil(totalPeople / 8),
-                                Math.ceil(newChildCount / 4)
+                                Math.ceil((childcount - 1) / 4)
                               );
-                              setchildcount(newChildCount);
-                              // Update room count if more rooms are needed
-                              if (requiredRooms > numberOfRoom) {
+                              // Update room count only if it's less than the current numberOfRoom
+                              if (requiredRooms <= numberOfRoom) {
                                 setNumberOfRoom(requiredRooms);
                               }
-                            }}
-                          >
-                            +
-                          </button>
-                        </div>
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <p className="px-2 border">{childcount}</p>
+                        <button
+                          className="px-2 text-black border"
+                          onClick={() => {
+                            const newChildCount = childcount + 1;
+                            const totalPeople = adultcount + newChildCount;
+                            const requiredRooms = Math.max(
+                              Math.ceil(totalPeople / 8),
+                              Math.ceil(newChildCount / 4)
+                            );
+                            setchildcount(newChildCount);
+                            // Update room count if more rooms are needed
+                            if (requiredRooms > numberOfRoom) {
+                              setNumberOfRoom(requiredRooms);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
-                      <div className="flex gap-3 justify-between">
-                        <p className="text-nowrap text-gray-700">Room Count</p>
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="px-2 border text-black"
-                            onClick={() => {
-                              const totalPeople = adultcount + childcount;
-                              const requiredRooms = Math.max(
-                                Math.ceil(totalPeople / 8),
-                                Math.ceil(childcount / 4)
-                              );
-                              // Only decrease if the new room count is sufficient
-                              if (numberOfRoom > requiredRooms) {
-                                setNumberOfRoom(numberOfRoom - 1);
-                              }
-                            }}
-                          >
-                            -
-                          </button>
-                          <p className="px-2 border">{numberOfRoom}</p>
-                          <button
-                            className="px-2 text-black border"
-                            onClick={() => {
-                              setNumberOfRoom(numberOfRoom + 1);
-                            }}
-                          >
-                            +
-                          </button>
-                        </div>
+                    </div>
+                    <div className="flex gap-3 justify-between">
+                      <p className="text-nowrap text-gray-700">Room Count</p>
+                      <div className="flex items-center gap-3">
+                        <button
+                          className="px-2 border text-black"
+                          onClick={() => {
+                            const totalPeople = adultcount + childcount;
+                            const requiredRooms = Math.max(
+                              Math.ceil(totalPeople / 8),
+                              Math.ceil(childcount / 4)
+                            );
+                            // Only decrease if the new room count is sufficient
+                            if (numberOfRoom > requiredRooms) {
+                              setNumberOfRoom(numberOfRoom - 1);
+                            }
+                          }}
+                        >
+                          -
+                        </button>
+                        <p className="px-2 border">{numberOfRoom}</p>
+                        <button
+                          className="px-2 text-black border"
+                          onClick={() => {
+                            setNumberOfRoom(numberOfRoom + 1);
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
                     </div>
                   </div>
-                )}
+                </div>
+              )}
 
 
 

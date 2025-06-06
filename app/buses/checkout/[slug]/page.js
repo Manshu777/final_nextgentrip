@@ -10,12 +10,13 @@ import { FaBusAlt } from "react-icons/fa";
 import { apilink } from '../../../Component/common';
 import Swal from "sweetalert2";
 import axios from 'axios'
+import { useRouter } from 'next/navigation';
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
   const [bookingData, setBookingData] = useState(null);
   const [boardingData, setBoardingData] = useState(null);
   const [selectedBusData, setSelectedBusData] = useState(null);
-
+  const router = useRouter();
   const [error, setError] = useState(null);
 
   const [passengers, setPassengers] = useState([
@@ -299,7 +300,9 @@ const handleBooking = async () => {
     });
 
     if (!blockResponse.ok) {
+      router.push('/buses');
       throw new Error('Failed to block bus seats');
+      
     }
 
     const blockResult = await blockResponse.json();
@@ -319,6 +322,7 @@ const handleBooking = async () => {
     });
 
     if (!bookResponse.ok) {
+      router.push('/buses');
       throw new Error('Failed to book bus');
     }
 
@@ -326,7 +330,7 @@ const handleBooking = async () => {
 
     // Step 3: Proceed to payment
     const leadPassenger = passengers[0];
-    const amount = selectedBusData?.BusPrice?.PublishedPrice * 100;
+    const amount = selectedBusData?.BusPrice?.PublishedPrice;
 
     const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
       amount,
@@ -367,7 +371,7 @@ const handleBooking = async () => {
     razorpay.open();
 
   } catch (error) {
-    console.error('Booking error:', error);
+
     Swal.fire({
       icon: "error",
       title: "Error",
@@ -375,6 +379,7 @@ const handleBooking = async () => {
     });
   } finally {
     setIsLoading(false);
+    router.push('/buses');
   }
 };
     

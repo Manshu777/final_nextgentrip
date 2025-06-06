@@ -9,13 +9,14 @@ export default function MyBookings() {
     BookingId: '',
     PNR: '',
     EndUserIp: '',
-   
   });
   const [bookings, setBookings] = useState([]);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(null); // Track which booking is being cancelled
+  const [charges, setCharges] = useState({}); // Store cancellation charges per BookingId
+  const [showModal, setShowModal] = useState(null); // Track which booking's charges are shown in modal
 
   // Fetch user's IP address
   useEffect(() => {
@@ -62,8 +63,9 @@ export default function MyBookings() {
           ArrTime: bookingData.Segments[0]?.Destination?.ArrTime || 'N/A',
           InvoiceAmount: bookingData.InvoiceAmount || 0,
           Currency: bookingData.Fare?.Currency || 'INR',
+          Email: bookingData.Passenger?.[0]?.Email || response.data.data?.username || 'N/A', // From booking or Bookflights
+          PhoneNumber: bookingData.Passenger?.[0]?.ContactNo || response.data.data?.phone_number || 'N/A', // From booking or Bookflights
         }]);
-        console.log(bookingData.Segments[0])
         setMessage('Booking details fetched successfully.');
       } else {
         setError(response.data.message || 'Failed to fetch booking details.');
@@ -75,7 +77,48 @@ export default function MyBookings() {
     }
   };
 
+  const handleFetchCancellationCharges = async (booking) => {
+
+    setMessage('');
+    setError('');
+    try {
+      const response = await axios.post(`${apilink}/flight-cancellation-charges`, {
+        BookingId: String(booking.BookingId),
+        RequestType: '1', // Adjust based on your API requirements
+        EndUserIp: formData.EndUserIp,
+      }, {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    console.log('Fetching cancellation charges for booking:', response);
+      if (response.data.status) {
+        setCharges((prev) => ({
+          ...prev,
+          [booking.BookingId]: response.data,
+        }));
+        setShowModal(booking.BookingId); // Show modal for this booking
+        setMessage(`Cancellation charges for Booking ID ${booking.BookingId} fetched successfully.`);
+      } else {
+        setError(response.data.message || 'Failed to fetch cancellation charges.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'An error occurred while fetching cancellation charges.');
+    }
+  };
+
   const handleCancelBooking = async (booking) => {
+    if (!charges[booking.BookingId]) {
+      setError('Please fetch cancellation charges before proceeding with cancellation.');
+      return;
+    }
+
+    if (!confirm(
+      `Are you sure you want to cancel Booking ID ${booking.BookingId}? ` +
+      `Cancellation Charge: ${charges[booking.BookingId].currency} ${charges[booking.BookingId].cancellation_charge}, ` +
+      `Refund Amount: ${charges[booking.BookingId].currency} ${charges[booking.BookingId].refund_amount}`
+    )) {
+      return;
+    }
+
     setMessage('');
     setError('');
     setCancelLoading(booking.BookingId);
@@ -92,7 +135,13 @@ export default function MyBookings() {
 
       if (response.data.status === 'success') {
         setMessage(`Cancellation request for Booking ID ${booking.BookingId} processed successfully.`);
-        setBookings(bookings.filter((b) => b.BookingId !== booking.BookingId)); // Remove cancelled booking
+        setBookings(bookings.filter((b) => b.BookingId !== booking.BookingId));
+        setCharges((prev) => {
+          const newCharges = { ...prev };
+          delete newCharges[booking.BookingId];
+          return newCharges;
+        });
+        setShowModal(null);
       } else {
         setError(response.data.message || 'Cancellation failed.');
       }
@@ -101,6 +150,10 @@ export default function MyBookings() {
     } finally {
       setCancelLoading(null);
     }
+  };
+
+  const closeModal = () => {
+    setShowModal(null);
   };
 
   return (
@@ -171,9 +224,9 @@ export default function MyBookings() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arrival</th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departure</th>
-
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -187,7 +240,7 @@ export default function MyBookings() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {booking.Origin} → {booking.Destination}
                       </td>
-                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {new Date(booking.ArrTime).toLocaleString()}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -196,12 +249,24 @@ export default function MyBookings() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {booking.Currency} {booking.InvoiceAmount}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {booking.Email}<br />{booking.PhoneNumber}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm flex space-x-2">
+                        <button
+                          onClick={() => handleFetchCancellationCharges(booking)}
+                          disabled={loading || charges[booking.BookingId]}
+                          className={`py-2 px-4 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 ${
+                            loading || charges[booking.BookingId] ? 'opacity-50 cursor-not-allowed' : ''
+                          }`}
+                        >
+                          {charges[booking.BookingId] ? 'Charges Fetched' : 'View Charges'}
+                        </button>
                         <button
                           onClick={() => handleCancelBooking(booking)}
-                          disabled={cancelLoading === booking.BookingId}
+                          disabled={cancelLoading === booking.BookingId || !charges[booking.BookingId]}
                           className={`py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                            cancelLoading === booking.BookingId ? 'opacity-50 cursor-not-allowed' : ''
+                            cancelLoading === booking.BookingId || !charges[booking.BookingId] ? 'opacity-50 cursor-not-allowed' : ''
                           }`}
                         >
                           {cancelLoading === booking.BookingId ? 'Cancelling...' : 'Cancel'}
@@ -215,6 +280,40 @@ export default function MyBookings() {
           </div>
         ) : (
           <p className="text-center text-gray-500">No bookings found. Please enter your booking details above.</p>
+        )}
+
+        {/* Modal for Cancellation Charges */}
+        {showModal && charges[showModal] && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full">
+              <h2 className="text-xl font-semibold mb-4">Cancellation Charges for Booking ID {showModal}</h2>
+              <div className="text-sm text-gray-900 space-y-2">
+                <p><strong>Cancellation Charge:</strong> {charges[showModal].currency} {charges[showModal].cancellation_charge}</p>
+                <p><strong>Refund Amount:</strong> {charges[showModal].currency} {charges[showModal].refund_amount}</p>
+                {charges[showModal].gst?.length > 0 && (
+                  <p><strong>GST Details:</strong> {JSON.stringify(charges[showModal].gst)}</p>
+                )}
+               
+              </div>
+              <div className="mt-6 flex justify-end space-x-2">
+                <button
+                  onClick={closeModal}
+                  className="py-2 px-4 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => handleCancelBooking(bookings.find((b) => b.BookingId === showModal))}
+                  disabled={cancelLoading === showModal}
+                  className={`py-2 px-4 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                    cancelLoading === showModal ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {cancelLoading === showModal ? 'Cancelling...' : 'Confirm Cancellation'}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>

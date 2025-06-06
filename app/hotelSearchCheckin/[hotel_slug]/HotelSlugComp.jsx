@@ -1,4 +1,4 @@
-"use client"
+'use client';
 import React, { useEffect, useState } from 'react'
 import { getSingleHotel } from '../../Component/Store/slices/getHotelSlice';
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,8 +48,7 @@ const HotelSlugComp = ({ slugs }) => {
   const [description, setDescription] = useState(false);
   const [showingsection, setShowingsection] = useState("");
   const [viewmore, setViewmore] = useState(false);
-
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     dispatch(getSingleHotel({ HotelCode, checkIn, checkOut, adults, children, roomes }));
@@ -60,19 +59,19 @@ const HotelSlugComp = ({ slugs }) => {
   }, [state]);
 
   const handelprebooking = async (BookingCode) => {
-
-
-    setLoading(true); // step 2
-
-    
+    setLoading(true);
     try {
       await dispatch(gethotelPreBookingApi({ BookingCode }));
+      if (preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]) {
+        // Save cancellation policies to localStorage
+        const cancellationPolicies = preBookinghotelState.info.HotelResult[0].Rooms[0].CancelPolicies;
+        localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
+      }
       setIsOpen(true);
     } finally {
-      setLoading(false); // step 3
+      setLoading(false);
     }
   };
-
 
   useEffect(() => {
     sethotel(preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]);
@@ -80,19 +79,18 @@ const HotelSlugComp = ({ slugs }) => {
 
   const togglePopup = () => setIsOpen(!isOpen);
 
- const routeCheckOutPage = () => {
-  setIsOpen(false);
-
-   localStorage.setItem("hotelinfo", JSON.stringify(hotelinfo));
-  localStorage.setItem("hotelcheckdata", JSON.stringify(hotel));
-  router.push('/hotels/checkout');
-};
+  const routeCheckOutPage = () => {
+    setIsOpen(false);
+    localStorage.setItem("hotelinfo", JSON.stringify(hotelinfo));
+    localStorage.setItem("hotelcheckdata", JSON.stringify(hotel));
+    router.push('/hotels/checkout');
+  };
 
   return (
     <>
       {isOpen && hotel && (
         <div className='fixed top-0 left-0 w-screen h-screen flex justify-center items-center bg-[#0000008a] z-50 overflow-y-scroll md:pt-16'>
-          <div className="bg-white  shadow-xl w-full max-h-[80vh] overflow-y-auto max-w-3xl mx-4 p-6">
+          <div className="bg-white shadow-xl w-full max-h-[80vh] overflow-y-auto max-w-3xl mx-4 p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold text-gray-800">{hotel.Rooms[0].Name[0]}</h2>
               <button onClick={togglePopup} className="text-red-500 font-bold text-xl">×</button>
@@ -150,7 +148,7 @@ const HotelSlugComp = ({ slugs }) => {
             <div className="mt-6">
               <button
                 onClick={() => routeCheckOutPage()}
-                className="w-full bg-blue-600 text-white py-2  hover:bg-blue-500 transition-all"
+                className="w-full bg-blue-600 text-white py-2 hover:bg-blue-500 transition-all"
               >
                 Book Now
               </button>
@@ -162,16 +160,13 @@ const HotelSlugComp = ({ slugs }) => {
       <div className="lg:px-20 py-5">
         {hotelinfo && hotelinfo.isLoading ? (
           <div className="animate-pulse">
-            {/* Breadcrumb Skeleton */}
             <div className="flex space-x-2 mt-5 mb-5">
               <div className="h-4 w-20 bg-gray-200 rounded"></div>
               <div className="h-4 w-4 bg-gray-200 rounded"></div>
               <div className="h-4 w-20 bg-gray-200 rounded"></div>
             </div>
-            {/* Main Content Skeleton */}
             <div className="p-6 bg-white rounded-3xl flex myshadow">
               <div className="lg:w-2/3">
-                {/* Hotel Title and Rating Skeleton */}
                 <div className="flex items-center justify-between mb-5">
                   <div className="h-6 w-3/4 bg-gray-200 rounded"></div>
                   <div className="flex gap-1">
@@ -180,15 +175,13 @@ const HotelSlugComp = ({ slugs }) => {
                     ))}
                   </div>
                 </div>
-                {/* Images Skeleton */}
                 <div className="lg:flex gap-5 mb-5">
-                  <div className="w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4 bg-gray-200 "></div>
+                  <div className="w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4 bg-gray-200"></div>
                   <div>
                     <div className="w-full lg:w-[280px] h-40 mb-4 bg-gray-200 rounded-2xl"></div>
                     <div className="w-full lg:w-[280px] h-40 bg-gray-200 rounded-2xl"></div>
                   </div>
                 </div>
-                {/* Description Skeleton */}
                 <div className="mb-5">
                   <div className="space-y-2 w-5/6">
                     <div className="h-4 bg-gray-200 rounded"></div>
@@ -197,10 +190,9 @@ const HotelSlugComp = ({ slugs }) => {
                   </div>
                   <div className="h-4 w-20 bg-gray-200 rounded mt-2"></div>
                 </div>
-                {/* Services Skeleton */}
                 <div className="mb-5">
-                  <div className="h-6 w-32 bg-gray-200 rounded mb-4"></div>
-                  <div className="flex space-x-4">
+                  <h2 className="text-xl font-semibold">Services</h2>
+                  <div className="flex mt-4 space-x-4">
                     <div className="h-4 w-20 bg-gray-200 rounded"></div>
                     <div className="h-4 w-20 bg-gray-200 rounded"></div>
                     <div className="h-4 w-20 bg-gray-200 rounded"></div>
@@ -208,7 +200,6 @@ const HotelSlugComp = ({ slugs }) => {
                   </div>
                 </div>
               </div>
-              {/* Sidebar Skeleton */}
               <div className="lg:w-1/3 hidden lg:block">
                 <div className="border-2 rounded-2xl p-3">
                   <div className="h-6 w-24 bg-gray-200 rounded mb-2"></div>
@@ -233,12 +224,11 @@ const HotelSlugComp = ({ slugs }) => {
                 </div>
               </div>
             </div>
-       
             <div className="p-6 bg-white rounded-3xl my-5 shadow-lg">
               <div className="h-6 w-32 bg-gray-200 rounded mb-2"></div>
               <div className="h-4 w-48 bg-gray-200 rounded mb-4"></div>
               <div className="flex flex-col lg:flex-row gap-10">
-                <div className="w-full h-96 bg-gray-200 "></div>
+                <div className="w-full h-96 bg-gray-200"></div>
                 <div className="lg:w-2/6 space-y-4">
                   <div className="h-6 w-24 bg-gray-200 rounded"></div>
                   <div className="h-6 w-24 bg-gray-200 rounded"></div>
@@ -252,10 +242,8 @@ const HotelSlugComp = ({ slugs }) => {
           <>
             <ul className="flex space-x-2 text-sm text-gray-600 mt-5 mb-5" id="detpg_bread_crumbs">
               <li><Link href="/hotels" className="text-blue-600 font-semibold">Home</Link></li>
-<li><span> / {hotelinfo?.info?.hoteldetail1?.[0].CityName}</span></li>
-      
+              <li><span> / {hotelinfo?.info?.hoteldetail1?.[0].CityName}</span></li>
               <li><span>/ {hotelinfo?.info?.hoteldetail1?.[0].HotelName} </span></li>
-             
               <li></li>
             </ul>
             {hotelinfo && !hotelinfo.isLoading && hotelinfo.info && hotelinfo.info.hoteldetail1 && (
@@ -296,12 +284,11 @@ const HotelSlugComp = ({ slugs }) => {
                       <div>
                         <div className="relative w-full lg:w-[450px] h-[200px] lg:h-[340px] mb-4">
                           <img
-                             src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
+                            src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
                             alt="hotel image"
-                            className="lg:w-[450px] h-[200px] lg:h-[340px] "
+                            className="lg:w-[450px] h-[200px] lg:h-[340px]"
                             layout="fill"
                             objectFit="cover"
-                    
                           />
                           <div onClick={() => setimgToggle(true)} className="cursor-pointer absolute bottom-0 left-0 w-full p-2 rounded-b-lg bg-opacity-75 bg-gray-800 text-white text-center">
                             +{hotelinfo.info.hoteldetail1[0]?.images?.length} property photos
@@ -315,8 +302,7 @@ const HotelSlugComp = ({ slugs }) => {
                                   <img
                                     src={image || '/images/not_found_img.png'}
                                     alt={`Image ${index + 1}`}
-                                      className=" h-[20rem] w-full lg:w-[600px]  lg:h-[340px] "
-                                 
+                                    className="h-[20rem] w-full lg:w-[600px] lg:h-[340px]"
                                   />
                                 </div>
                               ))}
@@ -331,7 +317,7 @@ const HotelSlugComp = ({ slugs }) => {
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
-                            className="w-full lg:w-[280px] h-40 "
+                            className="w-full lg:w-[280px] h-40"
                           />
                           <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
                             Room photos
@@ -378,7 +364,7 @@ const HotelSlugComp = ({ slugs }) => {
                         <div className='grid grid-cols-3 p-4 overflow-y-auto h-full w-full'>
                           {hotelinfo.info.hoteldetail1[0].HotelFacilities.map((service_items) => (
                             <p key={service_items} className='flex flex-col gap-2 my-2 items-center'>
-                              {service_items.toLowerCase().includes("wifi") ? <FaWifi  className='text-xl' /> :
+                              {service_items.toLowerCase().includes("wifi") ? <FaWifi className='text-xl' /> :
                                 service_items.toLowerCase().includes("wheelchair") ? <RiWheelchairFill className='text-xl' /> :
                                 service_items.toLowerCase().includes("breakfast") ? <MdOutlineBreakfastDining className='text-xl' /> :
                                 service_items.toLowerCase().includes("bathroom") ? <FaBath className='text-xl' /> :
@@ -389,7 +375,7 @@ const HotelSlugComp = ({ slugs }) => {
                                 service_items.toLowerCase().includes("fitness") ? <MdFitnessCenter className='text-xl' /> :
                                 service_items.toLowerCase().includes("coffee") ? <GiCoffeeCup className='text-xl' /> :
                                 service_items.toLowerCase().includes("health") ? <MdOutlineHealthAndSafety className='text-xl' /> :
-                                <MdRoomService className='text-xl'  />}
+                                <MdRoomService className='text-xl' />}
                               {service_items}
                             </p>
                           ))}
@@ -399,12 +385,6 @@ const HotelSlugComp = ({ slugs }) => {
                   </div>
                   <div className="lg:w-[28%] hidden lg:block lg:sticky lg:top-24 h-full">
                     <div className="mb-5 border-2 rounded-2xl p-3">
-                      {/* <h3 className="text-lg font-bold">Classic</h3>
-                      <p className="mt-2 text-gray-700">Fits 2 Adults</p>
-                      <ul className="mt-4 space-y-2">
-                        <li className="flex gap-3 items-center"><MdDinnerDining /> Complimentary Breakfast</li>
-                        <li className="flex gap-3 items-center"><FaCheck className="text-green-600" /> Free Cancellation till check-in</li>
-                      </ul> */}
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}
@@ -416,40 +396,36 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div className="mt-5 flex items-center">
                         <button
-      onClick={() =>
-        handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)
-      }
-      className={`px-5 py-2 text-white font-bold rounded-xl transition-all duration-200 ${
-        loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-      }`}
-      disabled={loading} // prevent multiple clicks
-    >
-      {loading ? (
-        <span className="flex items-center gap-2">
-          <svg
-            className="animate-spin h-5 w-5 text-white"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            ></path>
-          </svg>
-          Loading...
-        </span>
-      ) : (
-        "BOOK THIS NOW"
-      )}
-    </button>
+                          onClick={() => handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
+                          className={`px-5 py-2 text-white font-bold rounded-xl transition-all duration-200 ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+                          disabled={loading}
+                        >
+                          {loading ? (
+                            <span className="flex items-center gap-2">
+                              <svg
+                                className="animate-spin h-5 w-5 text-white"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                ></path>
+                              </svg>
+                              Loading...
+                            </span>
+                          ) : (
+                            "BOOK THIS NOW"
+                          )}
+                        </button>
                         <button className="ml-8 text-blue-600" onClick={() => sethandelpriceSection("price")}>Price List</button>
                       </div>
                     </div>
@@ -496,7 +472,7 @@ const HotelSlugComp = ({ slugs }) => {
                     )}
                   </div>
                 </div>
-                <div className="p-6 bg-white  my-5 myshadow">
+                <div className="p-6 bg-white my-5 myshadow">
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-lg font-semibold">Change Dates and Guest(s)</p>

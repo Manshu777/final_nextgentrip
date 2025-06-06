@@ -318,15 +318,15 @@ const Header = () => {
       to: toCity,
       timeDate: selected,
       retuntime: selectedReturn,
-      journytype: JourneyType, // Consider renaming to 'journeyType'
+      journytype: JourneyType, 
     })
   );
 
-  // Format departure date to midnight (local timezone)
+
   const date = new Date(selected);
-  date.setHours(0, 0, 0, 0); // Set to midnight
+  date.setHours(0, 0, 0, 0);
   const localFormattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T00:00:00`;
-  console.log('localFormattedDate', localFormattedDate);
+
 
   let searchUrl;
   if (JourneyType === 1) {
