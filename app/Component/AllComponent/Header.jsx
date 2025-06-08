@@ -171,7 +171,7 @@ const Header = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const getedate = localStorage.getItem("defaultflight");
-
+      let today = new Date();
       if (getedate) {
         try {
           const parsedDate = JSON.parse(getedate).timeDate;
@@ -179,9 +179,10 @@ const Header = () => {
 
           const storedDate = new Date(parsedDate);
           const storedDate2 = new Date(parsedDate2);
-
+             setSelected(today);
+             
           if (!isNaN(storedDate)) {
-            setSelected(storedDate);
+   
             if (!isNaN(storedDate2)) {
               setSelectedReturn(storedDate2);
             }
@@ -190,6 +191,8 @@ const Header = () => {
       }
     }
   }, []);
+
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
       const storedFlight = localStorage.getItem("defaultflight");

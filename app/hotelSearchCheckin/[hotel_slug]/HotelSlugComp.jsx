@@ -123,12 +123,12 @@ const HotelSlugComp = ({ slugs }) => {
                 <h3 className="text-lg font-semibold">Amenities:</h3>
                 {!viewmore && (
                   <ul className="grid grid-cols-3 gap-4 text-sm text-gray-700">
-                    {hotel.Rooms[0].Amenities.slice(0, 11).map((amenity, index) => (
+                    {hotel?.Rooms[0]?.Amenities?.slice(0, 11).map((amenity, index) => (
                       <li key={index} className="flex items-center">
                         <span className="mr-2">✓</span>{amenity}
                       </li>
                     ))}
-                    {hotel.Rooms[0].Amenities.length > 11 && (
+                    {hotel?.Rooms[0]?.Amenities?.length > 11 && (
                       <li className='text-blue-600 cursor-pointer flex items-center' onClick={() => setViewmore(true)}>View More</li>
                     )}
                   </ul>
