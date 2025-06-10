@@ -1,17 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import Image from "next/image";
-import CabFilter from "../Component/Filter/CabFilter";
 import { FaFilter, FaTimes } from "react-icons/fa";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import CabsComp from "../Component/AllComponent/formMaincomp/CabsComp";
-import { useDispatch, useSelector } from "react-redux";
-import { searchCabApi } from "../Component/Store/slices/cabSearchSlice";
 import { motion } from "framer-motion";
+import CabFilter from "../Component/Filter/CabFilter";
+import CabsComp from "../Component/AllComponent/formMaincomp/CabsComp";
+import axios from "axios";
+import { apilink } from "../Component/common";
+
+// Replace with your API base URL
+
 
 // Skeleton Loader for TransferCard
 const SkeletonCard = () => {
@@ -40,20 +40,8 @@ const SkeletonCard = () => {
   );
 };
 
-// Skeleton Loader for Slider
-const SkeletonSlider = () => {
-  return (
-    <div className="mb-5 animate-pulse">
-      <div className="flex space-x-2">
-        {[...Array(8)].map((_, index) => (
-          <div key={index} className="w-24 h-16 bg-gray-200 rounded-md"></div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
 // TransferCard Component
+
 const TransferCard = ({ transfer }) => {
   const vehicle = transfer.Vehicles[0];
   const price = vehicle.TransferPrice.OfferedPriceRoundedOff;
@@ -69,46 +57,59 @@ const TransferCard = ({ transfer }) => {
 
   return (
     <motion.div
-      className="w-full h-[300px] bg-white rounded-xl shadow-md flex items-center p-8 mb-6 border border-gray-200"
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{ scale: 1.01, boxShadow: "0 6px 12px rgba(0, 0, 0, 0.1)" }}
+      className="w-full bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mb-6 transform transition-all duration-300 hover:shadow-xl"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      whileHover={{ scale: 1.02, boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)" }}
     >
-      <div className="flex w-full items-center space-x-8">
+      <div className="flex flex-col md:flex-row items-start md:items-center p-6 md:p-8 gap-6 bg-gradient-to-r from-gray-50 to-white">
+        {/* Left Section: Transfer Details */}
         <div className="flex-1">
-          <h3 className="text-xl font-semibold text-gray-800 mb-3">{transfer.TransferName}</h3>
-          <div className="space-y-2 text-gray-600 text-sm">
-            <p>
-              <span className="font-medium">From:</span> {transfer.PickUp.PickUpDetailName} at {transfer.PickUp.PickUpTime}, {transfer.PickUp.PickUpDate}
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">{transfer.TransferName}</h3>
+          <div className="space-y-3 text-gray-700 text-sm">
+            <p className="flex items-center">
+              <span className="font-semibold text-blue-600 mr-2">From:</span>
+              <span className="font-medium">{transfer.PickUp.PickUpDetailName}</span>
+              <span className="ml-2 text-gray-500">at {transfer.PickUp.PickUpTime}, {transfer.PickUp.PickUpDate}</span>
             </p>
-            <p>
-              <span className="font-medium">To:</span> {transfer.DropOff.DropOffDetailName}
+            <p className="flex items-center">
+              <span className="font-semibold text-blue-600 mr-2">To:</span>
+              <span className="font-medium">{transfer.DropOff.DropOffDetailName}</span>
             </p>
-            <p>
-              <span className="font-medium">Duration:</span> {transfer.ApproximateTransferTime} hours
+            <p className="flex items-center">
+              <span className="font-semibold text-blue-600 mr-2">Duration:</span>
+              <span>{transfer.ApproximateTransferTime} hours</span>
             </p>
-            <div className="flex space-x-4">
-              <p>
-                <span className="font-medium">Passengers:</span> {vehicle.VehicleMaximumPassengers}
+            <div className="flex gap-6">
+              <p className="flex items-center">
+                <span className="font-semibold text-blue-600 mr-2">Passengers:</span>
+                <span>{vehicle.VehicleMaximumPassengers}</span>
               </p>
-              <p>
-                <span className="font-medium">Luggage:</span> {vehicle.VehicleMaximumLuggage}
+              <p className="flex items-center">
+                <span className="font-semibold text-blue-600 mr-2">Luggage:</span>
+                <span>{vehicle.VehicleMaximumLuggage}</span>
               </p>
             </div>
+            {transfer.Condition && transfer.Condition.length > 0 && (
+              <p className="text-xs text-gray-500 italic mt-2">{transfer.Condition[0]}</p>
+            )}
           </div>
         </div>
-        <div className="flex flex-col items-end justify-between h-full">
-          <p className="text-2xl font-bold text-gray-900">{formattedPrice}</p>
+
+        {/* Right Section: Price and Booking */}
+        <div className="flex flex-col items-end justify-between w-full md:w-auto">
+          <p className="text-3xl font-extrabold text-blue-700 mb-4">{formattedPrice}</p>
           <motion.button
-            className="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg font-medium"
+            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
             Book Now
           </motion.button>
-          <p className="text-xs text-gray-500 mt-2">
-            {cancellationCharge}% charge after {cancellationDate}
+          <p className="text-xs text-red-500 font-medium mt-3">
+            {cancellationCharge}% cancellation charge after {cancellationDate}
           </p>
         </div>
       </div>
@@ -117,28 +118,11 @@ const TransferCard = ({ transfer }) => {
 };
 
 const Page = () => {
-  const dispatch = useDispatch();
   const searchParams = useSearchParams();
-  const { searchResults,loading , error } = useSelector((state) => state.cabSearch?.info || {});
+  const [searchResults, setSearchResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
-  // Slider settings
-  const settings = {
-    infinite: true,
-    slidesToShow: 8,
-    slidesToScroll: 1,
-    responsive: [
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 4,
-          slidesToScroll: 1,
-        },
-      },
-    ],
-  };
-
-  
 
   // Toggle popup
   const togglePopup = () => {
@@ -147,140 +131,63 @@ const Page = () => {
 
   // Fetch cab search data
   useEffect(() => {
-    const searchData = {
-      EndUserIp: searchParams.get("EndUserIp") || "",
-      TokenId: searchParams.get("TokenId") || "",
-      CountryCode: searchParams.get("CountryCode") || "",
-      CityId: searchParams.get("CityId") || "",
-      PickUpCode: searchParams.get("PickUpCode") || "",
-      PickUpPointCode: searchParams.get("PickUpPointCode") || "",
-      DropOffCode: searchParams.get("DropOffCode") || "",
-      DropOffPointCode: searchParams.get("DropOffPointCode") || "",
-      TransferDate: searchParams.get("TransferDate") || "",
-      TransferTime: searchParams.get("TransferTime") || "",
-      AdultCount: Number(searchParams.get("AdultCount")) || 1,
-      PreferredLanguage: searchParams.get("PreferredLanguage") || "",
-      AlternateLanguage: searchParams.get("AlternateLanguage") || "",
-      PreferredCurrency: searchParams.get("PreferredCurrency") || "INR",
-      IsBaseCurrencyRequired: searchParams.get("IsBaseCurrencyRequired") === "true",
+    const fetchCabSearch = async () => {
+      const searchData = {
+        EndUserIp: searchParams.get("EndUserIp") || "",
+        CountryCode: searchParams.get("CountryCode") || "",
+        CityId: searchParams.get("CityId") || "",
+        PickUpCode: searchParams.get("PickUpCode") || "",
+        PickUpPointCode: searchParams.get("PickUpPointCode") || "",
+        DropOffCode: searchParams.get("DropOffCode") || "",
+        DropOffPointCode: searchParams.get("DropOffPointCode") || "",
+        TransferDate: searchParams.get("TransferDate") || "",
+        TransferTime: searchParams.get("TransferTime") || "",
+        AdultCount: Number(searchParams.get("AdultCount")) || 1,
+        PreferredLanguage: searchParams.get("PreferredLanguage") || "",
+        AlternateLanguage: searchParams.get("AlternateLanguage") || "",
+        PreferredCurrency: searchParams.get("PreferredCurrency") || "INR",
+        IsBaseCurrencyRequired: searchParams.get("IsBaseCurrencyRequired") === "true",
+      };
+
+      // Validation
+      if (!searchData.EndUserIp) {
+        alert("End user IP is required.");
+        return;
+      }
+      if (searchData.CityId === searchData.DropOffPointCode) {
+        alert("Pickup and dropoff locations cannot be the same.");
+        return;
+      }
+      if (new Date(searchData.TransferDate) < new Date()) {
+        alert("Transfer date must be in the future.");
+        return;
+      }
+      if (!searchData.TransferTime.match(/^\d{4}$/)) {
+        alert("Transfer time must be in hhmm format (e.g., 1030).");
+        return;
+      }
+
+      // Save to localStorage
+      localStorage.setItem("cabSearch", JSON.stringify(searchData));
+
+      setLoading(true);
+      setError(null);
+
+      try {
+        const response = await axios.post(`${apilink}/transfer-search`, searchData);
+
+        console.log("Transfer Search Response:", response.data.TransferSearchResult.TransferSearchResults);
+
+        setSearchResults(response.data.TransferSearchResult.TransferSearchResults || []);
+      } catch (err) {
+        setError(err.response?.data?.message || "Failed to load transfer options. Please try again.");
+      } finally {
+        setLoading(false);
+      }
     };
 
-    // Validation
-    if (!searchData.EndUserIp) {
-      alert("End user IP is required.");
-      return;
-    }
-    if (!searchData.TokenId) {
-      alert("Token ID is required.");
-      return;
-    }
-    if (searchData.CityId === searchData.DropOffPointCode) {
-      alert("Pickup and dropoff locations cannot be the same.");
-      return;
-    }
-    if (new Date(searchData.TransferDate) < new Date()) {
-      alert("Transfer date must be in the future.");
-      return;
-    }
-    if (!searchData.TransferTime.match(/^\d{4}$/)) {
-      alert("Transfer time must be in hhmm format (e.g., 1030).");
-      return;
-    }
-
-    // Save to localStorage
-    localStorage.setItem("cabSearch", JSON.stringify(searchData));
-
-    // Dispatch API call
-    dispatch(searchCabApi(searchData));
-  }, [searchParams, dispatch]);
-
-  // Sample transferData (for fallback or testing)
-  const transferData = [
-    {
-      IsPANMandatory: true,
-      ResultIndex: 1,
-      TransferCode: "1551356",
-      TransferName: "Premium Car",
-      CityCode: "126632",
-      ApproximateTransferTime: 1.53,
-      CategoryId: 7,
-      PickUp: {
-        PickUpCode: 1,
-        PickUpName: "Airport",
-        PickUpDetailCode: "LGW",
-        PickUpDetailName: "London Gatwick Airport",
-        IsPickUpAllowed: true,
-        IsPickUpTimeRequired: true,
-        PickUpTime: "1030",
-        PickUpDate: "22/05/2025",
-      },
-      DropOff: {
-        DropOffCode: 1,
-        DropOffName: "Airport",
-        DropOffDetailCode: "LHR",
-        DropOffDetailName: "London Heathrow Airport",
-        DropOffAllowForCheckInTime: 0,
-        IsDropOffAllowed: true,
-      },
-      Vehicles: [
-        {
-          IsPANMandatory: false,
-          LastCancellationDate: "2025-05-16T23:59:59",
-          TransferCancellationPolicy: [
-            {
-              Charge: 100,
-              ChargeType: 2,
-              Currency: "INR",
-              FromDate: "2025-05-17T00:00:00",
-              ToDate: "2025-05-18T23:59:59",
-            },
-          ],
-          VehicleIndex: 1,
-          Vehicle: "Premium Car",
-          VehicleCode: "1",
-          VehicleMaximumPassengers: 3,
-          VehicleMaximumLuggage: 3,
-          Language: "NotSpecified",
-          LanguageCode: 0,
-          TransferPrice: {
-            CurrencyCode: "INR",
-            BasePrice: 10081.88,
-            Tax: 0,
-            Discount: 0,
-            PublishedPrice: 10081.88,
-            PublishedPriceRoundedOff: 10082,
-            OfferedPrice: 9073.69,
-            OfferedPriceRoundedOff: 9074,
-            AgentCommission: 1008.19,
-            AgentMarkUp: 0,
-            ServiceTax: 0,
-            TCS: 0,
-            TDS: 403.28,
-            PriceType: 0,
-            SubagentCommissionInPriceDetailResponse: 0,
-            SubagentCommissionTypeInPriceDetailResponse: 0,
-            DistributorCommissionInPriceDetailResponse: 0,
-            DistributorCommissionTypeInPriceDetailResponse: 0,
-            ServiceCharge: 0,
-            TotalGSTAmount: 0,
-            GST: {
-              CGSTAmount: 0,
-              CGSTRate: 0,
-              CessAmount: 0,
-              CessRate: 0,
-              IGSTAmount: 0,
-              IGSTRate: 18,
-              SGSTAmount: 0,
-              SGSTRate: 0,
-              TaxableAmount: 0,
-            },
-          },
-        },
-      ],
-      Condition: ["Our representative monitors your landing hour and waits 60 minutes since the time of actual landing"],
-    },
-    // Additional transferData objects omitted for brevity
-  ];
+    fetchCabSearch();
+  }, [searchParams]); 
 
   return (
     <>
@@ -291,11 +198,9 @@ const Page = () => {
         </div>
         <div className="myshadow w-full md:w-3/4 bg-white px-5 py-3">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl font-bold text-center text-gray-900 mb-10">
+            {/* <h1 className="text-3xl font-bold text-center text-gray-900 mb-10">
               Airport Transfer Options: Gatwick to Heathrow
-            </h1>
-
-           
+            </h1> */}
 
             {/* Transfer Cards */}
             {loading ? (
@@ -305,7 +210,7 @@ const Page = () => {
                 ))}
               </div>
             ) : error ? (
-              <p className="text-red-600 text-center">Error: Failed to load transfer options. Please try again.</p>
+              <p className="text-red-600 text-center">Error: {error}</p>
             ) : searchResults?.length > 0 ? (
               <div className="flex flex-col space-y-6">
                 {searchResults.map((transfer) => (
@@ -313,11 +218,7 @@ const Page = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col space-y-6">
-                {transferData.map((transfer) => (
-                  <TransferCard key={transfer.TransferCode} transfer={transfer} />
-                ))}
-              </div>
+              <p className="text-gray-600 text-center">No transfer options available for the selected criteria.</p>
             )}
           </div>
         </div>

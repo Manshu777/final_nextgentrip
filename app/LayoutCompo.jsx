@@ -10,7 +10,7 @@ import Maintenance from "./Component/AllComponent/Maintenance"
 import { usePathname } from 'next/navigation';
 
 
-
+import Chatbot from './Component/AllComponent/NewchatBot';
 
 const LayoutCompo =({children}) => {
    const path=usePathname()
@@ -26,7 +26,7 @@ const LayoutCompo =({children}) => {
 </div> </>
 {children}
 
-
+  <Chatbot />
  <Footer />
   
     

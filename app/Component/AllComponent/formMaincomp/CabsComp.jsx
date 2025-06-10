@@ -308,17 +308,17 @@ const handleSearch = async () => {
                 <div className="absolute top-[80%] min-w-full min-h-[5rem] left-1 md:-left-10 z-10">
                   <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-4">
                     <div className="flex gap-3 justify-between">
-                      <p className="text-nowrap">Adult Count</p>
+                      <p className="text-nowrap text-gray-600 ">Adult Count</p>
                       <div className="flex items-center gap-3">
                         <button
-                          className="px-2 border"
+                          className="px-2 text-gray-600 border"
                           onClick={() => adultCount > 1 && setAdultCount(adultCount - 1)}
                         >
                           -
                         </button>
-                        <p className="px-2 border">{adultCount}</p>
+                        <p className="px-2 text-gray-600  border">{adultCount}</p>
                         <button
-                          className="px-2 border"
+                          className="px-2 text-gray-600  border"
                           onClick={() => setAdultCount(adultCount + 1)}
                         >
                           +
@@ -400,7 +400,7 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
           filteredDestinations.map((item) => (
             <p
               key={item.DestinationId}
-              className="border-b px-3 py-2 cursor-pointer hover:bg-gray-100 transition-all"
+              className="border-b px-3 py-2 cursor-pointer text-gray-700 transition-all"
               onClick={() => {
                 handelcity({
                   CityId: item.DestinationId.toString(), // Convert to string as per validation

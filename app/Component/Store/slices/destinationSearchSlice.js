@@ -22,6 +22,7 @@ export const getDestinationSearchData = createAsyncThunk(
    
       return data; // Return only the Destinations array
     } catch (error) {
+      console.error('Error fetching destination search data:', error);
       return rejectWithValue(error.message);
     }
   }
