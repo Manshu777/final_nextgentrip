@@ -65,7 +65,11 @@ const HotelSlugComp = ({ slugs }) => {
       if (preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]) {
         // Save cancellation policies to localStorage
         const cancellationPolicies = preBookinghotelState.info.HotelResult[0].Rooms[0].CancelPolicies;
+        const validationpolices = preBookinghotelState.info.ValidationInfo;
+
         localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
+        localStorage.setItem("validationpolices", JSON.stringify(validationpolices));
+
       }
       setIsOpen(true);
     } finally {
