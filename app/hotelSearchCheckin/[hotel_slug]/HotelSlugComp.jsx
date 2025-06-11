@@ -284,6 +284,8 @@ const HotelSlugComp = ({ slugs }) => {
                         </span>
                       </h1>
                     </div>
+
+
                     <div className="lg:flex gap-5 mb-5">
                       <div>
                         <div className="relative w-full lg:w-[450px] h-[200px] lg:h-[340px] mb-4">
@@ -361,7 +363,11 @@ const HotelSlugComp = ({ slugs }) => {
                           </button>
                         </li>
                       </ul>
+
+
                     </div>
+
+
                     {handelpricesection === "services" && (
                       <div className='absolute top-0 left-0 h-full w-full bg-white'>
                         <ImCancelCircle className='absolute top-0 right-10 text-3xl' onClick={() => sethandelpriceSection("")} />
@@ -370,25 +376,42 @@ const HotelSlugComp = ({ slugs }) => {
                             <p key={service_items} className='flex flex-col gap-2 my-2 items-center'>
                               {service_items.toLowerCase().includes("wifi") ? <FaWifi className='text-xl' /> :
                                 service_items.toLowerCase().includes("wheelchair") ? <RiWheelchairFill className='text-xl' /> :
-                                service_items.toLowerCase().includes("breakfast") ? <MdOutlineBreakfastDining className='text-xl' /> :
-                                service_items.toLowerCase().includes("bathroom") ? <FaBath className='text-xl' /> :
-                                service_items.toLowerCase().includes("parking") ? <FaCarSide className='text-xl' /> :
-                                service_items.toLowerCase().includes("elevator") ? <GiElevator className='text-xl' /> :
-                                service_items.toLowerCase().includes("laundry") ? <MdOutlineLocalLaundryService className='text-xl' /> :
-                                service_items.toLowerCase().includes("pools") ? <MdPool className='text-xl' /> :
-                                service_items.toLowerCase().includes("fitness") ? <MdFitnessCenter className='text-xl' /> :
-                                service_items.toLowerCase().includes("coffee") ? <GiCoffeeCup className='text-xl' /> :
-                                service_items.toLowerCase().includes("health") ? <MdOutlineHealthAndSafety className='text-xl' /> :
-                                <MdRoomService className='text-xl' />}
+                                  service_items.toLowerCase().includes("breakfast") ? <MdOutlineBreakfastDining className='text-xl' /> :
+                                    service_items.toLowerCase().includes("bathroom") ? <FaBath className='text-xl' /> :
+                                      service_items.toLowerCase().includes("parking") ? <FaCarSide className='text-xl' /> :
+                                        service_items.toLowerCase().includes("elevator") ? <GiElevator className='text-xl' /> :
+                                          service_items.toLowerCase().includes("laundry") ? <MdOutlineLocalLaundryService className='text-xl' /> :
+                                            service_items.toLowerCase().includes("pools") ? <MdPool className='text-xl' /> :
+                                              service_items.toLowerCase().includes("fitness") ? <MdFitnessCenter className='text-xl' /> :
+                                                service_items.toLowerCase().includes("coffee") ? <GiCoffeeCup className='text-xl' /> :
+                                                  service_items.toLowerCase().includes("health") ? <MdOutlineHealthAndSafety className='text-xl' /> :
+                                                    <MdRoomService className='text-xl' />}
                               {service_items}
                             </p>
                           ))}
                         </div>
                       </div>
                     )}
+
+                    {hotelinfo.info.hoteldetail2[0].Rooms[0].RoomPromotion && (
+                      <p className="text-sm text-green-600 font-semibold">
+                        Promotion: {hotelinfo.info.hoteldetail2[0].Rooms[0].RoomPromotion.join(", ").replace(/\|/g, "")}
+                      </p>
+                    )}
                   </div>
+
+
+
+
+
+
+
+
                   <div className="lg:w-[28%] hidden lg:block lg:sticky lg:top-24 h-full">
+
                     <div className="mb-5 border-2 rounded-2xl p-3">
+
+
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}
@@ -495,10 +518,7 @@ const HotelSlugComp = ({ slugs }) => {
                     <div className="mb-5 border-2 rounded-2xl p-3">
                       <h3 className="text-lg font-bold">Classic</h3>
                       <p className="mt-2 text-gray-700">Fits 2 Adults</p>
-                      <ul className="mt-4 space-y-2">
-                        <li className="flex gap-3 items-center"><MdDinnerDining /> Complimentary Breakfast</li>
-                        <li className="flex gap-3 items-center"><FaCheck className="text-green-600" /> Free Cancellation till check-in</li>
-                      </ul>
+
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}

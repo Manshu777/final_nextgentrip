@@ -8,8 +8,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { apilink } from "../../Component/common";
 
-
-
 export default function Book() {
   const router = useRouter();
   const [rooms, setRooms] = useState([]);
@@ -33,9 +31,14 @@ export default function Book() {
       time: "0001-01-01T00:00:00:00",
     },
   });
+  const [fareDetails, setFareDetails] = useState({
+    totalFare: 0,
+    taxFare: 0,
+    netAmount: 0,
+  });
 
   // Fetch IP address and hotel data
- 
+    
   useEffect(() => {
     const fetchIpAddress = async () => {
       try {
@@ -67,15 +70,18 @@ export default function Book() {
           CheckInDate: searchData?.CheckInDate || new Date().toISOString().split("T")[0],
           CheckOutDate: searchData?.CheckOutDate || new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
           BookingCode: hotelCheckData.Rooms[0].BookingCode || "BOOK12345",
+          className: "Price",
           Price: {
-            TotalDisplayFare: hotelCheckData.Rooms[0].TotalFare || 0,
+            TotalDisplayFare: parseFloat(hotelCheckData?.Rooms[0]?.TotalFare || 0),
           },
-          IsPackageFare: hotelCheckData.IsPackageFare || false,
-          IsPackageDetailsMandatory: hotelCheckData.IsPackageDetailsMandatory || false,
+          IsPackageFare: hotelCheckData?.IsPackageFare || false,
+          IsPackageDetails: {
+            IsMandatory: hotelCheckData.IsPackageDetailsMandatory || false,
+          },
           HotelRoomsDetails: hotelCheckData.Rooms?.map((room, index) => {
             const roomData = Array.isArray(hotelItems) ? hotelItems[index] : hotelItems;
-            const adultCount = roomData?.adultcount || 1;
-            const childCount = roomData?.childcount || 0;
+            const adultCount = parseInt(roomData?.adultcount, 10) || 1;
+            const childCount = parseInt(roomData?.childcount, 10) || 0;
   
             const guestDetails = [
               ...Array(adultCount).fill().map((_, guestIndex) => ({
@@ -113,7 +119,7 @@ export default function Book() {
               RoomIndex: index + 1,
               RoomTypeName: room.Name?.[0] || "Standard Room",
               Price: {
-                PublishedPrice: room.PriceBreakUp?.[0]?.RoomRate || 0,
+                PublishedPrice: parseFloat(room.PriceBreakUp?.[0]?.RoomRate || 0),
               },
               GuestDetails: guestDetails,
             };
@@ -126,6 +132,32 @@ export default function Book() {
           isPackageFare: mappedHotelData.IsPackageFare,
           isPackageDetailsMandatory: mappedHotelData.IsPackageDetailsMandatory,
         }));
+  
+        // Calculate fare details
+        const taxRate = 0.18; // 18% tax rate
+        const roomTotal = mappedHotelData.HotelRoomsDetails.reduce(
+          (sum, room) => sum + (parseFloat(room.Price.PublishedPrice) || 0),
+          0
+        );
+        const taxFare = hotelCheckData?.Rooms[0]?.TotalTax; 
+        const totalFare = hotelCheckData?.Rooms[0]?.TotalFare; 
+        const netAmount = hotelCheckData?.Rooms[0]?.NetAmount;
+  
+        // Debug log for NetAmount calculation
+        console.log("Fare Calculation:", {
+          roomTotal: roomTotal,
+          taxRate: taxRate,
+          taxFare: taxFare,
+          totalFare: totalFare,
+          netAmount: netAmount,
+          matchesTotalDisplayFare: netAmount === parseFloat(hotelCheckData.Rooms[0].TotalFare || 0),
+        });
+  
+        setFareDetails({
+          totalFare: totalFare,
+          taxFare: taxFare,
+          netAmount: netAmount,
+        });
       } else {
         throw new Error("No hotel data found in localStorage");
       }
@@ -141,6 +173,7 @@ export default function Book() {
     }
   }, [router]);
 
+  
   // Initialize rooms based on hotel data
   useEffect(() => {
     if (hotelData?.HotelRoomsDetails) {
@@ -171,20 +204,18 @@ export default function Book() {
   const handleChange = (e, roomIndex, guestIndex) => {
     const { name, value, type, checked } = e.target;
     let sanitizedValue = value;
-  
+
     if (name === "FirstName" || name === "LastName" || name === "MiddleName") {
-      // Apply character and space restrictions
       if (!validationPolicies?.SpecialCharAllowed) {
         sanitizedValue = sanitizedValue.replace(/[^a-zA-Z\s]/g, "");
       }
       if (!validationPolicies?.SpaceAllowed) {
         sanitizedValue = sanitizedValue.replace(/\s/g, "");
       }
-      // Apply max and min length
       if (validationPolicies?.CharLimit) {
         sanitizedValue = sanitizedValue.slice(0, validationPolicies.PaxNameMaxLength);
         if (sanitizedValue.length < validationPolicies.PaxNameMinLength) {
-          sanitizedValue = value; // Keep original for validation
+          sanitizedValue = value;
         }
       }
     } else if (name === "PAN") {
@@ -192,7 +223,7 @@ export default function Book() {
     } else if (name === "arrivalTransportType") {
       sanitizedValue = parseInt(value, 10);
     }
-  
+
     if (roomIndex !== undefined && guestIndex !== undefined) {
       const updatedRooms = [...rooms];
       updatedRooms[roomIndex].Guests[guestIndex][name] = type === "checkbox" ? checked : sanitizedValue;
@@ -212,7 +243,7 @@ export default function Book() {
         [name]: type === "checkbox" ? checked : sanitizedValue,
       }));
     }
-  
+
     if (errors[`${name}_${roomIndex}_${guestIndex}`] || errors[name]) {
       setErrors((prevErrors) => {
         const newErrors = { ...prevErrors };
@@ -231,10 +262,9 @@ export default function Book() {
     });
   };
 
-  
   const validateAllForms = () => {
     const newErrors = {};
-  
+
     // Validate top-level fields
     if (!bookingDetails.endUserIp || !/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(bookingDetails.endUserIp)) {
       newErrors.endUserIp = "Valid IP address is required (e.g., 192.168.1.1)";
@@ -245,7 +275,7 @@ export default function Book() {
     if (bookingDetails.isVoucherBooking === null || bookingDetails.isVoucherBooking === undefined) {
       newErrors.isVoucherBooking = "Voucher booking selection is required";
     }
-  
+
     // Validate arrival transport if mandatory
     if (validationPolicies?.PackageDetailsMandatory) {
       if (![0, 1].includes(bookingDetails.arrivalTransport.arrivalTransportType)) {
@@ -255,11 +285,11 @@ export default function Book() {
         newErrors.arrivalTransportTime = "Valid arrival time is required (e.g., 0001-01-01T00:00:00:00)";
       }
     }
-  
+
     // Validate guest details
     let totalPanCount = 0;
     const nameSet = validationPolicies?.SamePaxNameAllowed ? null : new Set();
-  
+
     rooms.forEach((room, roomIndex) => {
       let hasLeadPassenger = false;
       room.Guests.forEach((guest, guestIndex) => {
@@ -267,8 +297,8 @@ export default function Book() {
         if (!["Mr", "Mrs", "Miss", "Ms"].includes(guest.Title)) {
           newErrors[`Title_${roomIndex}_${guestIndex}`] = "Title must be Mr, Mrs, Miss, or Ms";
         }
-  
-        // Validate FirstName and LastName with dynamic rules
+
+        // Validate FirstName and LastName
         if (!guest.FirstName || guest.FirstName.length < (validationPolicies?.PaxNameMinLength || 2)) {
           newErrors[`FirstName_${roomIndex}_${guestIndex}`] = `First Name must be at least ${validationPolicies?.PaxNameMinLength || 2} characters`;
         } else if (validationPolicies?.CharLimit && guest.FirstName.length > (validationPolicies?.PaxNameMaxLength || 50)) {
@@ -279,8 +309,8 @@ export default function Book() {
         } else if (validationPolicies?.CharLimit && guest.LastName.length > (validationPolicies?.PaxNameMaxLength || 50)) {
           newErrors[`LastName_${roomIndex}_${guestIndex}`] = `Last Name must not exceed ${validationPolicies?.PaxNameMaxLength || 50} characters`;
         }
-  
-        // Validate unique names if SamePaxNameAllowed is false
+
+        // Validate unique names
         if (!validationPolicies?.SamePaxNameAllowed && guest.FirstName && guest.LastName) {
           const fullName = `${guest.FirstName} ${guest.LastName}`;
           if (nameSet.has(fullName)) {
@@ -289,8 +319,8 @@ export default function Book() {
             nameSet.add(fullName);
           }
         }
-  
-        // Validate PAN if mandatory
+
+        // Validate PAN
         if (validationPolicies?.PanMandatory) {
           if (!guest.PAN || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(guest.PAN)) {
             newErrors[`PAN_${roomIndex}_${guestIndex}`] = "PAN must be in format AAAAA1234A";
@@ -300,8 +330,8 @@ export default function Book() {
         } else if (guest.PAN && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(guest.PAN)) {
           newErrors[`PAN_${roomIndex}_${guestIndex}`] = "PAN must be in format AAAAA1234A";
         }
-  
-        // Validate Passport if mandatory
+
+        // Validate Passport
         if (validationPolicies?.PassportMandatory) {
           if (!guest.PassportNo) {
             newErrors[`PassportNo_${roomIndex}_${guestIndex}`] = "Passport Number is required";
@@ -317,23 +347,34 @@ export default function Book() {
         } else if (guest.PassportExpDate && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(guest.PassportExpDate)) {
           newErrors[`PassportExpDate_${roomIndex}_${guestIndex}`] = "Passport Expiry Date must be in format YYYY-MM-DDTHH:MM:SS:00";
         }
-  
+
         // Validate PaxType
         if (![1, 2].includes(guest.PaxType)) {
           newErrors[`PaxType_${roomIndex}_${guestIndex}`] = "Guest Type must be Adult or Child";
         }
-  
-        // Validate Lead Passenger
-        if (guest.LeadPassenger) {
-          hasLeadPassenger = true;
-          if (!guest.Phoneno || !/^\+?\d{10,15}$/.test(guest.Phoneno)) {
-            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Valid phone number is required for lead guest";
+
+        // Validate Phone Number for all adults
+       { console.log('guest.Phoneno', !guest.Phoneno || !/^\+?\d{9,15}$/.test(guest.Phoneno))}
+       if (guest.PaxType === 1) {
+        if (!guest.Phoneno) {
+          newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number is required for adult guests";
+        } else {
+          const digits = guest.Phoneno.replace(/^\+?/, '').replace(/[^0-9]/g, '');
+       { console.log('guest.Phoneno',digits.length)}
+
+          if (digits.length < 10 || digits.length > 15) {
+            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number must be 10 to 15 digits long";
           }
+        }
+      }
+
+        // Validate Lead Passenger fields
+        if (guest.LeadPassenger) {
           if (!guest.Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest.Email)) {
             newErrors[`Email_${roomIndex}_${guestIndex}`] = "Valid email is required for lead guest";
           }
         }
-  
+
         // Validate Child-specific fields
         if (guest.PaxType === 2) {
           if (!guest.Age || guest.Age > 12 || guest.Age < 0) {
@@ -343,18 +384,22 @@ export default function Book() {
             newErrors[`Email_${roomIndex}_${guestIndex}`] = "Valid parent email is required for child";
           }
         }
+
+        if (guest.LeadPassenger) {
+          hasLeadPassenger = true;
+        }
       });
-  
+
       if (!hasLeadPassenger) {
         newErrors[`LeadPassenger_${roomIndex}`] = `Room ${roomIndex + 1} must have one adult as lead passenger`;
       }
     });
-  
+
     // Validate PanCountRequired
     if (validationPolicies?.PanCountRequired > 0 && totalPanCount < validationPolicies.PanCountRequired) {
       newErrors.panCount = `At least ${validationPolicies.PanCountRequired} PAN number(s) are required across all guests`;
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -362,9 +407,9 @@ export default function Book() {
   const handleBookHotel = async (e) => {
     e.preventDefault();
     const isValid = validateAllForms();
-
+  
     const bookingCode = hotelData?.BookingCode;
-
+  
     if (isValid) {
       setIsLoading(true);
       const payload = {
@@ -374,25 +419,40 @@ export default function Book() {
         IsVoucherBooking: bookingDetails.isVoucherBooking,
         IsPackageFare: bookingDetails.isPackageFare,
         IsPackageDetailsMandatory: bookingDetails.isPackageDetailsMandatory,
-        NetAmount: hotelData?.Price?.TotalDisplayFare || 0, // Single value as per example
+        NetAmount: fareDetails.netAmount,
         RequestedBookingMode: 5,
         HotelRoomsDetails: rooms.map((room) => ({
           RoomIndex: room.RoomIndex,
-          HotelPassenger: room.Guests.map((guest) => ({
-            Title: guest.Title,
-            FirstName: guest.FirstName,
-            MiddleName: guest.MiddleName || "",
-            LastName: guest.LastName,
-            Phoneno: guest.Phoneno || null,
-            Email: guest.Email || null,
-            PaxType: parseInt(guest.PaxType, 10),
-            LeadPassenger: guest.LeadPassenger,
-            Age: guest.PaxType === 2 ? parseInt(guest.Age, 10) : guest.Age || null,
-            PassportNo: guest.PassportNo || null,
-            PassportIssueDate: guest.PassportIssueDate || null,
-            PassportExpDate: guest.PassportExpDate || null,
-            PAN: guest.PAN || null,
-          })),
+          HotelPassenger: room.Guests.map((guest) => {
+            const passenger = {
+              Title: guest.Title,
+              FirstName: guest.FirstName,
+              MiddleName: guest.MiddleName || "",
+              LastName: guest.LastName,
+              Phoneno: guest.Phoneno ? parseInt(guest.Phoneno.replace(/^\+?/, ''), 10) : null, // From previous Phoneno fix
+              Email: guest.Email || null,
+              PaxType: parseInt(guest.PaxType, 10),
+              LeadPassenger: guest.LeadPassenger,
+              Age: guest.Age ? parseInt(guest.Age, 10) : null,
+            };
+  
+            if (validationPolicies?.PanMandatory || (guest.PAN && guest.PAN !== "")) {
+              passenger.PAN = guest.PAN || null;
+            }
+  
+            if (
+              validationPolicies?.PassportMandatory ||
+              (guest.PassportNo && guest.PassportNo !== "") ||
+              (guest.PassportIssueDate && guest.PassportIssueDate !== "0001-01-01T00:00:00:00") ||
+              (guest.PassportExpDate && guest.PassportExpDate !== "0001-01-01T00:00:00:00")
+            ) {
+              passenger.PassportNo = guest.PassportNo || null;
+              passenger.PassportIssueDate = guest.PassportIssueDate || null;
+              passenger.PassportExpDate = guest.PassportExpDate || null;
+            }
+  
+            return passenger;
+          }),
         })),
         ...(bookingDetails.isPackageDetailsMandatory && {
           ArrivalTransport: {
@@ -402,7 +462,9 @@ export default function Book() {
           },
         }),
       };
-
+  
+      console.log('payload', payload);
+  
       try {
         const response = await axios.post(`${apilink}/hotel/book`, payload);
         setBookingResponse(response.data);
@@ -466,7 +528,7 @@ export default function Book() {
             </p>
             <p>
               <strong>Total Amount:</strong> INR{" "}
-              {hotelData?.Price?.TotalDisplayFare?.toLocaleString() || "N/A"}
+              {fareDetails.totalFare.toLocaleString() || "N/A"}
             </p>
           </div>
           <div className="mt-6 text-center">
@@ -492,7 +554,7 @@ export default function Book() {
   };
 
   return (
-    <div className="md:grid px-[10%] md:grid-cols-6 gap-5 mt-3 ">
+    <div className="md:grid px-[10%] md:grid-cols-6 gap-5 mt-3">
       <div className="col-span-4 space-y-6">
         {/* Booking Details Section */}
         <div className="border rounded-lg shadow-lg">
@@ -695,433 +757,430 @@ export default function Book() {
           </div>
 
           {rooms.map((room, roomIndex) => (
-  <div key={room.RoomIndex} className="m-4 rounded-lg shadow-lg border-2">
-    <div className="flex items-center justify-between p-4">
-      <h3 className="text-lg font-semibold">
-        Room {roomIndex + 1} ({room.RoomTypeName})
-      </h3>
-      <button
-        onClick={() => toggleFormVisibility(roomIndex)}
-        aria-label={`Toggle form for Room ${roomIndex + 1}`}
-      >
-        <RiArrowDropDownLine
-          className={`text-2xl transform ${showForms[roomIndex] ? "rotate-180" : ""}`}
-        />
-      </button>
-    </div>
-    {showForms[roomIndex] && (
-      <div className="p-4 space-y-4">
-        {room.Guests.map((guest, guestIndex) => (
-          <div key={`guest_${roomIndex}_${guestIndex}`} className="border-t pt-4">
-            <h4 className="text-md font-semibold">
-              Guest {guestIndex + 1} {guest.LeadPassenger ? "(Lead)" : ""}
-            </h4>
-            <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
-              <div>
-                <label className="block text-[10px] font-bold" htmlFor={`title_${roomIndex}_${guestIndex}`}>
-                  Title *
-                </label>
-                <select
-                  id={`title_${roomIndex}_${guestIndex}`}
-                  name="Title"
-                  value={guest.Title}
-                  onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                  className="w-full border p-2 rounded-md"
-                  required
-                  aria-label="Guest Title"
-                  aria-describedby={errors[`Title_${roomIndex}_${guestIndex}`] ? `title-error_${roomIndex}_${guestIndex}` : undefined}
+            <div key={room.RoomIndex} className="m-4 rounded-lg shadow-lg border-2">
+              <div className="flex items-center justify-between p-4">
+                <h3 className="text-lg font-semibold">
+                  Room {roomIndex + 1} ({room.RoomTypeName})
+                </h3>
+                <button
+                  onClick={() => toggleFormVisibility(roomIndex)}
+                  aria-label={`Toggle form for Room ${roomIndex + 1}`}
                 >
-                  <option value="">Select</option>
-                  <option value="Mr">Mr</option>
-                  <option value="Ms">Ms</option>
-                  <option value="Mrs">Mrs</option>
-                  <option value="Miss">Miss</option>
-                </select>
-                {errors[`Title_${roomIndex}_${guestIndex}`] && (
-                  <p id={`title-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                    {errors[`Title_${roomIndex}_${guestIndex}`]}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold" htmlFor={`firstName_${roomIndex}_${guestIndex}`}>
-                  First Name *
-                </label>
-                <input
-                  type="text"
-                  id={`firstName_${roomIndex}_${guestIndex}`}
-                  name="FirstName"
-                  value={guest.FirstName}
-                  onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                  className="w-full border p-2 rounded-md"
-                  maxLength={validationPolicies?.PaxNameMaxLength || 50}
-                  required
-                  aria-label="Guest First Name"
-                  aria-describedby={errors[`FirstName_${roomIndex}_${guestIndex}`] ? `firstName-error_${roomIndex}_${guestIndex}` : undefined}
-                />
-                {errors[`FirstName_${roomIndex}_${guestIndex}`] && (
-                  <p id={`firstName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                    {errors[`FirstName_${roomIndex}_${guestIndex}`]}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold" htmlFor={`middleName_${roomIndex}_${guestIndex}`}>
-                  Middle Name
-                </label>
-                <input
-                  type="text"
-                  id={`middleName_${roomIndex}_${guestIndex}`}
-                  name="MiddleName"
-                  value={guest.MiddleName}
-                  onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                  className="w-full border p-2 rounded-md"
-                  maxLength={validationPolicies?.PaxNameMaxLength || 50}
-                  aria-label="Guest Middle Name"
-                />
-              </div>
-              <div>
-                <label className="block text-[10px] font-bold" htmlFor={`lastName_${roomIndex}_${guestIndex}`}>
-                  Last Name *
-                </label>
-                <input
-                  type="text"
-                  id={`lastName_${roomIndex}_${guestIndex}`}
-                  name="LastName"
-                  value={guest.LastName}
-                  onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                  className="w-full border p-2 rounded-md"
-                  maxLength={validationPolicies?.PaxNameMaxLength || 50}
-                  required
-                  aria-label="Guest Last Name"
-                  aria-describedby={errors[`LastName_${roomIndex}_${guestIndex}`] ? `lastName-error_${roomIndex}_${guestIndex}` : undefined}
-                />
-                {errors[`LastName_${roomIndex}_${guestIndex}`] && (
-                  <p id={`lastName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                    {errors[`LastName_${roomIndex}_${guestIndex}`]}
-                  </p>
-                )}
-              </div>
-              {(guest.LeadPassenger || guest.PaxType === 2) && (
-                <div>
-                  <label className="block text-[10px] font-bold" htmlFor={`email_${roomIndex}_${guestIndex}`}>
-                    {guest.PaxType === 2 ? "Parent Email *" : "Email *"}
-                  </label>
-                  <input
-                    type="email"
-                    id={`email_${roomIndex}_${guestIndex}`}
-                    name="Email"
-                    value={guest.Email}
-                    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                    className="w-full border p-2 rounded-md"
-                    required
-                    aria-label={guest.PaxType === 2 ? "Parent Email" : "Guest Email"}
-                    aria-describedby={errors[`Email_${roomIndex}_${guestIndex}`] ? `email-error_${roomIndex}_${guestIndex}` : undefined}
+                  <RiArrowDropDownLine
+                    className={`text-2xl transform ${showForms[roomIndex] ? "rotate-180" : ""}`}
                   />
-                  {errors[`Email_${roomIndex}_${guestIndex}`] && (
-                    <p id={`email-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                      {errors[`Email_${roomIndex}_${guestIndex}`]}
-                    </p>
-                  )}
+                </button>
+              </div>
+              {showForms[roomIndex] && (
+                <div className="p-4 space-y-4">
+                  {room.Guests.map((guest, guestIndex) => (
+                    <div key={`guest_${roomIndex}_${guestIndex}`} className="border-t pt-4">
+                      <h4 className="text-md font-semibold">
+                        Guest {guestIndex + 1} {guest.LeadPassenger ? "(Lead)" : ""}
+                      </h4>
+                      <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
+                        <div>
+                          <label className="block text-[10px] font-bold" htmlFor={`title_${roomIndex}_${guestIndex}`}>
+                            Title *
+                          </label>
+                          <select
+                            id={`title_${roomIndex}_${guestIndex}`}
+                            name="Title"
+                            value={guest.Title}
+                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            className="w-full border p-2 rounded-md"
+                            required
+                            aria-label="Guest Title"
+                            aria-describedby={errors[`Title_${roomIndex}_${guestIndex}`] ? `title-error_${roomIndex}_${guestIndex}` : undefined}
+                          >
+                            <option value="">Select</option>
+                            <option value="Mr">Mr</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                          </select>
+                          {errors[`Title_${roomIndex}_${guestIndex}`] && (
+                            <p id={`title-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              {errors[`Title_${roomIndex}_${guestIndex}`]}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold" htmlFor={`firstName_${roomIndex}_${guestIndex}`}>
+                            First Name *
+                          </label>
+                          <input
+                            type="text"
+                            id={`firstName_${roomIndex}_${guestIndex}`}
+                            name="FirstName"
+                            value={guest.FirstName}
+                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            className="w-full border p-2 rounded-md"
+                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            required
+                            aria-label="Guest First Name"
+                            aria-describedby={errors[`FirstName_${roomIndex}_${guestIndex}`] ? `firstName-error_${roomIndex}_${guestIndex}` : undefined}
+                          />
+                          {errors[`FirstName_${roomIndex}_${guestIndex}`] && (
+                            <p id={`firstName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              {errors[`FirstName_${roomIndex}_${guestIndex}`]}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold" htmlFor={`middleName_${roomIndex}_${guestIndex}`}>
+                            Middle Name
+                          </label>
+                          <input
+                            type="text"
+                            id={`middleName_${roomIndex}_${guestIndex}`}
+                            name="MiddleName"
+                            value={guest.MiddleName}
+                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            className="w-full border p-2 rounded-md"
+                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            aria-label="Guest Middle Name"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold" htmlFor={`lastName_${roomIndex}_${guestIndex}`}>
+                            Last Name *
+                          </label>
+                          <input
+                            type="text"
+                            id={`lastName_${roomIndex}_${guestIndex}`}
+                            name="LastName"
+                            value={guest.LastName}
+                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            className="w-full border p-2 rounded-md"
+                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            required
+                            aria-label="Guest Last Name"
+                            aria-describedby={errors[`LastName_${roomIndex}_${guestIndex}`] ? `lastName-error_${roomIndex}_${guestIndex}` : undefined}
+                          />
+                          {errors[`LastName_${roomIndex}_${guestIndex}`] && (
+                            <p id={`lastName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              {errors[`LastName_${roomIndex}_${guestIndex}`]}
+                            </p>
+                          )}
+                        </div>
+                        {(guest.LeadPassenger || guest.PaxType === 2) && (
+                          <div>
+                            <label className="block text-[10px] font-bold" htmlFor={`email_${roomIndex}_${guestIndex}`}>
+                              {guest.PaxType === 2 ? "Parent Email *" : "Email *"}
+                            </label>
+                            <input
+                              type="email"
+                              id={`email_${roomIndex}_${guestIndex}`}
+                              name="Email"
+                              value={guest.Email}
+                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              className="w-full border p-2 rounded-md"
+                              required
+                              aria-label={guest.PaxType === 2 ? "Parent Email" : "Guest Email"}
+                              aria-describedby={errors[`Email_${roomIndex}_${guestIndex}`] ? `email-error_${roomIndex}_${guestIndex}` : undefined}
+                            />
+                            {errors[`Email_${roomIndex}_${guestIndex}`] && (
+                              <p id={`email-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                {errors[`Email_${roomIndex}_${guestIndex}`]}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {(guest.LeadPassenger || guest.PaxType === 1) && (
+                          <div>
+                            <label className="block text-[10px] font-bold" htmlFor={`phoneno_${roomIndex}_${guestIndex}`}>
+                              Phone Number *
+                            </label>
+                            <input
+                              type="text"
+                              id={`phoneno_${roomIndex}_${guestIndex}`}
+                              name="Phoneno"
+                              value={guest.Phoneno}
+                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              className="w-full border p-2 rounded-md"
+                              required
+                              aria-label="Guest Phone Number"
+                              aria-describedby={errors[`Phoneno_${roomIndex}_${guestIndex}`] ? `phoneno-error_${roomIndex}_${guestIndex}` : undefined}
+                            />
+                            {errors[`Phoneno_${roomIndex}_${guestIndex}`] && (
+                              <p id={`phoneno-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                {errors[`Phoneno_${roomIndex}_${guestIndex}`]}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {validationPolicies?.PassportMandatory && (
+                          <>
+                            <div>
+                              <label className="block text-[10px] font-bold" htmlFor={`passportNo_${roomIndex}_${guestIndex}`}>
+                                Passport Number *
+                              </label>
+                              <input
+                                type="text"
+                                id={`passportNo_${roomIndex}_${guestIndex}`}
+                                name="PassportNo"
+                                value={guest.PassportNo}
+                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                className="w-full border p-2 rounded-md"
+                                maxLength={20}
+                                required
+                                aria-label="Passport Number"
+                                aria-describedby={errors[`PassportNo_${roomIndex}_${guestIndex}`] ? `passportNo-error_${roomIndex}_${guestIndex}` : undefined}
+                              />
+                              {errors[`PassportNo_${roomIndex}_${guestIndex}`] && (
+                                <p id={`passportNo-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                  {errors[`PassportNo_${roomIndex}_${guestIndex}`]}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold" htmlFor={`passportIssueDate_${roomIndex}_${guestIndex}`}>
+                                Passport Issue Date *
+                              </label>
+                              <input
+                                type="datetime-local"
+                                id={`passportIssueDate_${roomIndex}_${guestIndex}`}
+                                name="PassportIssueDate"
+                                value={guest.PassportIssueDate ? guest.PassportIssueDate.slice(0, 16) : ""}
+                                onChange={(e) => handleChange({ target: { name: "PassportIssueDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
+                                className="w-full border p-2 rounded-md"
+                                required
+                                aria-label="Passport Issue Date"
+                                aria-describedby={errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] ? `passportIssueDate-error_${roomIndex}_${guestIndex}` : undefined}
+                              />
+                              {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] && (
+                                <p id={`passportIssueDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                  {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`]}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold" htmlFor={`passportExpDate_${roomIndex}_${guestIndex}`}>
+                                Passport Expiry Date *
+                              </label>
+                              <input
+                                type="datetime-local"
+                                id={`passportExpDate_${roomIndex}_${guestIndex}`}
+                                name="PassportExpDate"
+                                value={guest.PassportExpDate ? guest.PassportExpDate.slice(0, 16) : ""}
+                                onChange={(e) => handleChange({ target: { name: "PassportExpDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
+                                className="w-full border p-2 rounded-md"
+                                required
+                                aria-label="Passport Expiry Date"
+                                aria-describedby={errors[`PassportExpDate_${roomIndex}_${guestIndex}`] ? `passportExpDate-error_${roomIndex}_${guestIndex}` : undefined}
+                              />
+                              {errors[`PassportExpDate_${roomIndex}_${guestIndex}`] && (
+                                <p id={`passportExpDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                  {errors[`PassportExpDate_${roomIndex}_${guestIndex}`]}
+                                </p>
+                              )}
+                            </div>
+                          </>
+                        )}
+                        {validationPolicies?.PanMandatory && (
+                          <div>
+                            <label className="block text-[10px] font-bold">
+                              PAN *
+                            </label>
+                            <input
+                              type="text"
+                              id={`pan_${roomIndex}_${guestIndex}`}
+                              name="PAN"
+                              value={guest.PAN}
+                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              className="w-full border p-2 rounded-md"
+                              placeholder="e.g., AAAAA1234A"
+                              maxLength={10}
+                              required
+                              aria-label="PAN"
+                              aria-describedby={errors[`PAN_${roomIndex}_${guestIndex}`] ? `pan-error_${roomIndex}_${guestIndex}` : undefined}
+                            />
+                            {errors[`PAN_${roomIndex}_${guestIndex}`] && (
+                              <p id={`pan-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                {errors[`PAN_${roomIndex}_${guestIndex}`]}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        <div>
+                          <label className="block text-[10px] font-bold" htmlFor={`paxType_${roomIndex}_${guestIndex}`}>
+                            Guest Type *
+                          </label>
+                          <select
+                            id={`paxType_${roomIndex}_${guestIndex}`}
+                            name="PaxType"
+                            value={guest.PaxType}
+                            onChange={(e) => {
+                              const updatedRooms = [...rooms];
+                              updatedRooms[roomIndex].Guests[guestIndex].PaxType = parseInt(e.target.value, 10);
+                              if (e.target.value === "2") {
+                                updatedRooms[roomIndex].Guests[guestIndex].Age = "";
+                                updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
+                              } else {
+                                updatedRooms[roomIndex].Guests[guestIndex].Age = null;
+                              }
+                              setRooms(updatedRooms);
+                            }}
+                            className="w-full border p-2 rounded-md"
+                            required
+                            aria-label="Guest Type"
+                          >
+                            <option value="1">Adult</option>
+                            <option value="2">Child</option>
+                          </select>
+                        </div>
+                        {guest.PaxType === 2 && (
+                          <div>
+                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+                              Age *
+                            </label>
+                            <input
+                              type="number"
+                              id={`age_${roomIndex}_${guestIndex}`}
+                              name="Age"
+                              value={guest.Age}
+                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              className="w-full border p-2 rounded-md"
+                              max="12"
+                              min="0"
+                              required
+                              aria-label="Child Age"
+                              aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+                            />
+                            {errors[`Age_${roomIndex}_${guestIndex}`] && (
+                              <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                {errors[`Age_${roomIndex}_${guestIndex}`]}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                        {guest.PaxType === 1 && (
+                          <div>
+                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+                              Age
+                            </label>
+                            <input
+                              type="number"
+                              id={`age_${roomIndex}_${guestIndex}`}
+                              name="Age"
+                              value={guest.Age || ""}
+                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              className="w-full border p-2 rounded-md"
+                              min="0"
+                              aria-label="Adult Age"
+                            />
+                          </div>
+                        )}
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`leadPassenger_${roomIndex}_${guestIndex}`}
+                            name="LeadPassenger"
+                            checked={guest.LeadPassenger}
+                            onChange={(e) => {
+                              const updatedRooms = [...rooms];
+                              if (e.target.checked && guest.PaxType === 1) {
+                                updatedRooms[roomIndex].Guests = updatedRooms[roomIndex].Guests.map(
+                                  (g, idx) => ({
+                                    ...g,
+                                    LeadPassenger: idx === guestIndex && g.PaxType === 1,
+                                  })
+                                );
+                              } else {
+                                updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
+                              }
+                              setRooms(updatedRooms);
+                              if (errors[`LeadPassenger_${roomIndex}`]) {
+                                setErrors((prevErrors) => {
+                                  const newErrors = { ...prevErrors };
+                                  delete newErrors[`LeadPassenger_${roomIndex}`];
+                                  return newErrors;
+                                });
+                              }
+                            }}
+                            className="mr-2"
+                            disabled={guest.PaxType === 2}
+                            aria-label="Lead Passenger"
+                          />
+                          <label className="text-[10px] font-bold" htmlFor={`leadPassenger_${roomIndex}_${guestIndex}`}>
+                            Lead Passenger
+                          </label>
+                        </div>
+                      </form>
+                    </div>
+                  ))}
                 </div>
               )}
-              {guest.LeadPassenger && (
-                <div>
-                  <label className="block text-[10px] font-bold" htmlFor={`phoneno_${roomIndex}_${guestIndex}`}>
-                    Phone Number *
-                  </label>
-                  <input
-                    type="text"
-                    id={`phoneno_${roomIndex}_${guestIndex}`}
-                    name="Phoneno"
-                    value={guest.Phoneno}
-                    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                    className="w-full border p-2 rounded-md"
-                    required
-                    aria-label="Guest Phone Number"
-                    aria-describedby={errors[`Phoneno_${roomIndex}_${guestIndex}`] ? `phoneno-error_${roomIndex}_${guestIndex}` : undefined}
-                  />
-                  {errors[`Phoneno_${roomIndex}_${guestIndex}`] && (
-                    <p id={`phoneno-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                      {errors[`Phoneno_${roomIndex}_${guestIndex}`]}
-                    </p>
-                  )}
-                </div>
-              )}
-              {validationPolicies?.PassportMandatory && (
-                <>
-                  <div>
-                    <label className="block text-[10px] font-bold" htmlFor={`passportNo_${roomIndex}_${guestIndex}`}>
-                      Passport Number *
-                    </label>
-                    <input
-                      type="text"
-                      id={`passportNo_${roomIndex}_${guestIndex}`}
-                      name="PassportNo"
-                      value={guest.PassportNo}
-                      onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                      className="w-full border p-2 rounded-md"
-                      maxLength={20}
-                      required
-                      aria-label="Passport Number"
-                      aria-describedby={errors[`PassportNo_${roomIndex}_${guestIndex}`] ? `passportNo-error_${roomIndex}_${guestIndex}` : undefined}
-                    />
-                    {errors[`PassportNo_${roomIndex}_${guestIndex}`] && (
-                      <p id={`passportNo-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                        {errors[`PassportNo_${roomIndex}_${guestIndex}`]}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold" htmlFor={`passportIssueDate_${roomIndex}_${guestIndex}`}>
-                      Passport Issue Date *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      id={`passportIssueDate_${roomIndex}_${guestIndex}`}
-                      name="PassportIssueDate"
-                      value={guest.PassportIssueDate ? guest.PassportIssueDate.slice(0, 16) : ""}
-                      onChange={(e) => handleChange({ target: { name: "PassportIssueDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
-                      className="w-full border p-2 rounded-md"
-                      required
-                      aria-label="Passport Issue Date"
-                      aria-describedby={errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] ? `passportIssueDate-error_${roomIndex}_${guestIndex}` : undefined}
-                    />
-                    {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] && (
-                      <p id={`passportIssueDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                        {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`]}
-                      </p>
-                    )}
-                  </div>
-                  <div>
-                    <label className="block text-[10px] font-bold" htmlFor={`passportExpDate_${roomIndex}_${guestIndex}`}>
-                      Passport Expiry Date *
-                    </label>
-                    <input
-                      type="datetime-local"
-                      id={`passportExpDate_${roomIndex}_${guestIndex}`}
-                      name="PassportExpDate"
-                      value={guest.PassportExpDate ? guest.PassportExpDate.slice(0, 16) : ""}
-                      onChange={(e) => handleChange({ target: { name: "PassportExpDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
-                      className="w-full border p-2 rounded-md"
-                      required
-                      aria-label="Passport Expiry Date"
-                      aria-describedby={errors[`PassportExpDate_${roomIndex}_${guestIndex}`] ? `passportExpDate-error_${roomIndex}_${guestIndex}` : undefined}
-                    />
-                    {errors[`PassportExpDate_${roomIndex}_${guestIndex}`] && (
-                      <p id={`passportExpDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                        {errors[`PassportExpDate_${roomIndex}_${guestIndex}`]}
-                      </p>
-                    )}
-                  </div>
-                </>
-              )}
-              {validationPolicies?.PanMandatory && (
-                <div>
-                  <label className="block text-[10px] font-bold" htmlFor={`pan_${roomIndex}_${guestIndex}`}>
-                    PAN *
-                  </label>
-                  <input
-                    type="text"
-                    id={`pan_${roomIndex}_${guestIndex}`}
-                    name="PAN"
-                    value={guest.PAN}
-                    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                    className="w-full border p-2 rounded-md"
-                    placeholder="e.g., AAAAA1234A"
-                    maxLength={10}
-                    required
-                    aria-label="PAN"
-                    aria-describedby={errors[`PAN_${roomIndex}_${guestIndex}`] ? `pan-error_${roomIndex}_${guestIndex}` : undefined}
-                  />
-                  {errors[`PAN_${roomIndex}_${guestIndex}`] && (
-                    <p id={`pan-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                      {errors[`PAN_${roomIndex}_${guestIndex}`]}
-                    </p>
-                  )}
-                </div>
-              )}
-              <div>
-                <label className="block text-[10px] font-bold" htmlFor={`paxType_${roomIndex}_${guestIndex}`}>
-                  Guest Type *
-                </label>
-                <select
-                  id={`paxType_${roomIndex}_${guestIndex}`}
-                  name="PaxType"
-                  value={guest.PaxType}
-                  onChange={(e) => {
-                    const updatedRooms = [...rooms];
-                    updatedRooms[roomIndex].Guests[guestIndex].PaxType = parseInt(e.target.value, 10);
-                    if (e.target.value === "2") {
-                      updatedRooms[roomIndex].Guests[guestIndex].Age = "";
-                      updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
-                    } else {
-                      updatedRooms[roomIndex].Guests[guestIndex].Age = null;
-                    }
-                    setRooms(updatedRooms);
-                  }}
-                  className="w-full border p-2 rounded-md"
-                  required
-                  aria-label="Guest Type"
-                >
-                  <option value="1">Adult</option>
-                  <option value="2">Child</option>
-                </select>
-              </div>
-              {guest.PaxType === 2 && (
-                <div>
-                  <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
-                    Age *
-                  </label>
-                  <input
-                    type="number"
-                    id={`age_${roomIndex}_${guestIndex}`}
-                    name="Age"
-                    value={guest.Age}
-                    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                    className="w-full border p-2 rounded-md"
-                    max="12"
-                    min="0"
-                    required
-                    aria-label="Child Age"
-                    aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
-                  />
-                  {errors[`Age_${roomIndex}_${guestIndex}`] && (
-                    <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                      {errors[`Age_${roomIndex}_${guestIndex}`]}
-                    </p>
-                  )}
-                </div>
-              )}
-              {guest.PaxType === 1 && (
-                <div>
-                  <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
-                    Age
-                  </label>
-                  <input
-                    type="number"
-                    id={`age_${roomIndex}_${guestIndex}`}
-                    name="Age"
-                    value={guest.Age || ""}
-                    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                    className="w-full border p-2 rounded-md"
-                    min="0"
-                    aria-label="Adult Age"
-                  />
-                </div>
-              )}
-              <div className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`leadPassenger_${roomIndex}_${guestIndex}`}
-                  name="LeadPassenger"
-                  checked={guest.LeadPassenger}
-                  onChange={(e) => {
-                    const updatedRooms = [...rooms];
-                    if (e.target.checked && guest.PaxType === 1) {
-                      updatedRooms[roomIndex].Guests = updatedRooms[roomIndex].Guests.map(
-                        (g, idx) => ({
-                          ...g,
-                          LeadPassenger: idx === guestIndex && g.PaxType === 1,
-                        })
-                      );
-                    } else {
-                      updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
-                    }
-                    setRooms(updatedRooms);
-                    if (errors[`LeadPassenger_${roomIndex}`]) {
-                      setErrors((prevErrors) => {
-                        const newErrors = { ...prevErrors };
-                        delete newErrors[`LeadPassenger_${roomIndex}`];
-                        return newErrors;
-                      });
-                    }
-                  }}
-                  className="mr-2"
-                  disabled={guest.PaxType === 2}
-                  aria-label="Lead Passenger"
-                />
-                <label className="text-[10px] font-bold" htmlFor={`leadPassenger_${roomIndex}_${guestIndex}`}>
-                  Lead Passenger
-                </label>
-              </div>
-            </form>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-))}
-         
+            </div>
+          ))}
+
         </div>
 
         {validationPolicies?.PackageDetailsMandatory && (
-  <div className="space-y-4">
-    <div>
-      <label className="block text-[10px] font-bold" htmlFor="arrivalTransportType">
-        Arrival Transport Type *
-      </label>
-      <select
-        id="arrivalTransportType"
-        name="arrivalTransportType"
-        value={bookingDetails.arrivalTransport.arrivalTransportType}
-        onChange={handleChange}
-        className="w-full border p-2 rounded-md"
-        required
-        aria-label="Arrival Transport Type"
-        aria-describedby={errors.arrivalTransportType ? "arrivalTransportType-error" : undefined}
-      >
-        <option value="0">Flight</option>
-        <option value="1">Surface</option>
-      </select>
-      {errors.arrivalTransportType && (
-        <p id="arrivalTransportType-error" className="text-red-500 text-sm">
-          {errors.arrivalTransportType}
-        </p>
-      )}
-    </div>
-    <div>
-      <label className="block text-[10px] font-bold" htmlFor="transportInfoId">
-        Transport Info ID
-      </label>
-      <input
-        type="text"
-        id="transportInfoId"
-        name="arrivalTransport.transportInfoId"
-        value={bookingDetails.arrivalTransport.transportInfoId}
-        onChange={handleChange}
-        className="w-full border p-2 rounded-md"
-        placeholder="Enter transport info ID"
-        aria-label="Transport Info ID"
-      />
-    </div>
-    <div>
-      <label className="block text-[10px] font-bold" htmlFor="arrivalTransportTime">
-        Arrival Time *
-      </label>
-      <input
-        type="text"
-        id="arrivalTransportTime"
-        name="arrivalTransport.time"
-        value={bookingDetails.arrivalTransport.time}
-        onChange={handleChange}
-        className="w-full border p-2 rounded-md"
-        placeholder="YYYY-MM-DDTHH:MM:SS:00"
-        required
-        aria-label="Arrival Time"
-        aria-describedby={errors.arrivalTransportTime ? "arrivalTransportTime-error" : undefined}
-      />
-      {errors.arrivalTransportTime && (
-        <p id="arrivalTransportTime-error" className="text-red-500 text-sm">
-          {errors.arrivalTransportTime}
-        </p>
-      )}
-    </div>
-  </div>
-)}
-
-        {/* Right Side: Price Summary */}
-       
+          <div className="space-y-4">
+            <div>
+              <label className="block text-[10px] font-bold" htmlFor="arrivalTransportType">
+                Arrival Transport Type *
+              </label>
+              <select
+                id="arrivalTransportType"
+                name="arrivalTransportType"
+                value={bookingDetails.arrivalTransport.arrivalTransportType}
+                onChange={handleChange}
+                className="w-full border p-2 rounded-md"
+                required
+                aria-label="Arrival Transport Type"
+                aria-describedby={errors.arrivalTransportType ? "arrivalTransportType-error" : undefined}
+              >
+                <option value="0">Flight</option>
+                <option value="1">Surface</option>
+              </select>
+              {errors.arrivalTransportType && (
+                <p id="arrivalTransportType-error" className="text-red-500 text-sm">
+                  {errors.arrivalTransportType}
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold" htmlFor="transportInfoId">
+                Transport Info ID
+              </label>
+              <input
+                type="text"
+                id="transportInfoId"
+                name="arrivalTransport.transportInfoId"
+                value={bookingDetails.arrivalTransport.transportInfoId}
+                onChange={handleChange}
+                className="w-full border p-2 rounded-md"
+                placeholder="Enter transport info ID"
+                aria-label="Transport Info ID"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] font-bold" htmlFor="arrivalTransportTime">
+                Arrival Time *
+              </label>
+              <input
+                type="text"
+                id="arrivalTransportTime"
+                name="arrivalTransport.time"
+                value={bookingDetails.arrivalTransport.time}
+                onChange={handleChange}
+                className="w-full border p-2 rounded-md"
+                placeholder="YYYY-MM-DDTHH:MM:SS:00"
+                required
+                aria-label="Arrival Time"
+                aria-describedby={errors.arrivalTransportTime ? "arrivalTransportTime-error" : undefined}
+              />
+              {errors.arrivalTransportTime && (
+                <p id="arrivalTransportTime-error" className="text-red-500 text-sm">
+                  {errors.arrivalTransportTime}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {showModal && (
           <HotelConfirmationModal
@@ -1131,53 +1190,68 @@ export default function Book() {
         )}
       </div>
 
-       <div className="w-full md:col-span-2 space-y-4 md:px-4">
-          <div className="sticky top-0">
-            <div className="border rounded shadow-lg">
-              <div className="border rounded-t flex items-center px-3 py-2 bg-[#D1EAFF]">
-                <h3>Price Summary</h3>
-              </div>
-              <div className="p-4 space-y-2">
-                {hotelData?.HotelRoomsDetails?.map((room, index) => (
-                  <div key={index} className="flex justify-between">
-                    <p>{room.RoomTypeName}</p>
-                    <p className="flex items-center font-bold">
-                      <FaRupeeSign />
-                      {room.Price?.PublishedPrice?.toLocaleString() || "N/A"}
-                    </p>
-                  </div>
-                )) || <p>No price details available</p>}
-                <div className="flex justify-between font-semibold text-lg border-t pt-2">
-                  <p>Total</p>
-                  <p className="flex items-center">
-                    <FaRupeeSign />
-                    {hotelData?.Price?.TotalDisplayFare?.toLocaleString() || "N/A"}
-                  </p>
-                </div>
-              </div>
+      <div className="w-full md:col-span-2 space-y-4 md:px-4">
+        <div className="sticky top-0">
+          <div className="border rounded shadow-lg">
+            <div className="border rounded-t flex items-center px-3 py-2 bg-[#D1EAFF]">
+              <h3>Price Summary</h3>
             </div>
-            <div className="flex justify-center mt-3">
-              <button
-                className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${
-                  isLoading ? "opacity-75 cursor-not-allowed" : ""
-                }`}
-                onClick={handleBookHotel}
-                disabled={isLoading}
-                aria-label="Book Hotel"
-              >
-                {isLoading ? (
-                  <>
-                    <FaSpinner className="animate-spin mr-2" />
-                    Booking...
-                  </>
-                ) : (
-                  "Book Hotel"
-                )}
-              </button>
-            </div>
+            <div className="p-4 space-y-2">
+    {hotelData?.HotelRoomsDetails?.map((room, index) => (
+      <div key={index} className="flex justify-between">
+        <p>{room.RoomTypeName}</p>
+        <p className="flex items-center font-bold">
+          <FaRupeeSign />
+          {room.Price?.PublishedPrice?.toLocaleString('en-IN') || "N/A"}
+        </p>
+      </div>
+    )) || <p>No price details available</p>}
+    <div className="flex justify-between border-t pt-2">
+      <p>Base Fare</p>
+      <p className="flex items-center">
+        <FaRupeeSign />
+        {fareDetails.totalFare.toLocaleString('en-IN') || "N/A"}
+      </p>
+    </div>
+    <div className="flex justify-between">
+      <p>Taxes & Fees (18%)</p>
+      <p className="flex items-center">
+        <FaRupeeSign />
+        {fareDetails.taxFare.toLocaleString('en-IN') || "N/A"}
+      </p>
+    </div>
+    <div className="flex justify-between font-semibold text-lg border-t pt-2 relative">
+      <p>Total</p>
+      <p className="flex items-center">
+        <FaRupeeSign />
+        {fareDetails.netAmount.toLocaleString('en-IN') || "N/A"}
+      </p>
+      {/* Tooltip for assistance */}
+     
+    </div>
+  </div>
+          </div>
+          <div className="flex justify-center mt-3">
+            <button
+              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${
+                isLoading ? "opacity-75 cursor-not-allowed" : ""
+              }`}
+              onClick={handleBookHotel}
+              disabled={isLoading}
+              aria-label="Book Hotel"
+            >
+              {isLoading ? (
+                <>
+                  <FaSpinner className="animate-spin mr-2" />
+                  Booking...
+                </>
+              ) : (
+                "Book Hotel"
+              )}
+            </button>
           </div>
         </div>
-
+      </div>
     </div>
-    );
-  }
+  );
+}

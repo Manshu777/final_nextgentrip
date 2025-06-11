@@ -26,7 +26,13 @@ const Comp = ({ slug }) => {
   const adults = Number(params.get("adult"));
   const children = Number(params.get("child"));
   const roomes = params.get("roomes");
+  // const childAges = params.get("childAges");
+
+  const childAgesString = params.get("childAges");
+  const childAges = childAgesString ? childAgesString.split(",").map(age => Number(age.trim())) : [];
   const page = params.get("page");
+
+
 
   const dispatch = useDispatch();
   const allhoteldata = useSelector((state) => state.hotelsSlice);
@@ -91,7 +97,7 @@ const Comp = ({ slug }) => {
 
   useEffect(() => {
     dispatch(
-      getAllhotelsapi({ cityCode, checkIn, checkOut, adults, children, page })
+      getAllhotelsapi({ cityCode, checkIn, checkOut, adults, childAges,children,page })
     );
   }, []);
 

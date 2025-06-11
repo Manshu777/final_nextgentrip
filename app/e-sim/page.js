@@ -89,122 +89,62 @@ const PlansPage = () => {
       <ESimComp />
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-4">eSIM Plans </h2>
-        {error ? (
-          <p className="mt-4 text-red-500">
-            
-          </p>
-        ) : isLoading ? (
-          <div className="grid grid-cols-1 my-2 lg:my-[61px] px-[4%] lg:px-[8%] md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array(9)
-              .fill()
-              .map((_, index) => (
-                <SkeletonLoader key={index} />
-              ))}
-          </div>
-        ) : plans.length === 0 ? (
-          <p className="mt-4">No eSIM plans available for {country}.</p>
-        ) : (
-          <div className="grid grid-cols-1 px-[4%] my-2 lg:my-[61px] lg:px-[8%] md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {plans.map((plan) =>
-              plan.id && plan.planName && plan.totalPrice ? (
-                <div
-                  key={plan.id}
-                  className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 max-w-sm mx-auto"
-                >
-                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-xl">
-                    Trial Plan
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-3 tracking-tight">{plan.planName}</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"
-                        />
-                      </svg>
-                      <p className="text-gray-700 font-medium">
-                        <span className="font-semibold">Data:</span> {plan.dataCapacity} {plan.dataCapacityUnit}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                        />
-                      </svg>
-                      <p className="text-gray-700 font-medium">
-                        <span className="font-semibold">Validity:</span> {plan.validity} days
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <p className="text-gray-700 font-medium">
-                        <span className="font-semibold">Price:</span> {plan.totalPrice} {plan.currency}
-                      </p>
-                    </div>
-                    <div className="flex items-start space-x-2">
-                      <svg className="w-5 h-5 text-blue-500 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 004 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      <p className="text-gray-700 font-medium">
-                        <span className="font-semibold">Covered Countries:</span>{' '}
-                        {plan.coverages.split(',').slice(0, 3).map((country) => country.trim()).join(', ')}
-                        {plan.coverages.split(',').length > 3 && (
-                          <span className="text-blue-500 cursor-pointer hover:underline" title={plan.coverages}>
-                            {' '}
-                            +{plan.coverages.split(',').length - 3} more
-                          </span>
-                        )}
-                      </p>
-                    </div>
-                    <div className="flex items-start space-x-2">
-                      <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                        />
-                      </svg>
-                      <p className="text-gray-700 font-medium">
-                        <span className="font-semibold">Rechargeable:</span> {plan.isRechargeable ? 'Yes' : 'No'}
-                      </p>
-                    </div>
-                  </div>
-                  {plan.description.includes('Calls Restrictions') && (
-                    <div className="mt-4 bg-red-100 text-red-700 p-3 rounded-lg text-sm">
-                      <strong>Note:</strong> Calling facility not available in USA, Singapore, and Australia.
-                    </div>
-                  )}
-                  <button
-                    onClick={() => handleBuy(plan)}
-                    className="mt-6 w-full bg-blue-950 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
-                  >
-                    Buy Now
-                  </button>
+
+        <>
+      {error ? (
+        <p className="mt-4 text-red-500">{error}</p>
+      ) : isLoading ? (
+        <div className="grid grid-cols-1 my-2 lg:my-[61px] px-[4%] lg:px-[8%] md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {Array(9)
+            .fill()
+            .map((_, index) => (
+              <SkeletonLoader key={index} />
+            ))}
+        </div>
+      ) : plans.length === 0 ? (
+        <p className="mt-4">No eSIM plans available for {country}.</p>
+      ) : (
+        <div className="grid grid-cols-1 px-[4%] my-2 lg:my-[61px] lg:px-[5%] md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {plans.map((plan) =>
+            plan.id && plan.planName && plan.totalPrice ? (
+              <div
+                key={plan.id}
+                className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 border border-gray-200 rounded-xl p-6 shadow-md hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 max-w-sm mx-auto"
+              >
+                <img
+                  src={`/images/${plan.coverages.split(',')[0].trim()} eSIM.png`}
+                  alt={`${plan.coverages.split(',')[0].trim()} eSIM`}
+                  width={300}
+                  height={128}
+                  className="w-full h-[19rem] object-cover rounded-lg mb-4"
+                />
+                {/* <h3 className="text-xl font-bold text-gray-800 mb-3 tracking-tight">{plan.planName}</h3> */}
+                <div className="flex items-center space-x-2">
+                  <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <p className="text-gray-700 font-medium">
+                    <span className="font-semibold">Price:</span> {plan.totalPrice} {plan.currency}
+                  </p>
                 </div>
-              ) : null
-            )}
-          </div>
-        )}
+                <button
+                  onClick={() => handleBuy(plan)}
+                  className="mt-6 w-full bg-blue-950 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
+                >
+                  Buy Now
+                </button>
+              </div>
+            ) : null
+          )}
+        </div>
+      )}
+    </>
+       
         <div className="mt-6 flex my-5 justify-center space-x-4">
           <button
             onClick={handlePreviousPage}

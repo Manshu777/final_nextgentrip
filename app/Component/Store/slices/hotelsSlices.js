@@ -3,11 +3,22 @@ import axios from "axios";
 
 import { apilink } from "../../common";
 
-export const getAllhotelsapi=createAsyncThunk("/hotels",async({cityCode,checkIn,checkOut,adults,children,guestNationality="IN",page=0,})=>{
-const res=await axios.post(`${apilink}/hotels/search`,({cityCode,checkIn,checkOut,adults,children,guestNationality,page}))
-
-return res.data;
-})
+export const getAllhotelsapi = createAsyncThunk(
+  "/hotels",
+  async ({ cityCode, checkIn, checkOut, adults, children, guestNationality = "IN", childAges, page = 1 }) => {
+    const res = await axios.post(`${apilink}/hotels/search`, {
+      cityCode,
+      checkIn,
+      checkOut,
+      adults,
+      children,
+      childAges, // Add childAges
+      guestNationality,
+      page,
+    });
+    return res.data;
+  }
+);
 
 
  
