@@ -379,7 +379,7 @@ const handleBooking = async () => {
     });
   } finally {
     setIsLoading(false);
-    router.push('/buses');
+
   }
 };
     

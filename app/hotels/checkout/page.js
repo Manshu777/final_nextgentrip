@@ -37,6 +37,8 @@ export default function Book() {
     netAmount: 0,
   });
 
+  const [childAges, setChildAges] = useState([]);
+
   // Fetch IP address and hotel data
     
   useEffect(() => {
@@ -63,6 +65,7 @@ export default function Book() {
   
       setValidationPolicies(validationPolices || {});
       setCancellationPolicies(hotelCheckData.Rooms?.[0].CancelPolicies || []);
+      setChildAges(hotelItems?.childAges || []); // Set childAges from hotelItems
   
       if (hotelCheckData && hotelItems) {
         const mappedHotelData = {
@@ -107,7 +110,7 @@ export default function Book() {
                 MiddleName: "",
                 LastName: "",
                 Email: "",
-                Age: "",
+                Age: "", // Initialize as empty; user will select from childAges
                 PassportNo: "",
                 PassportIssueDate: "0001-01-01T00:00:00:00",
                 PassportExpDate: "0001-01-01T00:00:00:00",
@@ -134,16 +137,15 @@ export default function Book() {
         }));
   
         // Calculate fare details
-        const taxRate = 0.18; // 18% tax rate
+        const taxRate = 0.18;
         const roomTotal = mappedHotelData.HotelRoomsDetails.reduce(
           (sum, room) => sum + (parseFloat(room.Price.PublishedPrice) || 0),
           0
         );
-        const taxFare = hotelCheckData?.Rooms[0]?.TotalTax; 
-        const totalFare = hotelCheckData?.Rooms[0]?.TotalFare; 
+        const taxFare = hotelCheckData?.Rooms[0]?.TotalTax;
+        const totalFare = hotelCheckData?.Rooms[0]?.TotalFare;
         const netAmount = hotelCheckData?.Rooms[0]?.NetAmount;
   
-        // Debug log for NetAmount calculation
         console.log("Fare Calculation:", {
           roomTotal: roomTotal,
           taxRate: taxRate,
@@ -1031,29 +1033,51 @@ export default function Book() {
                           </select>
                         </div>
                         {guest.PaxType === 2 && (
-                          <div>
-                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
-                              Age *
-                            </label>
-                            <input
-                              type="number"
-                              id={`age_${roomIndex}_${guestIndex}`}
-                              name="Age"
-                              value={guest.Age}
-                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-                              className="w-full border p-2 rounded-md"
-                              max="12"
-                              min="0"
-                              required
-                              aria-label="Child Age"
-                              aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
-                            />
-                            {errors[`Age_${roomIndex}_${guestIndex}`] && (
-                              <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                                {errors[`Age_${roomIndex}_${guestIndex}`]}
-                              </p>
-                            )}
-                          </div>
+
+<div>
+<label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+  Age *
+</label>
+{childAges.length > 0 ? (
+  <select
+    id={`age_${roomIndex}_${guestIndex}`}
+    name="Age"
+    value={guest.Age}
+    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+    className="w-full border p-2 rounded-md"
+    required
+    aria-label="Child Age"
+    aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+  >
+    <option value="">Select Age</option>
+    {childAges.map((age, index) => (
+      <option key={`child_age_${index}`} value={age}>
+        {age}
+      </option>
+    ))}
+  </select>
+) : (
+  <input
+    type="number"
+    id={`age_${roomIndex}_${guestIndex}`}
+    name="Age"
+    value={guest.Age}
+    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+    className="w-full border p-2 rounded-md"
+    max="12"
+    min="0"
+    required
+    aria-label="Child Age"
+    aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+  />
+)}
+{errors[`Age_${roomIndex}_${guestIndex}`] && (
+  <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+    {errors[`Age_${roomIndex}_${guestIndex}`]}
+  </p>
+)}
+</div>
+                        
                         )}
                         {guest.PaxType === 1 && (
                           <div>
