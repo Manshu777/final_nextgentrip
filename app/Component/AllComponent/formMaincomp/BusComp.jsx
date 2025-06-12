@@ -209,7 +209,7 @@ const BusComp = () => {
               <div className="relative">
                 <div
                   onClick={() => setselected("date")}
-                  className="flex items-center cursor-pointer  gap-2 px-3 py-1 border-2 text-black border-slate-200  rounded-md"
+                  className="flex items-center cursor-pointer  gap-2 px-[5px] py-[12px] border-2 text-black border-[1px] border-slate-400   rounded-md"
                 >
                   <FaCalendarAlt className="" />
                   <div className="text-slate-400">
@@ -244,7 +244,7 @@ const BusComp = () => {
               </div>
 
 
-              <div className="flex items-start gap-2   px-3 py-1  border-2 text-black border-slate-200 rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
+              <div className="flex items-start gap-2   px-3 py-1  border-2 text-black border-[1px] border-slate-400   rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
       
                 <div className="text-slate-400">
                   <h5 className="font-bold text-lg text-black">{adultCount + childCount + infantCount}</h5>

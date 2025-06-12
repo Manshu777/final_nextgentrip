@@ -10,6 +10,7 @@ import BusFilter from "../../Component/Filter/BusFilter";
 import Slider from "react-slick";
 import { FaChevronDown, FaFilter, FaTimes } from "react-icons/fa";
 import Link from 'next/link'
+import { TbBus } from "react-icons/tb";
 
 import { useRouter } from 'next/navigation';
 
@@ -71,15 +72,15 @@ const BusCompo = ({ slug }) => {
 
   const handleSelectSeats = (bus) => {
     // console.log("bus", bus);
-  
+
     // Save data to localStorage
     localStorage.setItem("selectedBus", JSON.stringify(bus));
-   
-  
+
+
 
     router.push(`/buses/selectseat/index=${state.info.BusSearchResult.TraceId}&resultindex=${bus.ResultIndex}`);
   };
-  
+
 
 
   return (
@@ -124,102 +125,85 @@ const BusCompo = ({ slug }) => {
             {busData && busData.map((bus) => (
               <div
                 key={bus.id}
-                className="bg-white hover:border-blue-500 px-5 pt-3 my-5 border myshadow rounded-lg"
+                className="bg-white hover:shadow-lg hover:border-blue-600 transition-all duration-300 p-5 my-5 border rounded-2xl"
               >
-                <div className="">
-                  <div className="flex flex-col lg:flex-row justify-between">
+                <div className="flex flex-col lg:flex-row justify-between gap-6">
 
-                    <div className="busInfo flex flex-col mb-6 lg:mb-0">
-                      <div className="flex items-center mb-2">
-                        <p className="font-bold text-black mr-4">
-                          {bus.TravelName}
-                        </p>
-                      </div>
-                      <p className="text-gray-500">{bus.BusType}</p>
+                  {/* Travel Info */}
+                  <div className="flex flex-col gap-1 lg:w-1/4">
+                    <p className="text-xl font-bold text-gray-800">{bus.TravelName}</p>
+                    <p className="text-sm text-gray-500">{bus.BusType}</p>
+                    <span className="text-xs text-white bg-[#1a7971] w-max px-2 py-1 rounded mt-1">
+                      {bus.ServiceName}
+                    </span>
+                  </div>
+
+                  {/* Time Info */}
+                  <div className="flex items-center justify-between gap-4 flex-1">
+                    {/* Departure */}
+                    <div className="text-center">
+                      <p className="text-base font-semibold text-black">
+                        {new Date(bus.DepartureTime).toLocaleDateString("en-GB", { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(bus.DepartureTime).toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })}
+                      </p>
                     </div>
 
-                    <div className="flex items-center mb-6 lg:mb-0">
-                      <div className="mr-6">
-                        <span className="text-lg font-bold text-black">
-                          {new Date(bus.DepartureTime).getFullYear()}-{new Date(bus.DepartureTime).toLocaleDateString("en", { month: "short" })}-{new Date(bus.DepartureTime).getDate()}
-                        </span>
-                        <span className="text-sm text-gray-500 block">
-                          {new Date(bus.DepartureTime).getHours() <= 9 ? `0${new Date(bus.DepartureTime).getHours()}` : new Date(bus.DepartureTime).getHours()}:{new Date(bus.DepartureTime).getMinutes() <= 9 ? `0${new Date(bus.DepartureTime).getMinutes()}` : new Date(bus.DepartureTime).getMinutes()}
-                        </span>
-                      </div>
-                      <div className="h-px w-16 bg-gray-300 mx-6"></div>
-                      <div className="text-sm text-gray-500">
-                        {/* <span>{bus.duration.hours}</span>hrs{" "}
-                        <span>{bus.duration.minutes}</span>mins */}
-                      </div>
-                      <div className="h-px w-16 bg-gray-300 mx-6"></div>
-                      <div>
-                        <span className="text-lg text-black">
-                          {new Date(bus.ArrivalTime).getFullYear()}-{new Date(bus.ArrivalTime).toLocaleDateString("en", { month: "short" })}-{new Date(bus.ArrivalTime).getDate()}
+                    {/* Divider */}
+                    <div className="flex-1 h-px bg-gray-300 mx-2 lg:mx-4"></div>
 
-                        </span>
-                        <span className="text-sm text-gray-500 block">
-                          {new Date(bus.ArrivalTime).getHours() <= 9 ? `0${new Date(bus.ArrivalTime).getHours()}` : new Date(bus.ArrivalTime).getHours()}:{new Date(bus.ArrivalTime).getMinutes() <= 9 ? `0${new Date(bus.ArrivalTime).getMinutes()}` : new Date(bus.ArrivalTime).getMinutes()}
 
-                        </span>
-                      </div>
+                    <div className="text-gray-400 text-4xl">
+                      <TbBus className='text-4xl  text-green-500'/>
                     </div>
 
 
-                    <div className="priceSection flex flex-col items-end">
-                      <div className="mb-2">
-                        <span className="text-lg font-bold text-green-600">
-                          {defaultcurrency.symble}
-                          {(() => {
-                            const publishedPrice = Number(bus.BusPrice?.PublishedPrice || 0);
-                            const agentCommission = Number(bus.BusPrice?.AgentCommission || 0);
 
-                            const totalPrice = (publishedPrice + agentCommission) * cuntryprice;
+                    <div className="flex-1 h-px bg-gray-300 mx-2 lg:mx-4"></div>
 
-                            const priceString = totalPrice.toFixed(2);
-
-                            // Split into integer and decimal parts
-                            const [integerPart, decimalPart] = priceString.split(".");
-
-                            // Ensure the decimal part has exactly two digits and return the formatted price
-                            return `${integerPart}.${(decimalPart || "00").slice(0, 2)}`;
-                          })()}
-                        </span>
-                      </div>
+                    {/* Arrival */}
+                    <div className="text-center">
+                      <p className="text-base font-semibold text-black">
+                        {new Date(bus.ArrivalTime).toLocaleDateString("en-GB", { year: 'numeric', month: 'short', day: 'numeric' })}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {new Date(bus.ArrivalTime).toLocaleTimeString("en-GB", { hour: '2-digit', minute: '2-digit' })}
+                      </p>
                     </div>
                   </div>
 
-
-                  <div className="flex justify-between items-center mt-6">
-                    <ul className="busFacility flex items-center">
-                      <li className="mr-6">
-                        <span className="flex gap-[1px] items-center bg-[#1a7971] p-1 px-2 rounded-md ">
-
-                          <span className="text-white text-sm font-semibold">
-                            {bus.ServiceName}
-                          </span>
-                        </span>
-                      </li>
-
-                    </ul>
-                    <div className="text-sm text-gray-500">
+                  {/* Price & Seats */}
+                  <div className="flex flex-col justify-between items-end lg:w-1/4 text-right">
+                    <div>
+                      <span className="text-xl font-bold text-green-600">
+                        {defaultcurrency.symble}
+                        {(() => {
+                          const publishedPrice = Number(bus.BusPrice?.PublishedPrice || 0);
+                          const agentCommission = Number(bus.BusPrice?.AgentCommission || 0);
+                          const totalPrice = (publishedPrice + agentCommission) * cuntryprice;
+                          return totalPrice.toFixed(2);
+                        })()}
+                      </span>
+                    </div>
+                    <div className="text-sm text-gray-500 mt-2">
                       {bus.AvailableSeats} Seats Left
                     </div>
                   </div>
                 </div>
 
-
-                <div className="border-t py-2 flex justify-between mt-6">
-
-                <button
-      onClick={()=>handleSelectSeats(bus)}
-      className="selectSeats text-center cursor-pointer bg-blue-100 border border-blue-600 rounded px-3 py-1 text-blue-600 font-semibold"
-    >
-      Select Seats
-    </button>
+                {/* Bottom Section */}
+                <div className="mt-6 pt-4 border-t flex flex-col sm:flex-row justify-between items-center gap-3">
+                  <button
+                    onClick={() => handleSelectSeats(bus)}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-all"
+                  >
+                    Select Seats
+                  </button>
                 </div>
               </div>
             ))}
+
           </div>
         </div>
       </div>

@@ -69,7 +69,7 @@ const HotelSlugComp = ({ slugs }) => {
 
         localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
         localStorage.setItem("validationpolices", JSON.stringify(validationpolices));
-
+        setIsOpen(true);
       }
       setIsOpen(true);
     } finally {

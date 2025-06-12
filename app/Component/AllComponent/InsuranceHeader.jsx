@@ -107,193 +107,193 @@ export default function InsuranceHeader() {
             <Navbar />
           </div>
 
-          <div className="bg-white flex flex-wrap lg:flex-nowrap items-center gap-5 md:gap-8 py-5 px-4 md:px-4">
-            <div className="flex flex-col w-full justify-between lg:w-fit md:flex-row gap-4 md:gap-4">
-              <div className="w-full">
-                <p>Travel Start Date</p>
+
+          <div className="bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 items-center lg:grid-cols-4 xl:grid-cols-7 gap-6">
+
+              <div className="col-span-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Travel Start Date</label>
                 <input
                   type="date"
                   value={alldata.TravelStartDate}
-                  onChange={(e) =>
-                    setAllData({ ...alldata, TravelStartDate: e.target.value })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded"
+                  onChange={(e) => setAllData({ ...alldata, TravelStartDate: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
                 />
               </div>
 
-              <div className="w-full">
-                <p>Travel End Date</p>
+              {/* 2. Travel End Date */}
+              <div className="col-span-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Travel End Date</label>
                 <input
                   type="date"
                   value={alldata.TravelEndDate}
-                  onChange={(e) =>
-                    setAllData({ ...alldata, TravelEndDate: e.target.value })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded"
+                  onChange={(e) => setAllData({ ...alldata, TravelEndDate: e.target.value })}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
                 />
               </div>
-            </div>
 
-            <div className="w-full lg:w-auto relative">
-              <label className="text-sm font-medium text-gray-700">No. of Passengers</label>
-              <div
-                className="flex items-start gap-2 p-2 border-2 text-black border-gray-200 rounded-lg mt-1 bg-white hover:border-blue-500 transition cursor-pointer"
-                onMouseEnter={() => setIsVisible(true)}
-              >
-                <div className="text-gray-400">
-                  <h5 className="font-bold text-lg text-black">{alldata.NoOfPax}</h5>
-                  <p className="text-gray-400 text-xs">Traveller(s)</p>
+              {/* 3. No. of Passengers */}
+              <div className="col-span-1 relative">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">No. of Passengers</label>
+                <div
+                  className="flex justify-between items-center p-2 border border-gray-300 rounded-md hover:border-blue-500 bg-white cursor-pointer"
+                  onMouseEnter={() => setIsVisible(true)}
+                >
+                  <div>
+                    <p className="text-lg font-bold text-black">{alldata.NoOfPax}</p>
+                    {/* <p className="text-xs text-gray-500">Traveller(s)</p> */}
+                  </div>
+                  <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>
                 </div>
-                <button className="ml-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
-                  Edit
-                </button>
-                {isVisible && (
+
+                {/* Popover (optional dropdown) */}
+
+
+                {
                   <div
                     onMouseLeave={() => setIsVisible(false)}
-                    className="absolute top-[100%] left-0 min-w-full z-[99] mt-2"
+                    className="absolute top-full left-0 z-50 mt-2 w-[300px] bg-white border border-gray-200 rounded-xl shadow-2xl p-5 transition-all duration-300"
                   >
-                    <div className="shadow-2xl rounded-lg bg-white flex flex-col gap-4 p-4 border border-gray-200">
-                      <div className="flex gap-3 justify-between items-center">
-                        <p className="text-sm font-medium text-gray-700">Adult Count</p>
-                        <div className="flex items-center gap-3">
-                          <button
-                            className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition"
-                            onClick={() => handlePaxChange(false)}
-                            disabled={alldata.NoOfPax <= 1}
-                          >
-                            -
-                          </button>
-                          <p className="px-4 py-1 border border-gray-300 rounded text-gray-800 font-semibold">
-                            {alldata.NoOfPax}
-                          </p>
-                          <button
-                            className="px-2 py-1 border border-gray-300 rounded hover:bg-gray-100 transition"
-                            onClick={() => handlePaxChange(true)}
-                          >
-                            +
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="mt-2 space-y-2">
-                        {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
-                          <div key={index} className="flex items-center gap-3">
-                            <span className="text-sm text-gray-600">Passenger {index + 1} Age:</span>
-                            <input
-                              type="number"
-                              min="1"
-                              max="100"
-                              value={alldata.PaxAge[index] || ""}
-                              onChange={(e) => handleAgeChange(index, e.target.value)}
-                              className="w-full p-2 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-                            />
-                          </div>
-                        ))}
+                    {/* Passenger Count Control */}
+                    <div className="flex justify-between items-center mb-4">
+                      <span className="text-sm font-semibold text-gray-700">Adult Count</span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handlePaxChange(false)}
+                          disabled={alldata.NoOfPax <= 1}
+                          className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full hover:bg-red-100 disabled:opacity-50 transition"
+                        >
+                          <span className="text-lg font-bold text-red-500">-</span>
+                        </button>
+                        <span className="px-4 py-1 border border-gray-300 rounded-md bg-gray-100 text-gray-800 font-medium min-w-[40px] text-center">
+                          {alldata.NoOfPax}
+                        </span>
+                        <button
+                          onClick={() => handlePaxChange(true)}
+                          className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full hover:bg-green-100 transition"
+                        >
+                          <span className="text-lg font-bold text-green-600">+</span>
+                        </button>
                       </div>
                     </div>
+
+                    {/* Passenger Ages */}
+                    <div className="grid grid-cols-1  gap-3">
+                      {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <label className="text-sm text-gray-600 whitespace-nowrap">Passenger {index + 1} Age:</label>
+                          <input
+                            type="number"
+                            min="1"
+                            max="100"
+                            value={alldata.PaxAge[index] || ""}
+                            onChange={(e) => handleAgeChange(index, e.target.value)}
+                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                )}
+                }
+
+
+              </div>
+
+              {/* 4. Plan Category */}
+              <div className="col-span-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Category</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                  value={alldata.Plan_Category.id}
+                  onChange={(e) => {
+                    const selectedCategory = planCategories.find((cat) => cat.id == e.target.value);
+                    let updatedCoverage = alldata.Plan_Coverage;
+                    if (selectedCategory.id === 2) {
+                      updatedCoverage = planCoverage.find((cov) => cov.id === 3);
+                    }
+                    setAllData({
+                      ...alldata,
+                      Plan_Category: selectedCategory,
+                      Plan_Coverage: updatedCoverage,
+                    });
+                  }}
+                >
+                  {planCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 5. Plan Coverage */}
+              <div className="col-span-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Coverage</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                  value={alldata.Plan_Coverage.id}
+                  onChange={(e) =>
+                    setAllData({
+                      ...alldata,
+                      Plan_Coverage: planCoverage.find((cov) => cov.id == e.target.value),
+                    })
+                  }
+                >
+                  {planCoverage.map((coverage) => (
+                    <option key={coverage.id} value={coverage.id}>
+                      {coverage.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 6. Plan Type */}
+              <div className="col-span-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Type</label>
+                <select
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                  value={alldata.Plan_Type}
+                  onChange={(e) => setAllData({ ...alldata, Plan_Type: e.target.value })}
+                >
+                  {planTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                      {type.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* 7. Submit Button */}
+              <div className="col-span-1 flex items-end justify-end">
+                <button
+                  className="w-full bg-[#0c3a48] mt-[14px] hover:bg-[#0a2e39] text-white px-4 py-2 rounded-md font-semibold transition"
+                  onClick={handelIncSearch}
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <div className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
+                        />
+                      </svg>
+                      Loading...
+                    </div>
+                  ) : (
+                    "Search"
+                  )}
+                </button>
               </div>
             </div>
-
-          <div>
-  <label className="text-sm font-medium">Plan Category</label>
-  <select
-    className="w-full p-2 border border-gray-300 rounded"
-    value={alldata.Plan_Category.id}
-    onChange={(e) => {
-      const selectedCategory = planCategories.find((cat) => cat.id == e.target.value);
-      let updatedCoverage = alldata.Plan_Coverage;
-
-      // If "Overseas Travel Insurance" (id: 2) is selected, set coverage to "World Wide" (id: 3)
-      if (selectedCategory.id === 2) {
-        updatedCoverage = planCoverage.find((cov) => cov.id === 3);
-      }
-
-      setAllData({
-        ...alldata,
-        Plan_Category: selectedCategory,
-        Plan_Coverage: updatedCoverage,
-      });
-    }}
-  >
-    {planCategories.map((category) => (
-      <option key={category.id} value={category.id}>
-        {category.title}
-      </option>
-    ))}
-  </select>
-</div>
-
-<div>
-  <label className="text-sm font-medium">Plan Coverage</label>
-  <select
-    className="w-full p-2 border border-gray-300 rounded"
-    value={alldata.Plan_Coverage.id}
-    onChange={(e) =>
-      setAllData({
-        ...alldata,
-        Plan_Coverage: planCoverage.find((cov) => cov.id == e.target.value),
-      })
-    }
-  >
-    {planCoverage.map((coverage) => (
-      <option key={coverage.id} value={coverage.id}>
-        {coverage.name}
-      </option>
-    ))}
-  </select>
-</div>
-
-            <div>
-              <label className="text-sm font-medium">Plan Type</label>
-              <select
-                className="w-full p-2 border border-gray-300 rounded"
-                value={alldata.Plan_Type}
-                onChange={(e) => setAllData({ ...alldata, Plan_Type: e.target.value })}
-              >
-                {planTypes.map((type) => (
-                  <option key={type.id} value={type.id}>
-                    {type.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              className="bg-[#0c3a48] mt-5 z-30 float-end text-white p-3 px-4 rounded-md relative"
-              onClick={handelIncSearch}
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <div className="flex items-center justify-center">
-                  <svg
-                    className="animate-spin h-5 w-5 mr-2 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v8h8a8 8 0 01-16 0z"
-                    ></path>
-                  </svg>
-                  Loading...
-                </div>
-              ) : (
-                "Search"
-              )}
-            </button>
           </div>
+
+
+
+
+
         </div>
       </div>
     </>

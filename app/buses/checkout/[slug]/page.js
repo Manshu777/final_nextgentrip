@@ -28,7 +28,7 @@ const CheckoutPage = () => {
       DateOfBirth: '',
       // PassportNo: '',
       // PassportExpiry: '',
-      AddressLine1: '',
+      Address: '',
       City: '',
       ContactNo: '',
       Email: '',
@@ -208,7 +208,7 @@ const handleBooking = async () => {
     // Basic validation
     const validationErrors = {};
     passengers.forEach((passenger, index) => {
-      ['Title', 'FirstName', 'LastName', 'Gender', 'DateOfBirth', 'AddressLine1', 'City', 'ContactNo', 'Email'].forEach((field) => {
+      ['Title', 'FirstName', 'LastName', 'Gender', 'DateOfBirth', 'Address', 'City', 'ContactNo', 'Email'].forEach((field) => {
         if (!passenger[field]) {
           validationErrors[`${field}_${index}`] = `${field} is required`;
         }
@@ -231,7 +231,7 @@ const handleBooking = async () => {
       LeadPassenger: index === 0,
       PassengerId: 0,
       Title: passenger.Title,
-      Address: passenger.AddressLine1,
+      Address: passenger.Address,
       Age: calculateAge(passenger.DateOfBirth),
       Email: passenger.Email,
       FirstName: passenger.FirstName,
@@ -442,7 +442,7 @@ const handleBooking = async () => {
                   { name: 'DateOfBirth', type: 'date' },
                   // { name: 'PassportNo', type: 'text' },
                   // { name: 'PassportExpiry', type: 'date' },
-                  { name: 'AddressLine1', type: 'text' },
+                  { name: 'Address', type: 'text' },
                   { name: 'City', type: 'text' },
                   { name: 'ContactNo', type: 'text' },
                   { name: 'Email', type: 'email' },

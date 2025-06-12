@@ -19,3 +19,129 @@
         }
     }
 }
+
+{
+    "EndUserIp": "203.134.211.76",
+    "email": "manshu.developer@gmail.com",
+    "user_id": "4",
+    "TraceId": "b0f3edb9-c570-4106-bff5-efe8a0e57591",
+    "ResultIndex": "OB1[TBO]BP4F8ffkwFNi0qaYA5zqvkpvurpD2Z876hJSrerajvl4rMtTKmaNxDET5sOSQrOzvgq+NlKAAdIGvLSJhDFfMd8nbHuqvu3sBGFTO1jvUmXagbFjZF4Zm9rAhdJrpL5HEy/9sWdmR6hnlnxVqPegqx8E6RceJ2yP8u6MSLygoTWmvCSPbR/JOMvSW6hTnKFp0zDcZhsXwBJwyeDua9EcvQPNpztAcMYxpFS1eLQWBuKcKIRHxGnFkSt91Truvqhm+o2Xejf56hdkq2HMc1aKAG0bbpkRC8KycCioY+F02+yIGPSsYiyU+Lp6vzTvQ9MVUoeK1F8CGtsCfXOD31Rd4aR+zrIR21q5r2tCcvH907QmPeqif3Tf4Ke/RrnoIOyoOGf6jlr4xIP/nWYO/K33qytn0y50irdTefxQTMyhJCxaVvC4HkunQLDylbmDfKGUsWERD2KKjdhuw2WBSQ7/czU+pmoVhA7/VbE/I17Au6fFnujnCRLQQBiq4SCoKsRiVBuItC4/F888GOVfqRvl+4gbElj4bCyFQaLnc9nobtbgtof9IuPHiMscuX2dhrMWFskCiJHV6/kzHR1RymN5x9Fddmu/zKH3R+bjXJqjCeGp+xxJ7EEeSnAFqtba2gN3LCLiycTN1WqvSTHfjRPwGX+wGSUuGS6ZgyN0ntOWFLCEQagg4cTIPUeNuAJeuuNS",
+    "Passengers": [
+      {
+        "Title": "Mr",
+        "FirstName": "Manshu",
+        "LastName": "Meh",
+        "PaxType": 1,
+        "DateOfBirth": "2001-09-22",
+        "Gender": 1,
+        "AddressLine1": "mabla",
+        "CellCountryCode": "91",
+        "City": "Ambala",
+        "ContactNo": "7988532993",
+        "CountryCode": "IN",
+        "Email": "manshu.developer@gmail.com",
+        "PassportNo": "",
+        "PassportExpiry": "",
+        "IsLeadPax": true,
+        "Fare": {
+          "Currency": "INR",
+          "BaseFare": 4835,
+          "Tax": 1410,
+          "YQTax": 0,
+          "AdditionalTxnFeePub": 0,
+          "AdditionalTxnFeeOfrd": 0,
+          "OtherCharges": 5.31,
+          "ServiceFee": 0,
+          "PublishedFare": 18740.31,
+          "OfferedFare": 15760.07,
+          "Discount": 0,
+          "TdsOnCommission": 428.19,
+          "TdsOnIncentive": 396.59,
+          "TdsOnPLB": 367.32
+        }
+      },
+      {
+        "Title": "Mr",
+        "FirstName": "Akaka",
+        "LastName": "Meh",
+        "PaxType": 2,
+        "DateOfBirth": "2016-09-22",
+        "Gender": 1,
+        "AddressLine1": "ambala",
+        "CellCountryCode": "91",
+        "City": "AMbala",
+        "ContactNo": "7988532993",
+        "CountryCode": "IN",
+        "Email": "manshu.developer@gmail.com",
+        "PassportNo": "",
+        "PassportExpiry": "",
+        "IsLeadPax": true,
+        "Fare": {
+          "Currency": "INR",
+          "BaseFare": 4835,
+          "Tax": 1410,
+          "YQTax": 0,
+          "AdditionalTxnFeePub": 0,
+          "AdditionalTxnFeeOfrd": 0,
+          "OtherCharges": 5.31,
+          "ServiceFee": 0,
+          "PublishedFare": 18740.31,
+          "OfferedFare": 15760.07,
+          "Discount": 0,
+          "TdsOnCommission": 428.19,
+          "TdsOnIncentive": 396.59,
+          "TdsOnPLB": 367.32
+        }
+      },
+      {
+        "Title": "Ms",
+        "FirstName": "Naka ",
+        "LastName": "Meh",
+        "PaxType": 2,
+        "DateOfBirth": "2018-09-22",
+        "Gender": 1,
+        "AddressLine1": "Amblaa",
+        "CellCountryCode": "91",
+        "City": "Ambala",
+        "ContactNo": "7988532993",
+        "CountryCode": "IN",
+        "Email": "manshu.developer@gmail.com",
+        "PassportNo": "",
+        "PassportExpiry": "",
+        "IsLeadPax": false,
+        "Fare": {
+          "Currency": "INR",
+          "BaseFare": 4835,
+          "Tax": 1410,
+          "YQTax": 0,
+          "AdditionalTxnFeePub": 0,
+          "AdditionalTxnFeeOfrd": 0,
+          "OtherCharges": 5.31,
+          "ServiceFee": 0,
+          "PublishedFare": 18740.31,
+          "OfferedFare": 15760.07,
+          "Discount": 0,
+          "TdsOnCommission": 428.19,
+          "TdsOnIncentive": 396.59,
+          "TdsOnPLB": 367.32
+        }
+      }
+    ],
+    "fFareBreakdown": [
+      {
+        "Currency": "INR",
+        "PassengerType": 1,
+        "PassengerCount": 1,
+        "BaseFare": 4835,
+        "Tax": 1410
+      },
+      {
+        "Currency": "INR",
+        "PassengerType": 2,
+        "PassengerCount": 2,
+        "BaseFare": 4835,
+        "Tax": 1410
+      }
+    ]
+  }
+  

@@ -40,7 +40,7 @@ export default function Book() {
   const [childAges, setChildAges] = useState([]);
 
   // Fetch IP address and hotel data
-    
+
   useEffect(() => {
     const fetchIpAddress = async () => {
       try {
@@ -54,19 +54,19 @@ export default function Book() {
         }));
       }
     };
-  
+
     fetchIpAddress();
-  
+
     try {
       const hotelCheckData = JSON.parse(localStorage.getItem("hotelcheckdata"));
       const searchData = JSON.parse(localStorage.getItem("hotelSearchData"));
       const hotelItems = JSON.parse(localStorage.getItem("hotelItems"));
       const validationPolices = JSON.parse(localStorage.getItem("validationpolices"));
-  
+
       setValidationPolicies(validationPolices || {});
       setCancellationPolicies(hotelCheckData.Rooms?.[0].CancelPolicies || []);
       setChildAges(hotelItems?.childAges || []); // Set childAges from hotelItems
-  
+
       if (hotelCheckData && hotelItems) {
         const mappedHotelData = {
           HotelName: hotelCheckData.Rooms[0].Name[0] || "Unknown Hotel",
@@ -85,7 +85,7 @@ export default function Book() {
             const roomData = Array.isArray(hotelItems) ? hotelItems[index] : hotelItems;
             const adultCount = parseInt(roomData?.adultcount, 10) || 1;
             const childCount = parseInt(roomData?.childcount, 10) || 0;
-  
+
             const guestDetails = [
               ...Array(adultCount).fill().map((_, guestIndex) => ({
                 PaxType: 1,
@@ -117,7 +117,7 @@ export default function Book() {
                 PAN: "",
               })),
             ];
-  
+
             return {
               RoomIndex: index + 1,
               RoomTypeName: room.Name?.[0] || "Standard Room",
@@ -135,7 +135,7 @@ export default function Book() {
           isPackageFare: mappedHotelData.IsPackageFare,
           isPackageDetailsMandatory: mappedHotelData.IsPackageDetailsMandatory,
         }));
-  
+
         // Calculate fare details
         const taxRate = 0.18;
         const roomTotal = mappedHotelData.HotelRoomsDetails.reduce(
@@ -145,7 +145,7 @@ export default function Book() {
         const taxFare = hotelCheckData?.Rooms[0]?.TotalTax;
         const totalFare = hotelCheckData?.Rooms[0]?.TotalFare;
         const netAmount = hotelCheckData?.Rooms[0]?.NetAmount;
-  
+
         console.log("Fare Calculation:", {
           roomTotal: roomTotal,
           taxRate: taxRate,
@@ -154,7 +154,7 @@ export default function Book() {
           netAmount: netAmount,
           matchesTotalDisplayFare: netAmount === parseFloat(hotelCheckData.Rooms[0].TotalFare || 0),
         });
-  
+
         setFareDetails({
           totalFare: totalFare,
           taxFare: taxFare,
@@ -175,7 +175,7 @@ export default function Book() {
     }
   }, [router]);
 
-  
+
   // Initialize rooms based on hotel data
   useEffect(() => {
     if (hotelData?.HotelRoomsDetails) {
@@ -356,19 +356,19 @@ export default function Book() {
         }
 
         // Validate Phone Number for all adults
-       { console.log('guest.Phoneno', !guest.Phoneno || !/^\+?\d{9,15}$/.test(guest.Phoneno))}
-       if (guest.PaxType === 1) {
-        if (!guest.Phoneno) {
-          newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number is required for adult guests";
-        } else {
-          const digits = guest.Phoneno.replace(/^\+?/, '').replace(/[^0-9]/g, '');
-       { console.log('guest.Phoneno',digits.length)}
+        { console.log('guest.Phoneno', !guest.Phoneno || !/^\+?\d{9,15}$/.test(guest.Phoneno)) }
+        if (guest.PaxType === 1) {
+          if (!guest.Phoneno) {
+            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number is required for adult guests";
+          } else {
+            const digits = guest.Phoneno.replace(/^\+?/, '').replace(/[^0-9]/g, '');
+            { console.log('guest.Phoneno', digits.length) }
 
-          if (digits.length < 10 || digits.length > 15) {
-            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number must be 10 to 15 digits long";
+            if (digits.length < 10 || digits.length > 15) {
+              newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number must be 10 to 15 digits long";
+            }
           }
         }
-      }
 
         // Validate Lead Passenger fields
         if (guest.LeadPassenger) {
@@ -409,9 +409,9 @@ export default function Book() {
   const handleBookHotel = async (e) => {
     e.preventDefault();
     const isValid = validateAllForms();
-  
+
     const bookingCode = hotelData?.BookingCode;
-  
+
     if (isValid) {
       setIsLoading(true);
       const payload = {
@@ -437,11 +437,11 @@ export default function Book() {
               LeadPassenger: guest.LeadPassenger,
               Age: guest.Age ? parseInt(guest.Age, 10) : null,
             };
-  
+
             if (validationPolicies?.PanMandatory || (guest.PAN && guest.PAN !== "")) {
               passenger.PAN = guest.PAN || null;
             }
-  
+
             if (
               validationPolicies?.PassportMandatory ||
               (guest.PassportNo && guest.PassportNo !== "") ||
@@ -452,7 +452,7 @@ export default function Book() {
               passenger.PassportIssueDate = guest.PassportIssueDate || null;
               passenger.PassportExpDate = guest.PassportExpDate || null;
             }
-  
+
             return passenger;
           }),
         })),
@@ -464,9 +464,9 @@ export default function Book() {
           },
         }),
       };
-  
+
       console.log('payload', payload);
-  
+
       try {
         const response = await axios.post(`${apilink}/hotel/book`, payload);
         setBookingResponse(response.data);
@@ -1034,50 +1034,50 @@ export default function Book() {
                         </div>
                         {guest.PaxType === 2 && (
 
-<div>
-<label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
-  Age *
-</label>
-{childAges.length > 0 ? (
-  <select
-    id={`age_${roomIndex}_${guestIndex}`}
-    name="Age"
-    value={guest.Age}
-    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-    className="w-full border p-2 rounded-md"
-    required
-    aria-label="Child Age"
-    aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
-  >
-    <option value="">Select Age</option>
-    {childAges.map((age, index) => (
-      <option key={`child_age_${index}`} value={age}>
-        {age}
-      </option>
-    ))}
-  </select>
-) : (
-  <input
-    type="number"
-    id={`age_${roomIndex}_${guestIndex}`}
-    name="Age"
-    value={guest.Age}
-    onChange={(e) => handleChange(e, roomIndex, guestIndex)}
-    className="w-full border p-2 rounded-md"
-    max="12"
-    min="0"
-    required
-    aria-label="Child Age"
-    aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
-  />
-)}
-{errors[`Age_${roomIndex}_${guestIndex}`] && (
-  <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-    {errors[`Age_${roomIndex}_${guestIndex}`]}
-  </p>
-)}
-</div>
-                        
+                          <div>
+                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+                              Age *
+                            </label>
+                            {childAges.length > 0 ? (
+                              <select
+                                id={`age_${roomIndex}_${guestIndex}`}
+                                name="Age"
+                                value={guest.Age}
+                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                className="w-full border p-2 rounded-md"
+                                required
+                                aria-label="Child Age"
+                                aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+                              >
+                                <option value="">Select Age</option>
+                                {childAges.map((age, index) => (
+                                  <option key={`child_age_${index}`} value={age}>
+                                    {age}
+                                  </option>
+                                ))}
+                              </select>
+                            ) : (
+                              <input
+                                type="number"
+                                id={`age_${roomIndex}_${guestIndex}`}
+                                name="Age"
+                                value={guest.Age}
+                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                className="w-full border p-2 rounded-md"
+                                max="12"
+                                min="0"
+                                required
+                                aria-label="Child Age"
+                                aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+                              />
+                            )}
+                            {errors[`Age_${roomIndex}_${guestIndex}`] && (
+                              <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                                {errors[`Age_${roomIndex}_${guestIndex}`]}
+                              </p>
+                            )}
+                          </div>
+
                         )}
                         {guest.PaxType === 1 && (
                           <div>
@@ -1221,45 +1221,44 @@ export default function Book() {
               <h3>Price Summary</h3>
             </div>
             <div className="p-4 space-y-2">
-    {hotelData?.HotelRoomsDetails?.map((room, index) => (
-      <div key={index} className="flex justify-between">
-        <p>{room.RoomTypeName}</p>
-        <p className="flex items-center font-bold">
-          <FaRupeeSign />
-          {room.Price?.PublishedPrice?.toLocaleString('en-IN') || "N/A"}
-        </p>
-      </div>
-    )) || <p>No price details available</p>}
-    <div className="flex justify-between border-t pt-2">
-      <p>Base Fare</p>
-      <p className="flex items-center">
-        <FaRupeeSign />
-        {fareDetails.totalFare.toLocaleString('en-IN') || "N/A"}
-      </p>
-    </div>
-    <div className="flex justify-between">
-      <p>Taxes & Fees (18%)</p>
-      <p className="flex items-center">
-        <FaRupeeSign />
-        {fareDetails.taxFare.toLocaleString('en-IN') || "N/A"}
-      </p>
-    </div>
-    <div className="flex justify-between font-semibold text-lg border-t pt-2 relative">
-      <p>Total</p>
-      <p className="flex items-center">
-        <FaRupeeSign />
-        {fareDetails.netAmount.toLocaleString('en-IN') || "N/A"}
-      </p>
-      {/* Tooltip for assistance */}
-     
-    </div>
-  </div>
+              {hotelData?.HotelRoomsDetails?.map((room, index) => (
+                <div key={index} className="flex justify-between">
+                  <p>{room.RoomTypeName}</p>
+                  <p className="flex items-center font-bold">
+                    <FaRupeeSign />
+                    {room.Price?.PublishedPrice?.toLocaleString('en-IN') || "N/A"}
+                  </p>
+                </div>
+              )) || <p>No price details available</p>}
+              <div className="flex justify-between border-t pt-2">
+                <p>Base Fare</p>
+                <p className="flex items-center">
+                  <FaRupeeSign />
+                  {fareDetails.totalFare.toLocaleString('en-IN') || "N/A"}
+                </p>
+              </div>
+              <div className="flex justify-between">
+                <p>Taxes & Fees (18%)</p>
+                <p className="flex items-center">
+                  <FaRupeeSign />
+                  {fareDetails.taxFare.toLocaleString('en-IN') || "N/A"}
+                </p>
+              </div>
+              <div className="flex justify-between font-semibold text-lg border-t pt-2 relative">
+                <p>Total</p>
+                <p className="flex items-center">
+                  <FaRupeeSign />
+                  {fareDetails.netAmount.toLocaleString('en-IN') || "N/A"}
+                </p>
+                {/* Tooltip for assistance */}
+
+              </div>
+            </div>
           </div>
           <div className="flex justify-center mt-3">
             <button
-              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${
-                isLoading ? "opacity-75 cursor-not-allowed" : ""
-              }`}
+              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${isLoading ? "opacity-75 cursor-not-allowed" : ""
+                }`}
               onClick={handleBookHotel}
               disabled={isLoading}
               aria-label="Book Hotel"
