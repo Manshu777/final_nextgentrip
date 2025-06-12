@@ -1,0 +1,21 @@
+{
+    "status": "success",
+    "data": {
+        "BookResult": {
+            "VoucherStatus": false,
+            "ResponseStatus": 1,
+            "Error": {
+                "ErrorCode": 0,
+                "ErrorMessage": ""
+            },
+            "TraceId": "3321323a-46df-11f0-abf2-4a224e7db70b",
+            "Status": 1,
+            "HotelBookingStatus": "Confirmed",
+            "ConfirmationNo": "9REGPA",
+            "BookingRefNo": null,
+            "BookingId": 1990548,
+            "IsPriceChanged": false,
+            "IsCancellationPolicyChanged": false
+        }
+    }
+}
