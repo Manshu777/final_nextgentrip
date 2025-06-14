@@ -195,15 +195,18 @@ a.text-sm {
 
 
  .flightmenuico {
-  background: url(../public/images/airplane\ \(1\).webp);
+  background: url(../public/images/flight-01.png);
   
 }
 .hotelmenuico {
-  background: url(../public/images/hote2.webp);
+  background: url(../public/images/hotelsimg.png);
 
 }
 
 
+.charterimg{
+  background: url(../public/images/charter-img.png);
+}
 
 .fphmenuico {
   background: url(../public/images/hotelplane.webp);
@@ -214,13 +217,13 @@ a.text-sm {
   
 }
  .busmenuico {
-  background: url(../public/images/bus1.webp);
+  background: url(../public/images/busimg.png);
 }
  .holidaymenuico {
-  background: url(../public/images/holidays.webp);
+  background: url(../public/images/holidaysimg.png);
 }
  .cabmenuico {
-  background: url(../public/images/cab2.webp);
+  background: url(../public/images/taxi-img.png);
 }
 .actvitymenuico {
   background: url(../public/images/activities.webp);
@@ -231,7 +234,7 @@ a.text-sm {
 
 }
 .Insurancenuico{
-  background: url(../public/images/insuranceImg.webp);
+  background: url(../public/images/insuranceimgicon.png);
 
 }
 .visa-roicon2 {
@@ -240,6 +243,14 @@ a.text-sm {
 
 .menuropos {
   background: url(../public/images/calltop.webp);
+}
+
+.esimimg {
+  background: url(../public/images/esim-img.png);
+}
+
+.passportimg{
+  background: url(../public/images/passport-img.png);
 }
 
 

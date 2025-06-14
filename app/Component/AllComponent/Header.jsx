@@ -1252,7 +1252,7 @@ const Header = () => {
                     <div className="relative " ref={dropCoachandCheap}>
                       <button
                         onClick={() => handleDropdownToggle("cheapFlight")}
-                        className="flex items-center w-full  h-full px-3 py-2  md:p-0   justify-center gap-2   font-medium bg-blue-500 hover:bg-blue-600 text-white md:px-4 md:py-3 lg:py-[3px] rounded-md shadow-md transition-all duration-300"
+                        className="flex items-center hidden w-full   h-full px-3 py-2  md:p-0   justify-center gap-2   font-medium bg-blue-500 hover:bg-blue-600 text-white md:px-4 md:py-3 lg:py-[3px] rounded-md shadow-md transition-all duration-300"
                         aria-expanded={
                           dropdowns.cheapFlight.isOpen ? "true" : "false"
                         }

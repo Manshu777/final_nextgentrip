@@ -27,11 +27,17 @@ const HotelsComp = () => {
     (defalinfo && defalinfo.place) || { Name: "delhi", Code: "130443" }
   );
   const currentDate = today(localTimeZone);
+  // Initialize Check In to today's date in local timezone
   const [arivitime, setarivitime] = useState(
-    new Date((defalinfo && defalinfo.checkIntime) || Date.now())
+    defalinfo && defalinfo.checkIntime
+      ? new Date(defalinfo.checkIntime)
+      : currentDate.toDate(localTimeZone)
   );
+  // Initialize Check Out to the day after Check In or stored value
   const [checkOut, setcheckOut] = useState(
-    new Date((defalinfo && defalinfo.checkouttime) || Date.now())
+    defalinfo && defalinfo.checkouttime
+      ? new Date(defalinfo.checkouttime)
+      : new Date(currentDate.toDate(localTimeZone).setDate(currentDate.day + 1))
   );
   const [adultcount, setadultcount] = useState(
     (defalinfo && defalinfo.adultcount) || 1
@@ -44,7 +50,6 @@ const HotelsComp = () => {
     (defalinfo && defalinfo.numberOfRoom) || 1
   );
   const [childAges, setChildAges] = useState(() => {
-    // Initialize childAges to match childcount, defaulting to 1 for each child
     const storedAges = defalinfo && defalinfo.childAges ? defalinfo.childAges : [];
     const validAges = storedAges
       .slice(0, childcount)
@@ -80,7 +85,7 @@ const HotelsComp = () => {
   };
 
   useEffect(() => {
-    dispatch(getAllCountries()); // Removed redundant useEffect
+    dispatch(getAllCountries());
   }, [dispatch]);
 
   useEffect(() => {
@@ -93,8 +98,15 @@ const HotelsComp = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Function to format date to YYYY-MM-DD in local timezone
+  const formatDateToLocal = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
   const handlehotelSearch = () => {
-    // Validate childAges
     const validChildAges = childAges.filter(
       (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
     );
@@ -117,8 +129,9 @@ const HotelsComp = () => {
       })
     );
 
-    const checkInDate = arivitime.toISOString().slice(0, 10);
-    const checkOutDate = checkOut.toISOString().slice(0, 10);
+    // Use local timezone date formatting
+    const checkInDate = formatDateToLocal(arivitime);
+    const checkOutDate = formatDateToLocal(checkOut);
 
     const childAgesQuery =
       validChildAges.length > 0
@@ -390,7 +403,7 @@ const HotelsComp = () => {
                         >
                           -
                         </button>
-                        <p className="px-2 border text-gray-700 ">{childcount}</p>
+                        <p className="px-2 border text-gray-700">{childcount}</p>
                         <button
                           className="px-2 text-black border"
                           onClick={() => {
@@ -401,7 +414,7 @@ const HotelsComp = () => {
                               Math.ceil(newChildCount / maxChildrenPerRoom)
                             );
                             setchildcount(newChildCount);
-                            setChildAges([...childAges, 1]); // Default to 1 instead of 0
+                            setChildAges([...childAges, 1]);
                             if (requiredRooms > numberOfRoom) {
                               setNumberOfRoom(requiredRooms);
                             }

@@ -149,9 +149,10 @@ export default function InsuranceHeader() {
                 {/* Popover (optional dropdown) */}
 
 
-                {
+
+                {isVisible && ( // Only show when isVisible is true
                   <div
-                    onMouseLeave={() => setIsVisible(false)}
+                   onMouseLeave={()=>setIsVisible(false)}
                     className="absolute top-full left-0 z-50 mt-2 w-[300px] bg-white border border-gray-200 rounded-xl shadow-2xl p-5 transition-all duration-300"
                   >
                     {/* Passenger Count Control */}
@@ -178,7 +179,7 @@ export default function InsuranceHeader() {
                     </div>
 
                     {/* Passenger Ages */}
-                    <div className="grid grid-cols-1  gap-3">
+                    <div className="grid grid-cols-1 gap-3">
                       {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
                         <div key={index} className="flex items-center gap-2">
                           <label className="text-sm text-gray-600 whitespace-nowrap">Passenger {index + 1} Age:</label>
@@ -194,7 +195,9 @@ export default function InsuranceHeader() {
                       ))}
                     </div>
                   </div>
-                }
+                )}
+
+
 
 
               </div>

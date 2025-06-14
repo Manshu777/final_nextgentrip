@@ -44,7 +44,9 @@ const BusComp = () => {
   const localTimeZone = getLocalTimeZone();
   const currentDate = today(localTimeZone);
 
-  const [pickupdate, setpickdate] = useState((defaultstore && new Date(defaultstore.pickupdate)) || new Date(Date.now()))
+  const [pickupdate, setpickdate] = useState(
+    (defaultstore && new Date(defaultstore.pickupdate)) || new Date()
+  );
 
   const route = useRouter()
 

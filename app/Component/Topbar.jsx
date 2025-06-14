@@ -19,6 +19,7 @@ import { FaHotel } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { getCurrencyDef } from "./Store/slices/currencySlice";
+import { useTranslations } from 'next-intl';
 
 const Topbar = () => {
   const router = useRouter();
@@ -28,7 +29,8 @@ const Topbar = () => {
   const [userlogin, setUserLogine] = useState(null);
   const [selectedLang, setSelectedLang] = useState("en");
   const [topDropdown, setTopDropdown] = useState(null);
-
+  const [activeLink, setActiveLink] = useState("");
+  const t = useTranslations('Navbar');
   useEffect(() => {
     // Set the initial state from cookies (if available)
     const localeFromCookie = Cookies.get("locale");
@@ -63,6 +65,23 @@ const Topbar = () => {
     setOpenDropdown(null);
   };
 
+  const [showIcons, setShowIcons] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setShowIcons(true);
+      } else {
+        setShowIcons(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    // Clean up
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const [showPopup, setShowPopup] = useState(null);
   const [hasNewNotification, setHasNewNotification] = useState(true);
   const dummyNotifications = [
@@ -81,7 +100,7 @@ const Topbar = () => {
   };
   const [activeTab, setActiveTab] = useState("signup");
   const [currencyappled, setcurrencyappled] = useState(false);
-   const [defaultcurrency, setdefaultcurrency] = useState({
+  const [defaultcurrency, setdefaultcurrency] = useState({
     symble: "₹",
     code: "INR",
     country: "India",
@@ -95,7 +114,7 @@ const Topbar = () => {
       }
     }
   }, []);
-  
+
   const [countryOpner, setCounrtyOpner] = useState(false);
   const countryLanguages = [
     { name: "English (US)", image: "/images/flags/us.webp", langCode: "en" },
@@ -306,6 +325,106 @@ const Topbar = () => {
     return firstPart.charAt(0).toUpperCase() + (firstPart.charAt(1) || "").toUpperCase(); // First two letters in uppercase
   };
 
+
+  const icons = [
+    {
+      name: t("flight"),
+      className: "meuicowidth flightmenuico",
+      class: "flight-icon",
+      link: "/flight",
+    },
+    {
+      name: t("hotels"),
+      className: "meuicowidth hotelmenuico",
+      class: "hotel-icon",
+      link: "/hotels",
+    },
+
+    {
+      name: 'eSIM',
+      className: "meuicowidth esimimg",
+      class: "esim",
+      link: "/e-sim",
+    },
+
+    {
+      name: 'Visa',
+      className: "meuicowidth passportimg",
+      class: "eVisa",
+      link: "https://www.visanextgen.com/",
+    },
+
+
+
+    // {
+    //   name: t("flightHotel"),
+    //   className: "meuicowidth fphmenuico",
+    //   class: "fph-icon",
+    //   link: "/flight+hotels",
+    // },
+
+    {
+      name: t("bus"),
+      className: "meuicowidth busmenuico",
+      class: "buses-icon",
+      link: "/buses",
+    },
+    {
+      name: t("holidays"),
+      className: "meuicowidth holidaymenuico",
+      class: "holiday-icon",
+      link: "/holidayspackage",
+    },
+    {
+      name: t("cab"),
+      className: "meuicowidth cabmenuico",
+      class: "cab-icon",
+      link: "/cabs",
+    },
+
+
+
+    // {
+    //   name: t("activities"),
+    //   className: "meuicowidth actvitymenuico",
+    //   class: "activity-icon",
+    //   link: "/activities",
+    // },
+
+
+
+    {
+      name: t("insurance"),
+      className: "meuicowidth Insurancenuico",
+      class: "Inurance-icon",
+      link: "/Insurance",
+    },
+
+    {
+      name: t("cruise"),
+      className: "meuicowidth Cruisemenuico",
+      class: "Cruise-icon",
+      link: "/cruise",
+    },
+
+
+    {
+      name: t("charter"),
+      className: "meuicowidth charterimg",
+      class: "flight-icon",
+      link: "/charter",
+    },
+
+    {
+      name: t("trains"),
+      className: "meuicowidth trainmenuico",
+      class: "trains-icon",
+      link: "/train",
+    },
+
+
+  ];
+
   return (
     <div className="bg-red-400 border-b     relative md:sticky top-0 navbar-main pe-4 py-2 border-blue-100   md:px-8 lg:px-16 xl:px-20">
       <div className="container mx-auto flex py-0  flex-row justify-between items-center">
@@ -314,7 +433,7 @@ const Topbar = () => {
             className="flex   lg:hidden flex-col  justify-center cursor-pointer"
             onClick={openNav3}
           >
-            
+
           </div>
           <Link href="/">
             <img src="/images/NextGenTrip.png" alt="" className="h-[35px] md:h-[60px]" />
@@ -322,16 +441,55 @@ const Topbar = () => {
           <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
 
-        <div className="Contact-county-login-singnup flex items-center gap-1 lg:gap-4">
-          <div className=" flex justify-start lg:justify-end">
+
+        {showIcons && (
+          <div className="hidden md:flex gap-4 items-center ">
+             <div
+          className={`container relative custom-nav  grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
+        >
+          {icons.map((item, index) => (
             <Link
-              href="/property-listing"
-              className="  hidden  md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+              href={item.link}
+              key={index}
+              onClick={() => setActiveLink(item.link)}
+              className={` flex justify-center flex-col items-center mt-2 gap-1 p-3  text-center  rounded-md hover:bg-[#ECF5FE] hover:text-white transition-colors duration-300 ${activeLink === item.link
+                  ? "bg-[#ECF5FE] text-white"
+                  : "hover:bg-[#ECF5FE] hover:text-white"
+                }`}
             >
-              <FaHotel />
-              List Your Property
+
+              <div
+                src={item.icon}
+                alt={`${item.name} icon`}
+                className={`w-8 h-8 ${item.className}`}
+                style={index === 0 ? { transform: "rotate(312deg)" } : {}}
+              />
+
+              <span className="text-black font-semibold text-[12px]">
+                {item.name}
+              </span>
             </Link>
+          ))}
+        </div>
           </div>
+        )}
+
+
+
+
+        <div className="Contact-county-login-singnup flex items-center gap-1 lg:gap-4">
+         
+
+          
+        {!showIcons && (
+        <Link
+          href="/property-listing"
+          className="hidden md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+        >
+          <FaHotel />
+          List Your Property
+        </Link>
+      )}
 
           <a href="tel:+9877579319" className="hidden">
             <div className="border border-gray-300 rounded-full  text-white px-4 text-center shadow-md cursor-pointer transition duration-300 flex items-center gap-4 relative">
@@ -375,49 +533,47 @@ const Topbar = () => {
           {
             currencyappled && (
               <div className="fixed flex justify-center items-center bg-[rgba(0,0,0,0.6)] inset-0 p-4">
-              <div  onClick={(e) => e.stopPropagation()} className="h-[32rem] w-[700px] rounded-xl p-6 bg-white shadow-lg overflow-y-scroll">
- 
-                <div className="text-center mb-6 flex justify-between ">
-                  <h3 className="text-xl font-semibold text-gray-800">Select Your Currency</h3>
-                  <button
-                            onClick={() => setcurrencyappled(false)}
-                            className=""
-                          >
-                            <RxCross2 />
-                          </button>
-                </div>
-            
- 
-                <div className="flex flex-wrap justify-center gap-4 ">
-                  {currency.map((currency) => (
+                <div onClick={(e) => e.stopPropagation()} className="h-[32rem] w-[700px] rounded-xl p-6 bg-white shadow-lg overflow-y-scroll">
+
+                  <div className="text-center mb-6 flex justify-between ">
+                    <h3 className="text-xl font-semibold text-gray-800">Select Your Currency</h3>
                     <button
-                      key={currency.code}
-                      onClick={() => handelCurrencySEt(currency)}
-                      className={`flex items-center gap-3 px-3 py-2 lg:px-5 lg:py-3 text-sm font-medium border rounded-lg lg:rounded-full shadow-sm transition duration-300 ${
-                        currency.code === defaultcurrency.code
-                          ? "bg-blue-500 text-white  border-blue-500"
-                          : "bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-300"
-                      }`}
+                      onClick={() => setcurrencyappled(false)}
+                      className=""
                     >
-             
-                      <span className="w-5 h-5 hidden   rounded-full bg-gray-300 lg:flex items-center justify-center text-xs">
-                        🌍
-                      </span>
-          
-                      <div className={`${
-                        currency.code === defaultcurrency.code
-                          ? " !text-white  "
-                          : " text-gray-700 "
-                      }`}  >
-                        <p>{currency.symble} - {currency.code}</p>
-                        <p className="text-xs ">{currency.country}</p>
-                      </div>
+                      <RxCross2 />
                     </button>
-                  ))}
+                  </div>
+
+
+                  <div className="flex flex-wrap justify-center gap-4 ">
+                    {currency.map((currency) => (
+                      <button
+                        key={currency.code}
+                        onClick={() => handelCurrencySEt(currency)}
+                        className={`flex items-center gap-3 px-3 py-2 lg:px-5 lg:py-3 text-sm font-medium border rounded-lg lg:rounded-full shadow-sm transition duration-300 ${currency.code === defaultcurrency.code
+                            ? "bg-blue-500 text-white  border-blue-500"
+                            : "bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-300"
+                          }`}
+                      >
+
+                        <span className="w-5 h-5 hidden   rounded-full bg-gray-300 lg:flex items-center justify-center text-xs">
+                          🌍
+                        </span>
+
+                        <div className={`${currency.code === defaultcurrency.code
+                            ? " !text-white  "
+                            : " text-gray-700 "
+                          }`}  >
+                          <p>{currency.symble} - {currency.code}</p>
+                          <p className="text-xs ">{currency.country}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div> 
-          
+
 
             )
           }
@@ -444,12 +600,11 @@ const Topbar = () => {
                         />
                         <span className="text-nowrap hidden lg:block">{lang.name} </span>
                         <span className="text-nowrap  block lg:hidden ">
-                        {getLangAbbreviation(lang.name)}
+                          {getLangAbbreviation(lang.name)}
                         </span>
                         <FaChevronDown
-                          className={`${
-                            countryOpner && "rotate-180"
-                          } hidden md:block`}
+                          className={`${countryOpner && "rotate-180"
+                            } hidden md:block`}
                         />
                       </button>
                     )
@@ -616,7 +771,7 @@ const Topbar = () => {
               {!userlogin && (
                 <Link className="relative" href={"/user/login"}>
                   <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white px-3  lg:px-6 py-2 font-semibold rounded-full text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-300 cursor-pointer">
-                    Login <span className="hidden md:inline"> or Signup</span>
+                  <span className="inline lg:hidden">Login</span>  <span className="hidden md:inline"> Signup</span>
                   </div>
                   {/* 
                 {openDropdown === "signUp" && (
