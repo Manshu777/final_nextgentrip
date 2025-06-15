@@ -166,10 +166,10 @@ const HotelSliderCompo = ({ isLoading, children }) => {
                   slidesPerView: 1, // 1 slide on screens < 640px (mobile)
                 },
                 768: {
-                  slidesPerView: 2, // Optional: 2 slides for tablets
+                  slidesPerView: 4, // Optional: 2 slides for tablets
                 },
                 1024: {
-                  slidesPerView: 2, // 4 slides for larger screens (desktop)
+                  slidesPerView: 4, // 4 slides for larger screens (desktop)
                 },
               }}
               spaceBetween={50}
@@ -178,11 +178,11 @@ const HotelSliderCompo = ({ isLoading, children }) => {
  
             >
 
-            {["01JSK76W4F49A001EN7NJ2NNJJ.jpg", "01JSK76W4F49A001EN7NJ2NNJJ.jpg","01JSK76W4F49A001EN7NJ2NNJJ.jpg"].map((img, index) => <SwiperSlide
+            {["loadimg-1.png", "loadimg-2.png","loadimg-3.png","loadimg-4.png","loadimg-5.png","loadimg-6.png"].map((img, index) => <SwiperSlide
               className="flex flex-col   rounded-2xl shadow-sm bg-white-900"
-            >
+            > 
 
-              <div className="rounded-2xl   h-[200px]  md:h-[250px] lg:h-full ">
+              <div className="rounded-2xl   h-[200px]  md:h-[400px] lg:h-full ">
 
 
                 <img src={`/slide/${img}`} alt="" className="h-full w-full  rounded-2xl" />

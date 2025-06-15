@@ -14,7 +14,7 @@ import { useTranslations } from "next-intl";
 const Page = () => {
   const t=useTranslations("activities")
   const slides = [
-    { src: "/images/activity9.webp", title: "Paris", tours: "100+ Tours" },
+   
     { src: "/images/activity6.webp", title: "Singapore", tours: "300+ Tours" },
     { src: "/images/activity7.webp", title: "Roma", tours: "400+ Tours" },
     { src: "/images/activity8.webp", title: "Bangkok", tours: "100+ Tours" },
@@ -170,12 +170,13 @@ const Page = () => {
       slidesPerView: 4,
     },
     1024: {
-      slidesPerView: 8,
+      slidesPerView: 7,
     },
   }}
   navigation={true}
   modules={[Navigation,Pagination]}
-  className="mySwiper"
+  className=" px-8"
+  style={{padding:"0px 40px"}}
 >
   {slides.map((slide, index) => (
     <SwiperSlide key={index} className="w-32 cursor-pointer">

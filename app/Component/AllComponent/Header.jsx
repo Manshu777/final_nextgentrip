@@ -836,7 +836,7 @@ const Header = () => {
                         <div className="flex gap-3 justify-between"><p className="text-nowrap">Adult Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { adultCount > 1 ? setAdultCount(adultCount - 1) : null }}>-</button> <p className=" px-2 border">{adultCount}</p> <button className="px-2 border" onClick={() => setAdultCount(adultCount + 1)} >+</button> </div> </div>
                         <div className="flex gap-3 justify-between"><p className="text-nowrap">Child Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { childCount > 0 ? setChildCount(childCount - 1) : null }}>-</button> <p className=" px-2 border">{childCount}</p> <button className="px-2 border" onClick={() => setChildCount(childCount + 1)} >+</button> </div> </div>
                         <div className="flex gap-3 justify-between"><p className="text-nowrap">Infant Count </p> <div className="flex items-center gap-3"> <button className="px-2 border" onClick={() => { infantCount > 0 ? setInfantCount(infantCount - 1) : null }}>-</button> <p className=" px-2 border">{infantCount}</p> <button className="px-2 border" onClick={() => setInfantCount(infantCount + 1)} >+</button> </div> </div>
-
+                          
 
                       </div>
                     </div>

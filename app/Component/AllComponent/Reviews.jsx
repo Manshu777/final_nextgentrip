@@ -21,7 +21,7 @@ const Testimonial = () => {
       author: {
         name: "Rajesh Verma ",
         role: "CEO, Tech Innovations Pvt. Ltd.",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
         image: "/images/googleicon.webp",
         profileLink: "#"
       }
@@ -33,7 +33,7 @@ const Testimonial = () => {
       author: {
         name: "Priya Sharma",
         role: "Digital Marketing Head",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyW2MAFrFnfa_bT1jSttLbmvfotJcqQyCCGg&s",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
@@ -45,7 +45,7 @@ const Testimonial = () => {
       author: {
         name: "Amit Khanna ",
         role: "Startup Founder",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://play-lh.googleusercontent.com/vco-LT_M58j9DIAxlS1Cv9uvzbRhB6cYIZJS7ocZksWRqoEPat_QXb6fVFi77lciJZQ=w526-h296-rw",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
@@ -57,7 +57,7 @@ const Testimonial = () => {
       author: {
         name: "Neha Iyer",
         role: "E-commerce Entrepreneur",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://play-lh.googleusercontent.com/t2tJJ3PvHpZwSVH20B7zGBqcqMrUMnNpQ8re_BiS6vqdxboDm_RM_pcJvuRY-n8KvGA=w526-h296-rw",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
@@ -69,7 +69,7 @@ const Testimonial = () => {
       author: {
         name: "Vikram Patil ",
         role: "IT Manager",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw0PDKrErulLlbJkbv5KtsCeICczdgJSyurA&s",
         image: "/images/LinkedIn.svg",
         profileLink: ""
       }
@@ -81,7 +81,7 @@ const Testimonial = () => {
       author: {
         name: "Rohan Mehta",
         role: "Product Manager, TechSphere",
-        imageUrl: "/images/Avatar_Review_Male.svg",
+        imageUrl: "https://img.freepik.com/free-photo/portrait-handsome-young-man-with-arms-crossed-holding-white-headphone-around-his-neck_23-2148096439.jpg?semt=ais_hybrid&w=740",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
@@ -127,7 +127,7 @@ const Testimonial = () => {
                 <p className="text-base text-justify text-gray-600 mt-3">{review.content}</p>
               </div>
               <div className="border-t mt-4 pt-4 flex items-center gap-3">
-                <img src={review.author.imageUrl} alt="User" className="w-12 h-12 rounded-full" />
+                <img src={review.author.imageUrl} alt="User" className="w-[60px] h-[58px] rounded-full" />
                 <div>
                   <div className="text-sm font-semibold text-gray-900">{review.author.name}</div>
                   <div className="text-xs text-gray-500">{review.author.role}</div>

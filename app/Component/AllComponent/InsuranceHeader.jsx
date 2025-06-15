@@ -149,8 +149,12 @@ export default function InsuranceHeader() {
                 {/* Popover (optional dropdown) */}
 
 
+<<<<<<< Updated upstream
 
                 {isVisible && ( // Only show when isVisible is true
+=======
+                {isVisible &&
+>>>>>>> Stashed changes
                   <div
                    onMouseLeave={()=>setIsVisible(false)}
                     className="absolute top-full left-0 z-50 mt-2 w-[300px] bg-white border border-gray-200 rounded-xl shadow-2xl p-5 transition-all duration-300"

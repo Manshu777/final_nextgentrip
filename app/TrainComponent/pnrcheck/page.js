@@ -170,7 +170,7 @@ const page = () => {
   return (
     <>
       <div className="relative pt-6 lg:pt-0">
-        <div className="relative h-60 custom-color"></div>
+          <div className="relative h-60 bg-[#011F48] "></div>
 
         <div className="absolute bottom-10 left-0 right-0 text-center pb-6">
           <h1 className="text-white text-2xl lg:text-4xl font-bold">

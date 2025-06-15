@@ -172,7 +172,7 @@ const page = () => {
       {/* <TrainComp /> */}
 
       <div className="bg-[url(/images/TrainImg/trainBanner.webp)] min-h-[80vh] py-10 flex items-center relative bg-center bg-cover text-white px-5 md:px-16 xl:px-32  ">
-        <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
+        <div className="absolute inset-0  bg-gray-900  z-0"></div>
         <div className=" h-full  w-full flex flex-col bg-red400 gap-10 lg:flex-row items-center lg:justify-between relative z-10">
           <div className=" lg:w-1/2 space-y-4 ">
             <h5 className="font-extrabold  lg:leading-tight text-2xl md:text-3xl lg:text-4xl  text-white ">
