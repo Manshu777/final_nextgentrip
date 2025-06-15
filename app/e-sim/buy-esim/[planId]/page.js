@@ -68,7 +68,13 @@ function OrderForm() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
         <div className="flex items-center mb-6">
-        
+          <button
+            onClick={handleBack}
+            className="text-blue-600 hover:text-blue-800 mr-4"
+            aria-label="Go back"
+          >
+            ← Back
+          </button>
           <h2 className="text-2xl font-bold text-gray-800">
             Order Details for{" "}
             <span className="text-blue-600">{plan?.planName}</span>

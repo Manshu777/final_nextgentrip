@@ -27,6 +27,24 @@ const PlansPage = () => {
   const searchParams = useSearchParams(); // Ensure this is defined
   const router = useRouter();
   const country = searchParams ? searchParams.get('country') || '' : ''; // Safe access
+  const [selectedCountry, setSelectedCountry] = useState('');
+  const [countries, setCountries] = useState([]);
+
+  useEffect(() => {
+   const getCountries = async () => {
+    try {
+      const response = await axios.get(`${apilink}/matrix/countries`);
+
+      setCountries(response.data.data);
+    } catch (error) {
+      console.error("Error fetching countries:", error);
+    }
+   }
+   getCountries()
+
+  }, [country]);  
+
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,6 +70,8 @@ const PlansPage = () => {
     };
     fetchData();
   }, [currentPage]);
+
+
 
   useEffect(() => {
     if (currentPage > lastPage && lastPage > 0) {
@@ -84,11 +104,49 @@ const PlansPage = () => {
     }
   };
 
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (selectedCountry) {
+      navigate(`/plans?country_covered=${encodeURIComponent(selectedCountry)}`);
+    }
+  };
+
+
   return (
     <>
       <ESimComp />
       <div className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-bold mb-4">eSIM Plans </h2>
+
+
+        <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
+      <h2 className="text-xl font-semibold mb-4">Select Country</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <select
+          className="w-full p-2 border rounded mb-4"
+          value={selectedCountry}
+          onChange={(e) => setSelectedCountry(e.target.value)}
+          required
+        >
+          <option value="">Select a country</option>
+          {countries.map((country) => (
+            <option key={country} value={country}>
+              {country}
+            </option>
+          ))}
+        </select>
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+        >
+          View Plans
+        </button>
+      </form>
+    </div>
+
+
 
         <>
       {error ? (

@@ -194,8 +194,7 @@ const Comp = ({ slug }) => {
     if (hotalbackup?.info?.len && page < hotalbackup.info.len - 1) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${
-          Number(page) + 1
+        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${Number(page) + 1
         }`
       );
     }
@@ -205,8 +204,7 @@ const Comp = ({ slug }) => {
     if (page > 0) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${
-          Number(page) - 1
+        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${Number(page) - 1
         }`
       );
     }
@@ -419,7 +417,7 @@ const Comp = ({ slug }) => {
                     </div>
 
                     {hotel?.searchResults?.Status?.Code === 200 &&
-                    hotel?.searchResults?.Rooms?.length > 0 ? (
+                      hotel?.searchResults?.Rooms?.length > 0 ? (
                       hotel.searchResults.Rooms.map((items_price, roomIndex) => (
                         <div key={roomIndex}>
                           <div className="flex items-end justify-between">
@@ -435,12 +433,13 @@ const Comp = ({ slug }) => {
                               <p className="text-sm text-gray-500 mt-2">Per Night</p>
                             </div>
                             <Link
-                              href={`/hotelSearchCheckin/cityName=${cityName}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelCode}`}
+                              href={`/hotelSearchCheckin/cityName=${encodeURIComponent(
+                                cityName
+                              )}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelCode
+                                }${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""}`}
                               className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center"
                             >
-                              <span className="text-xs flex items-center gap-2">
-                                View Room
-                              </span>
+                              <span className="text-xs flex items-center gap-2">View Room</span>
                             </Link>
                           </div>
                           <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
@@ -467,9 +466,8 @@ const Comp = ({ slug }) => {
               <button
                 onClick={handlePrevPage}
                 disabled={page <= 0}
-                className={`px-4 py-2 rounded-lg font-semibold ${
-                  page <= 0 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
-                }`}
+                className={`px-4 py-2 rounded-lg font-semibold ${page <= 0 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
               >
                 Previous
               </button>
@@ -479,11 +477,10 @@ const Comp = ({ slug }) => {
               <button
                 onClick={handleNextPage}
                 disabled={page >= hotalbackup?.info?.len - 1}
-                className={`px-4 py-2 rounded-lg font-semibold ${
-                  page >= hotalbackup?.info?.len - 1
+                className={`px-4 py-2 rounded-lg font-semibold ${page >= hotalbackup?.info?.len - 1
                     ? "bg-gray-300 cursor-not-allowed"
                     : "bg-blue-600 text-white hover:bg-blue-700"
-                }`}
+                  }`}
               >
                 Next
               </button>

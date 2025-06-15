@@ -68,8 +68,11 @@ const Topbar = () => {
   const [showIcons, setShowIcons] = useState(false);
 
   useEffect(() => {
+   
+
     const handleScroll = () => {
-      if (window.scrollY > 20) {
+      console.log("scrollY", window.scrollY);
+      if (window.scrollY > 180) {
         setShowIcons(true);
       } else {
         setShowIcons(false);
@@ -445,7 +448,7 @@ const Topbar = () => {
         {showIcons && (
           <div className="hidden md:flex gap-4 items-center ">
              <div
-          className={`container relative custom-nav  grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
+          className={`container  relative custom-nav  grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
         >
           {icons.map((item, index) => (
             <Link
