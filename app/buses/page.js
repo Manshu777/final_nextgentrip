@@ -39,7 +39,7 @@ const Page = () => {
   return (
     <>
       <BusComp />
-      <MobileHeader />
+      {/* <MobileHeader /> */}
       <CustomSlider />
 
       

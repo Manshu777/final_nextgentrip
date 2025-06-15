@@ -20,7 +20,7 @@ const Subscribe = () => {
               />
               <button
                 type="submit"
-                className="primary-col text-white px-10 py-3 lg:py-5 rounded-r-md hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand"
+                className="bg-[#011F48] text-white px-10 py-3 lg:py-5 rounded-r-md hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand"
               >
                 Subscribe
               </button>

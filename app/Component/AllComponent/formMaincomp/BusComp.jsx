@@ -246,7 +246,7 @@ const BusComp = () => {
               </div>
 
 
-              <div className="flex items-start gap-2   px-3 py-1  border-2 text-black border-[1px] border-slate-400   rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
+              <div className="flex items-start gap-2   px-3 py-1  justify-between md:justify-start text-black border-[1px] border-slate-400   rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
       
                 <div className="text-slate-400">
                   <h5 className="font-bold text-lg text-black">{adultCount + childCount + infantCount}</h5>

@@ -65,7 +65,7 @@ setPackageInfo(res.data)
 
 
 
-<section className='mx-4 lg:mx-24 my-3 grid  lg:grid-cols-3 gap-2 shadow-lg rounded-md p-3 '>
+<section className=' lg:mx-24 my-3 grid  lg:grid-cols-3 gap-2 shadow-lg rounded-md px-[1vw] md:p-3 '>
 
 <div className='lg:col-span-2'>
 <div  className='flex  items-center gap-1'>
@@ -81,11 +81,11 @@ The Best of {packageInfo.country} &amp;  {packageInfo.city} <span className=""> 
 </div>
 
 <p className='my-4 mt-8 text-xl font-bold'>Photo Gallery</p>
-<div className=' h-[26rem]'>
-<Swiper navigation={true} modules={[Navigation]}  loop={true} className="mySwiper w-full h-full">
+<div className=' h-[26rem] bg-red-700 '>
+<Swiper navigation={true} modules={[Navigation]}  loop={true} className=" w-[98vw] lg:w-full h-full">
     {packageInfo.images.map((imginfo,imgindex)=>{
         return(
-<SwiperSlide className='w-full h-full' key={imgindex} ><img src={`${storageLink}/${imginfo}`} alt="" className='w-full h-full bg-cover' /> </SwiperSlide>
+<SwiperSlide className='' key={imgindex} ><img src={`${storageLink}/${imginfo}`} alt="" className='w-full h-full bg-cover' /> </SwiperSlide>
         )
     })}
         
