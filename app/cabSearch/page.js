@@ -9,7 +9,7 @@ import CabFilter from "../Component/Filter/CabFilter";
 import CabsComp from "../Component/AllComponent/formMaincomp/CabsComp";
 import axios from "axios";
 import { apilink } from "../Component/common";
-
+import { FaMapMarkerAlt, FaClock, FaUserFriends, FaSuitcase, FaMoneyBillWave, FaTag, FaInfoCircle } from "react-icons/fa";
 // Replace with your API base URL
 
 
@@ -42,80 +42,140 @@ const SkeletonCard = () => {
 
 // TransferCard Component
 
+
+
 const TransferCard = ({ transfer }) => {
   const vehicle = transfer.Vehicles[0];
   const price = vehicle.TransferPrice.OfferedPriceRoundedOff;
-  const cancellationDate = new Date(vehicle.LastCancellationDate).toLocaleDateString();
+  const currency = vehicle.TransferPrice.CurrencyCode;
+  const cancellationDate = new Date(vehicle.LastCancellationDate).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
   const cancellationCharge = vehicle.TransferCancellationPolicy[0].Charge;
+  const isPanMandatory = transfer.IsPANMandatory || vehicle.IsPANMandatory;
 
   const formattedPrice = new Intl.NumberFormat("en-IN", {
     style: "currency",
-    currency: "INR",
+    currency: currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(price);
 
   return (
     <motion.div
-      className="w-full bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100 mb-6 transform transition-all duration-300 hover:shadow-xl"
-      initial={{ opacity: 0, y: 20 }}
+      className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200 mb-8 transform transition-all duration-300 hover:shadow-2xl"
+      initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      whileHover={{ scale: 1.02, boxShadow: "0 8px 16px rgba(0, 0, 0, 0.15)" }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      whileHover={{ scale: 1.02 }}
     >
-      <div className="flex flex-col md:flex-row items-start md:items-center p-6 md:p-8 gap-6 bg-gradient-to-r from-gray-50 to-white">
+      <div className="flex flex-col lg:flex-row p-6 lg:p-8 gap-6 bg-gradient-to-br from-blue-50 via-white to-gray-50">
         {/* Left Section: Transfer Details */}
-        <div className="flex-1">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">{transfer.TransferName}</h3>
-          <div className="space-y-3 text-gray-700 text-sm">
-            <p className="flex items-center">
-              <span className="font-semibold text-blue-600 mr-2">From:</span>
-              <span className="font-medium">{transfer.PickUp.PickUpDetailName}</span>
-              <span className="ml-2 text-gray-500">at {transfer.PickUp.PickUpTime}, {transfer.PickUp.PickUpDate}</span>
-            </p>
-            <p className="flex items-center">
-              <span className="font-semibold text-blue-600 mr-2">To:</span>
-              <span className="font-medium">{transfer.DropOff.DropOffDetailName}</span>
-            </p>
-            <p className="flex items-center">
-              <span className="font-semibold text-blue-600 mr-2">Duration:</span>
-              <span>{transfer.ApproximateTransferTime} hours</span>
-            </p>
-            <div className="flex gap-6">
-              <p className="flex items-center">
-                <span className="font-semibold text-blue-600 mr-2">Passengers:</span>
-                <span>{vehicle.VehicleMaximumPassengers}</span>
-              </p>
-              <p className="flex items-center">
-                <span className="font-semibold text-blue-600 mr-2">Luggage:</span>
-                <span>{vehicle.VehicleMaximumLuggage}</span>
+        <div className="flex-1 space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-2xl font-bold text-gray-900">{transfer.TransferName}</h3>
+            <span className="text-sm font-medium text-blue-600 bg-blue-100 px-3 py-1 rounded-full">
+              {vehicle.Vehicle}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 text-sm">
+            {/* Pickup Details */}
+            <div className="flex items-start space-x-2">
+              <FaMapMarkerAlt className="text-blue-600 mt-1" size={18} />
+              <div>
+                <p className="font-semibold text-blue-600">Pickup</p>
+                <p className="font-medium">{transfer.PickUp.PickUpName} ({transfer.PickUp.PickUpDetailCode})</p>
+                <p className="text-gray-500">
+                  {transfer.PickUp.PickUpTime}, {transfer.PickUp.PickUpDate}
+                </p>
+              </div>
+            </div>
+
+            {/* Drop-off Details */}
+            <div className="flex items-start space-x-2">
+              <FaMapMarkerAlt className="text-blue-600 mt-1" size={18} />
+              <div>
+                <p className="font-semibold text-blue-600">Drop-off</p>
+                <p className="font-medium">{transfer.DropOff.DropOffName} ({transfer.DropOff.DropOffDetailCode})</p>
+              </div>
+            </div>
+
+            {/* Duration */}
+            <div className="flex items-center space-x-2">
+              <FaClock className="text-blue-600" size={18} />
+              <p>
+                <span className="font-semibold text-blue-600">Duration: </span>
+                {transfer.ApproximateTransferTime} hours
               </p>
             </div>
-            {transfer.Condition && transfer.Condition.length > 0 && (
-              <p className="text-xs text-gray-500 italic mt-2">{transfer.Condition[0]}</p>
-            )}
+
+            {/* Passengers and Luggage */}
+            <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-2">
+                <FaUserFriends className="text-blue-600" size={18} />
+                <p>{vehicle.VehicleMaximumPassengers} Passengers</p>
+              </div>
+              <div className="flex items-center space-x-2 ml-4">
+                <FaSuitcase className="text-blue-600" size={18} />
+                <p>{vehicle.VehicleMaximumLuggage} Luggage</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className="flex items-center space-x-2 text-sm text-gray-600">
+            <FaInfoCircle className="text-blue-600" size={16} />
+            <p>
+              {isPanMandatory && (
+                <span className="text-red-500 font-medium mr-2">PAN Mandatory</span>
+              )}
+              {transfer.Condition && transfer.Condition.length > 0 && (
+                <span className="italic">{transfer.Condition[0]}</span>
+              )}
+            </p>
           </div>
         </div>
 
         {/* Right Section: Price and Booking */}
-        <div className="flex flex-col items-end justify-between w-full md:w-auto">
-          <p className="text-3xl font-extrabold text-blue-700 mb-4">{formattedPrice}</p>
+        <div className="flex flex-col items-center lg:items-end justify-between w-full lg:w-64 bg-gray-100 p-4 rounded-lg">
+          <div className="text-center lg:text-right">
+            <p className="text-3xl font-extrabold text-blue-700 mb-2">{formattedPrice}</p>
+            {vehicle.TransferPrice.Discount > 0 && (
+              <p className="text-sm text-green-600">
+                <FaTag className="inline mr-1" /> Save {vehicle.TransferPrice.Discount}% off
+              </p>
+            )}
+            <p className="text-xs text-gray-500 mt-1">
+              Incl. {vehicle.TransferPrice.GST.IGSTRate}% IGST
+            </p>
+          </div>
+
           <motion.button
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="mt-4 bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold text-sm shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ duration: 0.2 }}
           >
             Book Now
           </motion.button>
-          <p className="text-xs text-red-500 font-medium mt-3">
-            {cancellationCharge}% cancellation charge after {cancellationDate}
+
+          <p className="text-xs text-red-500 font-medium mt-3 text-center lg:text-right">
+            <FaMoneyBillWave className="inline mr-1" /> {cancellationCharge}% cancellation charge after {cancellationDate}
           </p>
         </div>
+      </div>
+
+      {/* Footer: Additional Details */}
+      <div className="bg-gray-50 px-6 py-3 text-xs text-gray-500 border-t border-gray-200">
+        <p>Category ID: {transfer.CategoryId} | Transfer Code: {transfer.TransferCode}</p>
       </div>
     </motion.div>
   );
 };
+
 
 const Page = () => {
   const searchParams = useSearchParams();

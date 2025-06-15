@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getCabCityApi,searchCabApi } from "../../Store/slices/cabSearchSlice";
+import { getCabCityApi, searchCabApi } from "../../Store/slices/cabSearchSlice";
 import { Calendar } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { useRouter } from "next/navigation";
@@ -10,7 +10,6 @@ import { IoLocationSharp } from "react-icons/io5";
 import { FaCalendarAlt } from "react-icons/fa";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import { getDestinationSearchData, setSearchParams } from "../../Store/slices/destinationSearchSlice";
-
 
 const languageMap = {
   NotSpecified: 0,
@@ -31,20 +30,19 @@ const languageMap = {
 };
 
 const CabComp = () => {
-
   const [selected, setSelected] = useState("");
   const defaultStore = JSON.parse(localStorage.getItem("cabSearch")) || {};
   const [loading, setLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const [endUserIp, setEndUserIp] = useState(defaultStore.endUserIp || "");
-const [searchType, setSearchType] = useState(defaultStore.searchType || "1");
+  const [searchType, setSearchType] = useState(defaultStore.searchType || "1");
 
   // State for cab-specific fields
   const [pickup, setPickup] = useState(
     defaultStore.pickup || {
       CityId: 1234,
       CityName: "Hyderabad",
-      PickUpCode: 1, 
+      PickUpCode: 1,
       PickUpPointCode: "HYD",
     }
   );
@@ -52,7 +50,7 @@ const [searchType, setSearchType] = useState(defaultStore.searchType || "1");
     defaultStore.dropoff || {
       CityId: 5678,
       CityName: "Bengaluru",
-      DropOffCode: 1, 
+      DropOffCode: 1,
       DropOffPointCode: "BLR",
     }
   );
@@ -75,8 +73,7 @@ const [searchType, setSearchType] = useState(defaultStore.searchType || "1");
   const router = useRouter();
   const dispatch = useDispatch();
 
-
-useEffect(() => {
+  useEffect(() => {
     setLoading(true);
     dispatch(setSearchParams({ searchType, countryCode }));
     dispatch(getDestinationSearchData({ searchType, countryCode }))
@@ -116,8 +113,7 @@ useEffect(() => {
     return time.replace(":", "");
   };
 
-  
-const handleSearch = async () => {
+  const handleSearch = async () => {
     // Validation
     if (!endUserIp) {
       alert("End user IP is required.");
@@ -181,9 +177,9 @@ const handleSearch = async () => {
 
     // Save to localStorage
     localStorage.setItem("cabSearch", JSON.stringify(searchData));
- 
+
     router.push(searchUrl);
-};
+  };
 
   // Handle pickup and dropoff selection
   const handlePickup = (data) => {
@@ -205,10 +201,8 @@ const handleSearch = async () => {
           <Navbar />
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
-          <div className="tabs FromDateDeapt grid  items-center lg:grid-cols-8 gap-4">
-     
-
-            <div className="relative ">
+          <div className="tabs FromDateDeapt grid items-center lg:grid-cols-8 gap-4">
+            <div className="relative">
               <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
@@ -219,7 +213,6 @@ const handleSearch = async () => {
               </select>
             </div>
 
-
             <div className="relative">
               <div
                 onClick={() => setSelected("pickup")}
@@ -227,7 +220,7 @@ const handleSearch = async () => {
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[12px]  text-black font-bold">{pickup.CityName}</span>
+                  <span className="text-[12px] text-black font-bold">{pickup.CityName}</span>
                   <span className="text-sm text-gray-500">{pickup.PickUpPointCode}</span>
                 </div>
               </div>
@@ -244,16 +237,15 @@ const handleSearch = async () => {
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[12px]  text-black font-bold">{dropoff.CityName}</span>
+                  <span className="text-[12px] text-black font-bold">{dropoff.CityName}</span>
                   <span className="text-sm text-gray-500">{dropoff.DropOffPointCode}</span>
                 </div>
               </div>
-            {selected === "dropoff" && (
+              {selected === "dropoff" && (
                 <SearchComponents type={selected} handelcity={handleDropoff} searchType={searchType} />
               )}
             </div>
 
-   
             <div className="relative">
               <div
                 onClick={() => setSelected("date")}
@@ -308,7 +300,7 @@ const handleSearch = async () => {
                 <div className="absolute top-[80%] min-w-full min-h-[5rem] left-1 md:-left-10 z-10">
                   <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-4">
                     <div className="flex gap-3 justify-between">
-                      <p className="text-nowrap text-gray-600 ">Adult Count</p>
+                      <p className="text-nowrap text-gray-600">Adult Count</p>
                       <div className="flex items-center gap-3">
                         <button
                           className="px-2 text-gray-600 border"
@@ -316,9 +308,9 @@ const handleSearch = async () => {
                         >
                           -
                         </button>
-                        <p className="px-2 text-gray-600  border">{adultCount}</p>
+                        <p className="px-2 text-gray-600 border">{adultCount}</p>
                         <button
-                          className="px-2 text-gray-600  border"
+                          className="px-2 text-gray-600 border"
                           onClick={() => setAdultCount(adultCount + 1)}
                         >
                           +
@@ -363,15 +355,14 @@ const handleSearch = async () => {
 
 const SearchComponents = ({ type, handelcity, searchType }) => {
   const [searchParam, setSearchParam] = useState("");
-
-
-
   const { destinations, loading } = useSelector((state) => state.destinations);
 
-  console.log("Destinations:", destinations.data);
-
+  // Filter destinations based on search input
   const filteredDestinations = destinations?.data?.filter((item) =>
-    item.CityName.toLowerCase().includes(searchParam.toLowerCase())
+    searchType === "2"
+      ? item.hotel_name?.toLowerCase().includes(searchParam.toLowerCase()) ||
+        item.city_name?.toLowerCase().includes(searchParam.toLowerCase())
+      : item.city_name?.toLowerCase().includes(searchParam.toLowerCase())
   );
 
   // Map Type to PickUpCode/DropOffCode
@@ -380,7 +371,7 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
   };
 
   return (
-    <div className="absolute top-[53%] bg-white w-full z-30 shadow-md rounded-md mt-1">
+    <div className="absolute w-[300px] top-[53%] bg-white  z-30 shadow-md rounded-md mt-1">
       <input
         type="text"
         value={searchParam}
@@ -388,7 +379,6 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
         placeholder={`Search ${type === "pickup" ? "pickup" : "dropoff"} ${searchType === "1" ? "city" : "hotel"}...`}
         onChange={(e) => setSearchParam(e.target.value)}
       />
-       {console.log("Filtered Destinations:", filteredDestinations)}
       <div className="max-h-60 overflow-y-scroll custom-scroll">
         {loading ? (
           [...Array(5)].map((_, i) => (
@@ -399,20 +389,22 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
         ) : (
           filteredDestinations.map((item) => (
             <p
-              key={item.DestinationId}
+              key={item.destination_id}
               className="border-b px-3 py-2 cursor-pointer text-gray-700 transition-all"
               onClick={() => {
                 handelcity({
-                  CityId: item.DestinationId.toString(), // Convert to string as per validation
-                  CityName: item.CityName,
-                  [type === "pickup" ? "PickUpCode" : "DropOffCode"]: mapTypeToCode(item.Type),
+                  CityId: item.destination_id.toString(),
+                  CityName: searchType === "2" ? item.hotel_name : item.city_name,
+                  [type === "pickup" ? "PickUpCode" : "DropOffCode"]: mapTypeToCode(item.type),
                   [type === "pickup" ? "PickUpPointCode" : "DropOffPointCode"]:
-                    item.CityName.slice(0, 3).toUpperCase(), // Derive code (e.g., DEL for Delhi)
+                    item.city_name.slice(0, 3).toUpperCase(),
                 });
                 setSearchParam("");
               }}
             >
-              {item.CityName} ({item.CityName.slice(0, 3).toUpperCase()})
+              {searchType === "2"
+                ? `${item.hotel_name}, ${item.city_name}`
+                : `${item.city_name} (${item.city_name.slice(0, 3).toUpperCase()})`}
             </p>
           ))
         )}
