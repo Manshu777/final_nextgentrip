@@ -313,7 +313,7 @@ const fetchTopport = async () => {
 
       </div>
 
-      <div className="w-full mx-auto px-6 md:px-10 lg:px-28  pt:0 lg:pt-12 z-[-1]">
+      <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt:0 lg:pt-12 z-[-1]">
         <div className="relative text-xl md:text-xl lg:text-4xl tracking-tighter	 gfont1  font-bold text-gray-900 flex justify-center items-center gap-2 mb-4 lg:mb-14">
           Tourist 💕<span className="text-[#521010]"> Love</span>
         </div>

@@ -49,7 +49,7 @@ const Book = () => {
               <div
                 key={feature.title}
                 className="bg-white p-6 border border-blue-200 text-center card-hero"
-              ><span>{feature.count}</span>
+              >   
                 <div className="text-4xl mt-7 mb-4">{feature.icon}</div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {feature.title}
