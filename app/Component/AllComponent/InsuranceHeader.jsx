@@ -117,7 +117,7 @@ export default function InsuranceHeader() {
         <div className="bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
             <div className="col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Travel Start Date</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Travel Start Date</label>
               <input
                 type="date"
                 value={alldata.TravelStartDate}
@@ -127,7 +127,7 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Travel End Date</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Travel End Date</label>
               <input
                 type="date"
                 value={alldata.TravelEndDate}
@@ -137,7 +137,7 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1 relative">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">No. of Passengers</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">No. of Passengers</label>
               <div
                 className="flex justify-between items-center p-2 border border-gray-300 rounded-md hover:border-blue-500 bg-white cursor-pointer"
                 onClick={() => setIsVisible(!isVisible)}
@@ -180,7 +180,7 @@ export default function InsuranceHeader() {
                   <div className="grid grid-cols-1 gap-3">
                     {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <label className="text-sm text-gray-600 whitespace-nowrap">Passenger {index + 1} Age:</label>
+                        <label className="text-[12px] text-gray-600 whitespace-nowrap">Passenger {index + 1} Age:</label>
                         <input
                           type="number"
                           min="1"
@@ -197,9 +197,9 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Category</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Category</label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Category.id}
                 onChange={(e) => {
                   const selectedCategory = planCategories.find((cat) => cat.id == e.target.value);
@@ -223,9 +223,9 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Coverage</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Coverage</label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Coverage.id}
                 onChange={(e) =>
                   setAllData({
@@ -243,9 +243,9 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Plan Type</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Type</label>
               <select
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
+                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Type}
                 onChange={(e) => setAllData({ ...alldata, Plan_Type: e.target.value })}
               >
@@ -259,7 +259,7 @@ export default function InsuranceHeader() {
 
             <div className="col-span-1 flex items-end justify-end">
               <button
-                className="w-full bg-[#0c3a48] mt-[14px] hover:bg-[#0a2e39] text-white px-4 py-2 rounded-md font-semibold transition"
+                className="w-full bg-[#0c3a48] mb-2  hover:bg-[#0a2e39] text-white px-4 py-2 rounded-md font-semibold transition"
                 onClick={handleIncSearch}
                 disabled={isLoading}
               >

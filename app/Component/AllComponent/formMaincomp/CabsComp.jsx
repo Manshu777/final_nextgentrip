@@ -9,7 +9,10 @@ import Navbar from "../Navbar";
 import { IoLocationSharp } from "react-icons/io5";
 import { FaCalendarAlt } from "react-icons/fa";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
-import { getDestinationSearchData, setSearchParams } from "../../Store/slices/destinationSearchSlice";
+import {
+  getDestinationSearchData,
+  setSearchParams,
+} from "../../Store/slices/destinationSearchSlice";
 
 const languageMap = {
   NotSpecified: 0,
@@ -55,9 +58,12 @@ const CabComp = () => {
     }
   );
   const [transferDate, setTransferDate] = useState(
-    (defaultStore.transferDate && new Date(defaultStore.transferDate)) || new Date()
+    (defaultStore.transferDate && new Date(defaultStore.transferDate)) ||
+      new Date()
   );
-  const [transferTime, setTransferTime] = useState(defaultStore.transferTime || "1000"); // hhmm format
+  const [transferTime, setTransferTime] = useState(
+    defaultStore.transferTime || "1000"
+  ); // hhmm format
   const [adultCount, setAdultCount] = useState(defaultStore.adultCount || 1);
   const [preferredLanguage, setPreferredLanguage] = useState(
     defaultStore.preferredLanguage || 4 // English
@@ -65,8 +71,12 @@ const CabComp = () => {
   const [alternateLanguage, setAlternateLanguage] = useState(
     defaultStore.alternateLanguage || 0 // NotSpecified
   );
-  const [countryCode, setCountryCode] = useState(defaultStore.countryCode || "IN");
-  const [tokenId, setTokenId] = useState(defaultStore.tokenId || "SAMPLE_TOKEN"); // Replace with actual token
+  const [countryCode, setCountryCode] = useState(
+    defaultStore.countryCode || "IN"
+  );
+  const [tokenId, setTokenId] = useState(
+    defaultStore.tokenId || "SAMPLE_TOKEN"
+  ); // Replace with actual token
 
   const localTimeZone = getLocalTimeZone();
   const currentDate = today(localTimeZone);
@@ -206,7 +216,7 @@ const CabComp = () => {
               <select
                 value={searchType}
                 onChange={(e) => setSearchType(e.target.value)}
-                className="w-full px-3 py-1 border-2 border-slate-200 rounded-md text-black"
+                className="w-full px-3 py-2 border-2 border-slate-200 rounded-md text-black"
               >
                 <option value="1">City</option>
                 <option value="2">Hotel</option>
@@ -220,12 +230,20 @@ const CabComp = () => {
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[12px] text-black font-bold">{pickup.CityName}</span>
-                  <span className="text-sm text-gray-500">{pickup.PickUpPointCode}</span>
+                  <span className="text-[12px] text-black font-bold">
+                    {pickup.CityName}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {pickup.PickUpPointCode}
+                  </span>
                 </div>
               </div>
               {selected === "pickup" && (
-                <SearchComponents type={selected} handelcity={handlePickup} searchType={searchType} />
+                <SearchComponents
+                  type={selected}
+                  handelcity={handlePickup}
+                  searchType={searchType}
+                />
               )}
             </div>
 
@@ -237,28 +255,42 @@ const CabComp = () => {
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[12px] text-black font-bold">{dropoff.CityName}</span>
-                  <span className="text-sm text-gray-500">{dropoff.DropOffPointCode}</span>
+                  <span className="text-[12px] text-black font-bold">
+                    {dropoff.CityName}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {dropoff.DropOffPointCode}
+                  </span>
                 </div>
               </div>
               {selected === "dropoff" && (
-                <SearchComponents type={selected} handelcity={handleDropoff} searchType={searchType} />
+                <SearchComponents
+                  type={selected}
+                  handelcity={handleDropoff}
+                  searchType={searchType}
+                />
               )}
             </div>
 
             <div className="relative">
               <div
                 onClick={() => setSelected("date")}
-                className="flex items-center cursor-pointer gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center cursor-pointer gap-2 px-2 py-18px border-2 text-black border-slate-200 rounded-md"
               >
                 <FaCalendarAlt className="text-12px" />
                 <div className="text-slate-400">
                   <div className="flex items-baseline text-black">
-                    <span className="text-xl py-1 pr-1 text-black font-bold">{transferDate.getDate()}</span>
-                    <span className="text-sm font-semibold">
-                      {transferDate.toLocaleString("en-US", { month: "short" })}'
+                    <span className="text-xl py-1 pr-1 text-black font-bold">
+                      {transferDate.getDate()}
                     </span>
-                    <span className="text-sm font-semibold"> {transferDate.getFullYear()}</span>
+                    <span className="text-sm font-semibold">
+                      {transferDate.toLocaleString("en-US", { month: "short" })}
+                      '
+                    </span>
+                    <span className="text-sm font-semibold">
+                      {" "}
+                      {transferDate.getFullYear()}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -277,7 +309,11 @@ const CabComp = () => {
             <div className="relative">
               <input
                 type="time"
-                value={transferTime.match(/(\d{2})(\d{2})/)?.[1] + ":" + transferTime.match(/(\d{2})(\d{2})/)?.[2] || transferTime}
+                value={
+                  transferTime.match(/(\d{2})(\d{2})/)?.[1] +
+                    ":" +
+                    transferTime.match(/(\d{2})(\d{2})/)?.[2] || transferTime
+                }
                 onChange={(e) => setTransferTime(formatTime(e.target.value))}
                 className="w-full px-3 py-1 border-2 border-slate-200 rounded-md text-black"
               />
@@ -287,28 +323,34 @@ const CabComp = () => {
             <div className="relative">
               <div
                 onClick={() => setIsVisible(!isVisible)}
-                className="flex items-center cursor-pointer gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center cursor-pointer gap-2 px-2 py-14px border-2 text-black border-slate-200 rounded-md"
               >
                 <div className="text-slate-400">
                   <div className="flex items-baseline text-black">
-                    <span className="text-xl py-1 pr-1 text-black font-bold">{adultCount}</span>
+                    <span className="text-xl py-1 pr-1 text-black font-bold">
+                      {adultCount}
+                    </span>
                     <span className="text-sm font-semibold">Traveller(s)</span>
                   </div>
                 </div>
               </div>
               {isVisible && (
                 <div className="absolute top-[80%] min-w-full min-h-[5rem] left-1 md:-left-10 z-10">
-                  <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-4">
+                  <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-3">
                     <div className="flex gap-3 justify-between">
                       <p className="text-nowrap text-gray-600">Adult Count</p>
                       <div className="flex items-center gap-3">
                         <button
                           className="px-2 text-gray-600 border"
-                          onClick={() => adultCount > 1 && setAdultCount(adultCount - 1)}
+                          onClick={() =>
+                            adultCount > 1 && setAdultCount(adultCount - 1)
+                          }
                         >
                           -
                         </button>
-                        <p className="px-2 text-gray-600 border">{adultCount}</p>
+                        <p className="px-2 text-gray-600 border">
+                          {adultCount}
+                        </p>
                         <button
                           className="px-2 text-gray-600 border"
                           onClick={() => setAdultCount(adultCount + 1)}
@@ -327,7 +369,7 @@ const CabComp = () => {
               <select
                 value={preferredLanguage}
                 onChange={(e) => setPreferredLanguage(Number(e.target.value))}
-                className="w-full px-3 py-1 border-2 border-slate-200 rounded-md text-black"
+                className="w-full px-3 py-2 border-2 border-slate-200 rounded-md text-black"
               >
                 {Object.entries(languageMap).map(([lang, value]) => (
                   <option key={value} value={value}>
@@ -338,12 +380,15 @@ const CabComp = () => {
             </div>
 
             {/* Search Button */}
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center gap-4 flex-wrap px-4 sm:px-6 md:px-0">
+              {/* <span className="text-lg font-semibold text-gray-800">
+                Search Cab
+              </span> */}
               <button
                 onClick={handleSearch}
-                className="bg-[#0A5EB0] w-full md:w-fit py-2 px-3 font-semibold text-lg rounded-md text-white"
+                className="bg-[#0A5EB0] w-full max-w-sm md:w-auto py-2 px-4 text-base md:text-lg font-semibold rounded-md text-white transition duration-300 hover:bg-[#084c91]"
               >
-                Search Cab
+                Search 
               </button>
             </div>
           </div>
@@ -376,38 +421,45 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
         type="text"
         value={searchParam}
         className="w-full text-black px-3 py-2 border-b outline-none"
-        placeholder={`Search ${type === "pickup" ? "pickup" : "dropoff"} ${searchType === "1" ? "city" : "hotel"}...`}
+        placeholder={`Search ${type === "pickup" ? "pickup" : "dropoff"} ${
+          searchType === "1" ? "city" : "hotel"
+        }...`}
         onChange={(e) => setSearchParam(e.target.value)}
       />
       <div className="max-h-60 overflow-y-scroll custom-scroll">
-        {loading ? (
-          [...Array(5)].map((_, i) => (
-            <div key={i} className="p-2 border-b animate-pulse">
-              <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-            </div>
-          ))
-        ) : (
-          filteredDestinations.map((item) => (
-            <p
-              key={item.destination_id}
-              className="border-b px-3 py-2 cursor-pointer text-gray-700 transition-all"
-              onClick={() => {
-                handelcity({
-                  CityId: item.destination_id.toString(),
-                  CityName: searchType === "2" ? item.hotel_name : item.city_name,
-                  [type === "pickup" ? "PickUpCode" : "DropOffCode"]: mapTypeToCode(item.type),
-                  [type === "pickup" ? "PickUpPointCode" : "DropOffPointCode"]:
-                    item.city_name.slice(0, 3).toUpperCase(),
-                });
-                setSearchParam("");
-              }}
-            >
-              {searchType === "2"
-                ? `${item.hotel_name}, ${item.city_name}`
-                : `${item.city_name} (${item.city_name.slice(0, 3).toUpperCase()})`}
-            </p>
-          ))
-        )}
+        {loading
+          ? [...Array(5)].map((_, i) => (
+              <div key={i} className="p-2 border-b animate-pulse">
+                <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+              </div>
+            ))
+          : filteredDestinations.map((item) => (
+              <p
+                key={item.destination_id}
+                className="border-b px-3 py-2 cursor-pointer text-gray-700 transition-all"
+                onClick={() => {
+                  handelcity({
+                    CityId: item.destination_id.toString(),
+                    CityName:
+                      searchType === "2" ? item.hotel_name : item.city_name,
+                    [type === "pickup" ? "PickUpCode" : "DropOffCode"]:
+                      mapTypeToCode(item.type),
+                    [type === "pickup"
+                      ? "PickUpPointCode"
+                      : "DropOffPointCode"]: item.city_name
+                      .slice(0, 3)
+                      .toUpperCase(),
+                  });
+                  setSearchParam("");
+                }}
+              >
+                {searchType === "2"
+                  ? `${item.hotel_name}, ${item.city_name}`
+                  : `${item.city_name} (${item.city_name
+                      .slice(0, 3)
+                      .toUpperCase()})`}
+              </p>
+            ))}
       </div>
     </div>
   );

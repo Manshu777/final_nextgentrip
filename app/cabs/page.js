@@ -61,98 +61,65 @@ const page = () => {
       <MobileHeader />
       <CustomSlider />
 
-      <div className="bg-gray-100 p-5 md:p-20 ">
-        <div className="container mx-auto px-4 lg:px-0 space-y-8 ">
-          <div className="w-full lg:w-3/5 text-center mx-auto">
-            <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-700 bg-purple-100 rounded-full mb-3">
-              Benefits
-            </span>
-            <h2 className="text-lg md:text-3xl font-bold">
-              Boost Your Search With <strong>Trending Categories</strong>
-            </h2>
-            <p className="text-gray-600 mt-4">
-            Ride in style and comfort with our luxury cab options
-            </p>
-          </div>
+     <div className="bg-gray-100 p-5 md:p-20">
+  <div className="container mx-auto px-4 lg:px-0 space-y-8">
+    <div className="w-full lg:w-3/5 text-center mx-auto">
+      <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-700 bg-purple-100 rounded-full mb-3">
+        Benefits
+      </span>
+      <h2 className="text-lg md:text-3xl font-bold">
+        Boost Your Search With <strong>Trending Categories</strong>
+      </h2>
+      <p className="text-gray-600 mt-4">
+        Ride in style and comfort with our luxury cab options
+      </p>
+    </div>
 
-          <div className="block lg:flex flex-wrap justify-between">
-            <div className="w-full md:w-1/5 px-2">
-              <Link href="#" className="block bg-white text-center rounded-lg p-7 shadow-md">
-                <Image
-                  className="mx-auto mb-4"
-                  src="/images/plan-brown-icon.svg"
-                  alt="Furniture"
-                  width={48}
-                  height={48}
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-0">
-                  Choosing the Right Cab for Your Needs
-                </h3>
-              </Link>
-            </div>
-
-            <div className="w-full md:w-1/5 px-2">
-              <Link href="#" className="block bg-white text-center rounded-lg p-7 shadow-md">
-                <Image
-                  className="mx-auto mb-4"
-                  src="/images/cog-primary-icon.svg"
-                  alt="Furniture"
-                  width={48}
-                  height={48}
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-0">
-                  Top Cab Services in Your Area
-                </h3>
-              </Link>
-            </div>
-
-            <div className="w-full md:w-1/5 px-2">
-              <Link href="#" className="block bg-white text-center rounded-lg p-7 shadow-md">
-                <Image
-                  className="mx-auto mb-4"
-                  src="/images/arrow-red-icon.svg"
-                  alt="Mobile"
-                  width={48}
-                  height={48}
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-0">
-                  How to Book a Cab Efficiently
-                </h3>
-              </Link>
-            </div>
-
-            <div className="w-full md:w-1/5 px-2">
-              <Link href="#" className="block bg-white text-center rounded-lg p-7 shadow-md">
-                <Image
-                  className="mx-auto mb-4"
-                  src="/images/legal-purple-icon.svg"
-                  alt="Books"
-                  width={48}
-                  height={48}
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-0">
-                  Understanding Cab Fare Calculations
-                </h3>
-              </Link>
-            </div>
-
-            <div className="w-full md:w-1/5 px-2">
-              <Link href="#" className="block bg-white text-center rounded-lg p-7 shadow-md">
-                <Image
-                  className="mx-auto mb-4"
-                  src="/images/finance-blue-icon.svg"
-                  alt="Laptop"
-                  width={48}
-                  height={48}
-                />
-                <h3 className="text-lg font-semibold text-gray-800 mb-0">
-                  Safety Tips for Cab Rides
-                </h3>
-              </Link>
-            </div>
-          </div>
+    <div className="flex flex-wrap justify-between items-stretch -mx-2">
+      {[
+        {
+          title: 'Choosing the Right Cab for Your Needs',
+          icon: '/images/plan-brown-icon.svg',
+        },
+        {
+          title: 'Top Cab Services in Your Area',
+          icon: '/images/cog-primary-icon.svg',
+        },
+        {
+          title: 'How to Book a Cab Efficiently',
+          icon: '/images/arrow-red-icon.svg',
+        },
+        {
+          title: 'Understanding Cab Fare Calculations',
+          icon: '/images/legal-purple-icon.svg',
+        },
+        {
+          title: 'Safety Tips for Cab Rides',
+          icon: '/images/finance-blue-icon.svg',
+        },
+      ].map((item, index) => (
+        <div key={index} className="w-full md:w-1/2 lg:w-1/5 px-2 mb-4">
+          <Link
+            href="#"
+            className="flex flex-col justify-between bg-white text-center rounded-lg p-7 shadow-md h-full"
+          >
+            <Image
+              className="mx-auto mb-4"
+              src={item.icon}
+              alt="icon"
+              width={48}
+              height={48}
+            />
+            <h3 className="text-lg font-semibold text-gray-800">
+              {item.title}
+            </h3>
+          </Link>
         </div>
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+
 
       <main className="flight py-8 lg:py-10 px-0 md:px-10  lg:px-40">
         <div className="">

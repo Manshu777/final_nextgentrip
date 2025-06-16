@@ -126,7 +126,7 @@ const ESimComp = () => {
               <div className="relative">
                 <div
                   onClick={() => setSelected("date")}
-                  className="flex items-center cursor-pointer gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                  className="flex items-center cursor-pointer gap-2 px-3 py-2 border-2 text-black border-slate-200 rounded-md"
                 >
                   <FaCalendarAlt className="" />
                   <div className="text-slate-400">

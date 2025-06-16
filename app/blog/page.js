@@ -46,7 +46,7 @@ export default function page() {
       </section>
       <div className="min-h-screen bg-gray-100 p-6">
         <header className="text-center mb-12 max-w-4xl mt-5 mx-auto">
-          <h1 className="text-xl md:text-4xl font-bold mb-4">Welcome to Next Gen</h1>
+          <h1 className="text-xl md:text-4xl font-bold mb-4">Welcome to NextGenTrip</h1>
           <p className="text-justify text-lg text-gray-700">
             Your ultimate resource for travel inspiration, tips, and stories. Whether you're looking for destination guides, practical advice, or real-life travel experiences, our blog has something for every traveller.
           </p>
