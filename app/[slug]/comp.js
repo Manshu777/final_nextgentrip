@@ -274,7 +274,9 @@ const handelFilter = (value) => {
   };
 
   const togglePopup = (id, ResultIndex) => {
-    setisloadingQoute(true); // Set loading to true when starting
+    setisloadingQoute(true);
+
+    dispatch(getfareRule({ ResultIndex: ResultIndex.ResultIndex, TraceId: traceid }))
 
     // Dispatch the action and handle the response
     dispatch(getfarequote({ ResultIndex: ResultIndex.ResultIndex, TraceId: traceid }))

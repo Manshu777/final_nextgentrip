@@ -116,7 +116,7 @@ export default function page() {
           transition: Bounce,
         });
         setSendOtp(false);
-        route.push(`https://api.tringaa.com/hotelreg/login`);
+        route.push(`http://148.135.137.54:8000/hotelreg/login`);
       } else {
         toast.error(info.data.message, {
           position: "top-right",
@@ -291,7 +291,7 @@ export default function page() {
 
          
           <div className="text-center mt-4 flex justify-between">
-            <Link href={`https://api.tringaa.com/hotelreg/login`}  >
+            <Link href={`http://148.135.137.54:8000/hotelreg/login`}  >
              
               <p className="text-sm text-blue-600 hover:text-blue-800">Allready have Account?</p>
            

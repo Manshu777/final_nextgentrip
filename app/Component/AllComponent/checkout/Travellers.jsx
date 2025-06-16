@@ -328,7 +328,6 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     setPassengers([...passengers, newTraveler]);
     setShowForms([...showForms, true]);
   };
-
   const handleBook = async (e) => {
     e.preventDefault();
   
@@ -418,9 +417,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               TdsOnIncentive: fdatas?.data?.Fare.TdsOnIncentive,
               ServiceFee: fdatas?.data?.Fare.ServiceFee,
             },
-            PassportNo: passenger.PassportNo?.trim() ? passenger.PassportNo.trim() : "",
-            PassportExpiry: passenger.PassportExpiry?.trim() ? passenger.PassportExpiry.trim() : "",
           };
+  
+          // Add Passport details only if they exist and are not empty
+          if (passenger.PassportNo?.trim()) {
+            passengerPayload.PassportNo = passenger.PassportNo.trim();
+          }
+          if (passenger.PassportExpiry?.trim()) {
+            passengerPayload.PassportExpiry = passenger.PassportExpiry.trim();
+          }
   
           // Add SSR
           if (isLCC && ssrDetails[index]) {
@@ -467,7 +472,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       const { order_id } = orderResponse.data;
   
       const options = {
-        key: 'rzp_test_Bi57EMsQ6K7ZZH',
+        key: 'rzp_live_yIIq3jiwCQr2Hf',
         amount: amount * 100,
         currency: "INR",
         name: "Next Gen Trip Pvt Ltd",
@@ -475,19 +480,16 @@ const Page = ({ setActiveTab, fdatas, price }) => {
         order_id: order_id,
         handler: async (response) => {
           try {
-   
             const bookingResponse = await axios.post(apiEndpoint, payload);
   
             requestLog.response = bookingResponse.data;
   
             if (bookingResponse.data?.status === "success") {
-
               await axios.post(`${apilink}/capture-razorpay-payment`, {
                 payment_id: response.razorpay_payment_id,
                 amount: amount,
               });
   
- 
               if (!isInternational && !isLCC && fdatas?.ResultIndex.includes("OB")) {
                 const ibPayload = { ...payload, ResultIndex: fdatas?.ResultIndex.replace("OB", "IB") };
                 const ibBookingResponse = await axios.post(apiEndpoint, ibPayload, {
@@ -563,7 +565,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       });
       setBookisLoading(false);
     }
-  };
+};
+
+  
   
 
   const handleBookingError = (data) => {

@@ -409,9 +409,9 @@ export default function Book() {
   const handleBookHotel = async (e) => {
     e.preventDefault();
     const isValid = validateAllForms();
-
+  
     const bookingCode = hotelData?.BookingCode;
-
+  
     if (isValid) {
       setIsLoading(true);
       const payload = {
@@ -431,17 +431,17 @@ export default function Book() {
               FirstName: guest.FirstName,
               MiddleName: guest.MiddleName || "",
               LastName: guest.LastName,
-              Phoneno: guest.Phoneno ? parseInt(guest.Phoneno.replace(/^\+?/, ''), 10) : null, // From previous Phoneno fix
+              Phoneno: guest.Phoneno ? parseInt(guest.Phoneno.replace(/^\+?/, ""), 10) : null,
               Email: guest.Email || null,
               PaxType: parseInt(guest.PaxType, 10),
               LeadPassenger: guest.LeadPassenger,
               Age: guest.Age ? parseInt(guest.Age, 10) : null,
             };
-
+  
             if (validationPolicies?.PanMandatory || (guest.PAN && guest.PAN !== "")) {
               passenger.PAN = guest.PAN || null;
             }
-
+  
             if (
               validationPolicies?.PassportMandatory ||
               (guest.PassportNo && guest.PassportNo !== "") ||
@@ -452,7 +452,7 @@ export default function Book() {
               passenger.PassportIssueDate = guest.PassportIssueDate || null;
               passenger.PassportExpDate = guest.PassportExpDate || null;
             }
-
+  
             return passenger;
           }),
         })),
@@ -464,9 +464,7 @@ export default function Book() {
           },
         }),
       };
-
-      console.log('payload', payload);
-
+  
       try {
         const response = await axios.post(`${apilink}/hotel/book`, payload);
         setBookingResponse(response.data);
@@ -475,19 +473,36 @@ export default function Book() {
       } catch (error) {
         setIsLoading(false);
         let errorMessage = "An error occurred while booking the hotel.";
-        if (error.response?.data?.errors) {
-          errorMessage = Object.values(error.response.data.errors).flat().join(" ");
-        } else if (error.response?.data?.message) {
-          errorMessage = error.response.data.message;
-        } else if (error.message) {
-          errorMessage = error.message;
+        
+        // Check for session expiration error
+        if (
+          error.response?.data?.data?.BookResult?.Error?.ErrorCode === 5 ||
+          error.response?.data?.data?.BookResult?.Error?.ErrorMessage === "Your session (TraceId) is expired."
+        ) {
+          Swal.fire({
+            icon: "error",
+            title: "Session Expired",
+            text: "Your session has expired. Please search for hotels again.",
+            confirmButtonText: "OK",
+          }).then(() => {
+            router.push("/hotels");
+          });
+        } else {
+          // Handle other errors
+          if (error.response?.data?.errors) {
+            errorMessage = Object.values(error.response.data.errors).flat().join(" ");
+          } else if (error.response?.data?.data?.BookResult?.Error?.ErrorMessage) {
+            errorMessage = error.response.data.data.BookResult.Error.ErrorMessage;
+          } else if (error.message) {
+            errorMessage = error.message;
+          }
+          Swal.fire({
+            icon: "error",
+            title: "Booking Failed",
+            text: errorMessage,
+            confirmButtonText: "OK",
+          });
         }
-        Swal.fire({
-          icon: "error",
-          title: "Booking Failed",
-          text: errorMessage,
-          confirmButtonText: "OK",
-        });
       }
     } else {
       Swal.fire({
