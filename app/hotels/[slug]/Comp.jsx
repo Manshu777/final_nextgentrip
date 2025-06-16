@@ -223,7 +223,7 @@ const Comp = ({ slug }) => {
 
       <div className="p-4 flex gap-4 relative max-w-7xl mx-auto">
         {/* Filter Section */}
-        <div className="hidden lg:flex w-1/4 p-4 sticky top-24 h-[100vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
+        <div className="hidden lg:flex w-1/4 p-4 sticky top-24 h-[120vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
           <div className="flex items-center gap-3 text-lg font-semibold text-gray-700 mb-4">
             <MdFilterList className="text-2xl text-blue-600" /> Filters
           </div>
