@@ -96,10 +96,10 @@ route.push(`/holidayspackage/${searchInput}`)
         ))}
       </Slider>
       <div className="absolute bottom-10 lg:bottom-16  left-0 right-0 text-center pb-6">
-        <h1 className="text-white text-2xl lg:text-4xl font-bold">
+        <h1 className="text-white text-2xl lg:text-4xl font-bold mt-5">
           Where Every Experience Counts!
         </h1>
-        <div className="flex justify-between mt-5 items-center border rounded-full   w-full md:w-[600px] bg-white mx-auto ">
+        <div className="flex justify-between mt-5  items-center border rounded-full   w-full md:w-[600px] bg-white mx-auto ">
           <div className="relative w-full flex p-2 px-4 items-center">
             <img
               src="/images/search.svg"
