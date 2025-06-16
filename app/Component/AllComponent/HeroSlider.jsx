@@ -127,7 +127,7 @@ route.push(`/holidayspackage/${searchInput}`)
       </div>
 
       <div className="hidden md:flex justify-center">
-        <div className="bg-white  absolute -bottom-7 shadow-md  border border-[#98D1FF] rounded-full text-center py-2 flex ">
+        {/* <div className="bg-white  absolute -bottom-7 shadow-md  border border-[#98D1FF] rounded-full text-center py-2 flex ">
           <div className="flex  gap-6 mx-auto px-4">
             <div>
               <Link href="" className="flex text-center gap-2">
@@ -190,7 +190,7 @@ route.push(`/holidayspackage/${searchInput}`)
               </Link>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
