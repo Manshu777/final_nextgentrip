@@ -203,7 +203,7 @@ const Page = () => {
       const { order_id } = orderResponse.data;
 
       const options = {
-        key: "rzp_live_yIIq3jiwCQr2Hf",
+        key: "rzp_live_PWu6Om6oZlA7pn",
         amount,
         currency: "INR",
         name: "Next Gen Trip",

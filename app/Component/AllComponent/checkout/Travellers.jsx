@@ -23,7 +23,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const Page = ({ setActiveTab, fdatas, price }) => {
   const router = useRouter();
-  console.log('fdatas', fdatas);
+
   const [user, setUser] = useState();
   const [cardDetailsError, setCardDetailsError] = useState(false);
   const [showAdult, setShowAdult] = useState(true);
@@ -83,8 +83,10 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     }
   };
 
+
+   console.log('fdatasfdatas',fdatas?.data?.Response?.Results)
   // Calculate total after promo (mock implementation)
-  const originalFare = fdatas?.data?.Fare?.PublishedFare || 0;
+  const originalFare = fdatas?.data?.Response?.Results?.Fare?.PublishedFare || 0;
   const discount = appliedPromo ? (originalFare * appliedPromo.discount) / 100 : 0;
   const finalFare = originalFare - discount;
   // New state for token management
@@ -188,7 +190,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     const newErrors = {};
     let checkMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
 
-    setCheckPassport(checkMEEE.data.IsPassportRequiredAtBook);
+   
+
+    // setCheckPassport(checkMEEE.data.Results.IsPassportRequiredAtBook);
     passengers.forEach((passenger, index) => {
       if (!passenger.Title) {
         newErrors[`Title_${index}`] = "Title is required.";
@@ -269,8 +273,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   useEffect(() => {
     const initialPassengers = () => {
       let passengers = [];
-      if (fdatas?.data?.FareBreakdown) {
-        fdatas.data.FareBreakdown.forEach((fare) => {
+      console.log('fdatas?.data?.Response?.Results?.FareBreakdown',fdatas?.data?.Response?.Results?.FareBreakdown)
+      if (fdatas?.data?.Response?.Results?.FareBreakdown) {
+        fdatas?.data?.Response?.Results?.FareBreakdown?.forEach((fare) => {
           for (let i = 0; i < fare.PassengerCount; i++) {
             passengers.push({
               Title: "Mr",
@@ -298,6 +303,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     };
 
     initialPassengers();
+
+
+
   }, [fdatas]);
 
   useEffect(() => {
@@ -328,6 +336,8 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     setPassengers([...passengers, newTraveler]);
     setShowForms([...showForms, true]);
   };
+
+
   const handleBook = async (e) => {
     e.preventDefault();
   
@@ -355,7 +365,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   
     try {
       const leadPassenger = passengers.find((passenger) => passenger.IsLeadPax);
-      const fareBreakdown = fdatas?.data?.FareBreakdown;
+      const fareBreakdown = fdatas?.data?.Response?.Results?.FareBreakdown;
       const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
       const isLCC = checkOutFlightDetail?.IsLCC === true;
       const isInternational = checkOutFlightDetail?.data?.IsInternational;
@@ -406,16 +416,16 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               BaseFare: baseFarePerPassenger,
               Tax: taxPerPassenger,
               YQTax: passengerFare?.YQTax,
-              AdditionalTxnFeePub: fdatas?.data?.Fare.AdditionalTxnFeePub,
-              AdditionalTxnFeeOfrd: fdatas?.data?.Fare.AdditionalTxnFeeOfrd,
-              OtherCharges: fdatas?.data?.Fare.OtherCharges,
-              Discount: fdatas?.data?.Fare.Discount,
-              PublishedFare: fdatas?.data?.Fare.PublishedFare,
-              OfferedFare: fdatas?.data?.Fare.OfferedFare,
-              TdsOnCommission: fdatas?.data?.Fare.TdsOnCommission,
-              TdsOnPLB: fdatas?.data?.Fare.TdsOnPLB,
-              TdsOnIncentive: fdatas?.data?.Fare.TdsOnIncentive,
-              ServiceFee: fdatas?.data?.Fare.ServiceFee,
+              AdditionalTxnFeePub: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
+              AdditionalTxnFeeOfrd: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
+              OtherCharges: fdatas?.data?.Response?.Results?.Fare.OtherCharges,
+              Discount: fdatas?.data?.Response?.Results?.Fare.Discount,
+              PublishedFare: fdatas?.data?.Response?.Results?.Fare.PublishedFare,
+              OfferedFare: fdatas?.data?.Response?.Results?.Fare.OfferedFare,
+              TdsOnCommission: fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
+              TdsOnPLB: fdatas?.data?.Response?.Results?.Fare.TdsOnPLB,
+              TdsOnIncentive: fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
+              ServiceFee: fdatas?.data?.Response?.Results?.Fare.ServiceFee,
             },
           };
   
@@ -459,7 +469,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       requestLog.payload = payload;
   
       // 1️⃣ Create Razorpay order
-      const amount = fdatas?.data?.Fare?.PublishedFare;
+      const amount = fdatas?.data?.Response?.Results?.Fare?.PublishedFare;
       const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
         amount: amount,
         currency: "INR",
@@ -472,7 +482,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       const { order_id } = orderResponse.data;
   
       const options = {
-        key: 'rzp_live_yIIq3jiwCQr2Hf',
+        key: 'rzp_live_PWu6Om6oZlA7pn',
         amount: amount * 100,
         currency: "INR",
         name: "Next Gen Trip Pvt Ltd",
@@ -566,6 +576,160 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       setBookisLoading(false);
     }
 };
+
+
+// const handleBook = async (e) => {
+//   e.preventDefault();
+
+//   const isValid = validateAllForms();
+//   if (!isValid) {
+//     Swal.fire({
+//       icon: "error",
+//       title: "Validation Error",
+//       text: "Please fill out all required fields and fix the errors before submitting.",
+//       confirmButtonText: "OK",
+//     });
+//     return;
+//   }
+
+//   setBookisLoading(true);
+
+//   const requestId = uuidv4();
+//   const requestLog = {
+//     requestId,
+//     timestamp: new Date().toISOString(),
+//     endpoint: "",
+//     payload: {},
+//     response: null,
+//   };
+
+//   try {
+//     const leadPassenger = passengers.find((p) => p.IsLeadPax);
+//     const fareBreakdown = fdatas?.data?.Response?.Results?.FareBreakdown;
+//     const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+//     const isLCC = checkOutFlightDetail?.IsLCC === true;
+//     const isInternational = checkOutFlightDetail?.data?.IsInternational;
+//     const isSpecialReturn = checkOutFlightDetail?.data?.IsSpecialReturn;
+
+//     let resultIndex = fdatas?.ResultIndex;
+//     if (isSpecialReturn && isLCC) {
+//       resultIndex = `OB${fdatas?.ResultIndex},IB${fdatas?.ResultIndex}`;
+//     } else if (!isInternational) {
+//       resultIndex = fdatas?.ResultIndex;
+//     }
+
+//     const apiEndpoint = isLCC ? `${apilink}/flight-book-llc` : `${apilink}/flight-book`;
+
+//     const payload = {
+//       ResultIndex: resultIndex,
+//       EndUserIp: fdatas?.ip,
+//       TraceId: fdatas?.traceid,
+//       fFareBreakdown: fareBreakdown,
+//       email: leadPassenger?.Email,
+//       user_id: '4',
+//       checkPassport: checkPassport,
+//       Passengers: passengers.map((passenger, index) => {
+//         const fare = fareBreakdown.find((f) => f.PassengerType === passenger.PaxType);
+//         const baseFare = fare?.BaseFare / fare?.PassengerCount;
+//         const tax = fare?.Tax / fare?.PassengerCount;
+
+//         const obj = {
+//           Title: passenger.Title,
+//           FirstName: passenger.FirstName,
+//           LastName: passenger.LastName,
+//           PaxType: passenger.PaxType,
+//           DateOfBirth: passenger.DateOfBirth,
+//           Gender: parseInt(passenger.Gender, 10),
+//           AddressLine1: passenger.AddressLine1,
+//           City: passenger.City,
+//           CellCountryCode: passenger.CountryCode,
+//           CountryCode: "IN",
+//           ContactNo: passenger.ContactNo,
+//           Email: passenger.Email,
+//           IsLeadPax: passenger.IsLeadPax,
+//           Fare: {
+//             Currency: fare?.Currency,
+//             BaseFare: baseFare,
+//             Tax: tax,
+//             YQTax: fare?.YQTax,
+//             AdditionalTxnFeePub: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
+//             AdditionalTxnFeeOfrd: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
+//             OtherCharges: fdatas?.data?.Response?.Results?.Fare.OtherCharges,
+//             Discount: fdatas?.data?.Response?.Results?.Fare.Discount,
+//             PublishedFare: fdatas?.data?.Response?.Results?.Fare.PublishedFare,
+//             OfferedFare: fdatas?.data?.Response?.Results?.Fare.OfferedFare,
+//             TdsOnCommission: fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
+//             TdsOnPLB: fdatas?.data?.Response?.Results?.Fare.TdsOnPLB,
+//             TdsOnIncentive: fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
+//             ServiceFee: fdatas?.data?.Response?.Results?.Fare.ServiceFee,
+//           },
+//         };
+
+//         if (passenger.PassportNo?.trim()) obj.PassportNo = passenger.PassportNo.trim();
+//         if (passenger.PassportExpiry?.trim()) obj.PassportExpiry = passenger.PassportExpiry.trim();
+
+//         if (isLCC && ssrDetails[index]) {
+//           obj.SSR = {
+//             MealDynamic: Array.isArray(ssrDetails[index].Meal) ? ssrDetails[index].Meal : [ssrDetails[index].Meal],
+//             Baggage: ssrDetails[index].Baggage,
+//             SeatDynamic: Array.isArray(ssrDetails[index].Seat) ? ssrDetails[index].Seat : [ssrDetails[index].Seat],
+//           };
+//         } else if (!isLCC && ssrDetails[index]) {
+//           obj.SSR = {
+//             Meal: ssrDetails[index].Meal || "",
+//             Seat: ssrDetails[index].Seat || "",
+//           };
+//         }
+
+//         if (passenger.IsLeadPax && checkOutFlightDetail?.data?.IsGSTMandatory) {
+//           obj.GSTDetails = {
+//             GSTNumber: gstDetails.GSTNumber,
+//             GSTCompanyName: gstDetails.GSTCompanyName,
+//             GSTEmail: gstDetails.GSTEmail,
+//             GSTPhone: gstDetails.GSTPhone,
+//           };
+//         }
+
+//         return obj;
+//       }),
+//     };
+
+//     requestLog.endpoint = apiEndpoint;
+//     requestLog.payload = payload;
+
+//     const bookingResponse = await axios.post(apiEndpoint, payload);
+//     requestLog.response = bookingResponse.data;
+//     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+//     if (bookingResponse.data?.status === "success") {
+//       setBookingResponse(bookingResponse.data);
+//       setShowModal(true);
+//       Swal.fire({
+//         icon: "success",
+//         title: "Booking Successful",
+//         text: "Your flight has been booked!",
+//         confirmButtonText: "OK",
+//       });
+//     } else {
+//       throw new Error(bookingResponse.data?.message || "Booking failed");
+//     }
+
+//   } catch (error) {
+//     console.error("Booking Error:", error);
+//     requestLog.response = { error: error.message };
+//     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+//     Swal.fire({
+//       icon: "error",
+//       title: "Booking Failed",
+//       text: error?.response?.data?.message || error.message || "Something went wrong",
+//       confirmButtonText: "OK",
+//     });
+//   } finally {
+//     setBookisLoading(false);
+//   }
+// };
+
 
   
   
@@ -778,8 +942,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                 </div>
               </div>
             </div>
+            {console.log('fdatas',fdatas)}
             <div className="">
-              {fdatas?.data?.Segments[0]?.map((segment, index) => (
+              {fdatas?.data?.Response?.Results?.Segments?.[0]?.map((segment, index) => (
                 <div key={index} className="rounded-sm border px-3 py-4 relative space-y-5">
                   <h3 className="bg-gray-600 text-white text-xs w-fit px-3 font-bold rounded-br-xl absolute top-0 left-0">
                     Depart
@@ -837,7 +1002,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                             <GiAirplaneDeparture />
                           </div>
                         </div>
-                        {fdatas?.data?.IsRefundable ? (
+                        {fdatas?.data?.Response?.Results?.IsRefundable ? (
                           <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
                             REFUNDABLE
                           </span>
@@ -1100,7 +1265,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                         )}
                       </div>
                       {/* New: SSR Inputs for LCC Flights */}
-                      {fdatas?.data?.IsLCC && ssrDetails[index] && (
+                      {fdatas?.data?.Response?.Results?.IsLCC && ssrDetails[index] && (
                         <>
                           <div>
                             <label className="block text-[10px] font-bold text-gray-900 mb-1">Meal Preference</label>
@@ -1145,7 +1310,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                         </>
                       )}
                       {/* New: GST Inputs for Lead Passenger */}
-                      {passenger.IsLeadPax && fdatas?.data?.IsGSTMandatory && (
+                      {passenger.IsLeadPax && fdatas?.data?.Response?.Results?.IsGSTMandatory && (
                         <>
                           <div>
                             <label className="block text-[10px] font-bold text-gray-900 mb-1">GST Number</label>
@@ -1244,28 +1409,28 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                     <span>Base Fare:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Fare?.BaseFare?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.BaseFare?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Tax:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Fare?.Tax?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.Tax?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Other Charges:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Fare?.OtherCharges?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.OtherCharges?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Service Fee:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Fare?.ServiceFee?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.ServiceFee?.toLocaleString("en-IN") || "0"}
                     </span>
                   </div>
                   {appliedPromo && (

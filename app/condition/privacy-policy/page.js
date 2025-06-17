@@ -5,16 +5,12 @@ import React from "react";
 const PrivacyPolicy = () => {
   return (
     <>
-
-        <head>
-    <title>
-
-    NextGenTrip Privacy Policy – Your Data, Our Priority
-    </title>
-
-    <meta name="description" content="Your privacy matters to us. Review the NextGenTrip Privacy Policy to understand how your data is collected, stored, protected, and used during your journey." />
-    </head>
-
+      <head>
+        <title>
+          NextGenTrip Privacy Policy – Your Data, Our Priority
+        </title>
+        <meta name="description" content="Learn how NextGenTrip, in partnership with Razorpay, collects, uses, and protects your personal data. Understand our privacy practices for secure travel bookings." />
+      </head>
 
       <section className="bg-gray-50 py-10">
         <div className="mx-auto max-w-6xl">
@@ -27,7 +23,7 @@ const PrivacyPolicy = () => {
             </div>
             <h2 className="mt-4 mb-4 text-4xl font-bold">Privacy Policy</h2>
             <p className="text-xl font-medium text-neutral-1000 fadeInUp" style={{ visibility: "visible" }}>
-              Last update: Mar 17, 2024
+              Last update: June 17, 2025
             </p>
           </div>
           
@@ -38,82 +34,81 @@ const PrivacyPolicy = () => {
           <div className="mx-auto mt-10 text-justify max-w-6xl px-3">
             <div className="box-detail-info">
               <p>
-                NextGenTrip values your privacy and is committed to protecting your personal information. 
-                This Privacy Policy applies to all users who interact with our services through our website, 
-                mobile app, or offline channels (collectively referred to as "Sales Channels"). By accessing 
-                our services, you agree to the terms of this policy. If you disagree, please refrain from using 
-                our Sales Channels.
+                NextGenTrip is committed to safeguarding your privacy. This Privacy Policy outlines how we, along with our payment partner Razorpay, 
+                collect, use, and protect your personal information when you interact with our services via our website, mobile app, or offline channels 
+                (collectively, "Sales Channels"). By using our services, you consent to this policy. If you do not agree, please refrain from using our Sales Channels.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Information Collection</h3>
               <p>
-                We collect personal details including name, contact information, 
-                payment details, and travel history when you use our services. This may include passport details, PAN 
-                information, and vaccination status when required for booking purposes. Names, addresses, phone numbers, 
-                and age details are shared with related service providers, including airlines, hotels, or bus services 
-                to facilitate reservations.
+                We collect personal information such as your name, contact details, travel preferences, and payment information to facilitate your bookings. 
+                For travel-related services, we may also collect passport details, PAN information, or vaccination status as required. Razorpay collects payment-related 
+                data (e.g., card details, UPI IDs) as per their{" "}
+                <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  Privacy Policy
+                </a>. This data is shared with service providers like airlines, hotels, or tour operators to complete your reservations.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Usage of Information</h3>
               <p>
-                Your information is used to facilitate your bookings, enhance our services, process payments, 
-                and comply with legal obligations. We use mobile numbers and emails to send promotional offers, 
-                including discounts and lucky draws. If you prefer not to receive these offers, you can opt-out anytime.
+                Your data is used to process bookings, manage payments via Razorpay, improve our services, and meet legal requirements. We may use your email or mobile number 
+                to send promotional offers, such as discounts or travel deals. You can opt out of these communications at any time through the provided unsubscribe options.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Membership & Registration</h3>
               <p>
-                When you register as a member, we collect details such as your name, address, email, and password. 
-                This enables:
+                When you register with NextGenTrip, we collect details like your name, email, address, and password to enable:
                 <ul className="list-disc pl-5 mt-2">
-                  <li>User recognition</li>
-                  <li>Travel reservations</li>
-                  <li>Customer service assistance</li>
-                  <li>Confirmation of new member registration</li>
-                  <li>Improvement of our services</li>
+                  <li>Personalized user accounts</li>
+                  <li>Seamless travel bookings</li>
+                  <li>Customer support services</li>
+                  <li>New member verification</li>
+                  <li>Service enhancements</li>
                 </ul>
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Surveys</h3>
               <p>
-                We value customer feedback and conduct surveys to enhance our services. Participation is optional, 
-                and responses remain anonymous unless otherwise stated.
+                We may conduct optional surveys to gather feedback and improve our offerings. Your responses are anonymous unless explicitly stated otherwise.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Cookies & Tracking</h3>
               <p>
-                We use cookies to personalize user experiences and advertisements. These cookies store information 
-                to allow seamless logins and provide relevant offers. Users can control cookie settings via their browser.
+                NextGenTrip and Razorpay use cookies to enhance user experiences, enable seamless logins, and deliver personalized ads. You can manage cookie preferences 
+                through your browser settings. For details on Razorpay’s use of cookies, refer to their{" "}
+                <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  Privacy Policy
+                </a>.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Automatic Logging</h3>
               <p>
-                Our systems log session data such as IP addresses, operating systems, and browsing activities to 
-                enhance user experience and identify potential issues.
+                Our systems log data such as IP addresses, browser types, and session activities to optimize user experience and troubleshoot issues.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">User-Generated Content</h3>
               <p>
-                Users can post reviews, ratings, and questions about our services. These contributions may be visible 
-                to other users across various platforms.
+                Reviews, ratings, or questions you post about our services may be publicly visible on our platforms or shared with partners for promotional purposes.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Data Sharing & Disclosure</h3>
               <p>
-                We share your information only with service providers (e.g., airlines, hotels) as needed to fulfill your bookings. 
-                We do not sell or rent personal data but may share details with business partners for promotional purposes. 
-                Additionally, we may share non-identifiable aggregate data for research and analysis.
+                We share your data with service providers (e.g., airlines, hotels) to fulfill bookings and with Razorpay for payment processing. We may share anonymized, 
+                aggregated data with partners for analytics or marketing. Personal data is not sold or rented but may be disclosed to comply with legal obligations.
               </p>
               
               <h3 className="mt-6 text-2xl font-semibold">Security & Data Protection</h3>
               <p>
-                NextGenTrip ensures that your data is safeguarded with the latest security measures. We do not store sensitive 
-                financial details like credit card information.
+                NextGenTrip employs industry-standard security measures to protect your data. Razorpay handles payment data securely, and we do not store sensitive financial 
+                information like card details. For more on Razorpay’s security practices, see their{" "}
+                <a href="https://razorpay.com/privacy/" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">
+                  Privacy Policy
+                </a>.
               </p>
               
-              <h6 className="mt-6 text-lg font-semibold">Thank you for choosing NextGenTrip!</h6>
+              <h6 className="mt-6 text-lg font-semibold">Thank you for trusting NextGenTrip!</h6>
               <p>
-                By using our services, you acknowledge and consent to our Privacy Policy and its terms.
+                By using our services, you agree to this Privacy Policy and Razorpay’s associated terms.
               </p>
             </div>
           </div>

@@ -14,9 +14,10 @@ const page = () => {
    useEffect(() => {
      let dataS = localStorage.getItem("checkOutFlightDetail");
  
-   
+    console.log('dataS',dataS)
  
      setCheckOutData(JSON.parse(dataS));
+
    }, []);
 
 
@@ -29,7 +30,7 @@ const page = () => {
     {
       id: 2,
       label: "Travellers",
-      content: <Travellers fdatas={ CheckOutData}  setActiveTab={setActiveTab} />,
+      content: <Travellers fdatas={CheckOutData}  setActiveTab={setActiveTab} />,
     },
     { id: 3, label: "Payment", content: <Payment CheckOutData={CheckOutData} /> },
   ];
