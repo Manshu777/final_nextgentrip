@@ -243,12 +243,12 @@ const TopFlight = () => {
                           className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
                         />
                       </div>
-                      <div className="px-6 w-full">
+                      <div className="px-2 lg:px-6 w-full">
                         <h3 className="text-md font-semibold text-gray-800 mb-1 mt-1">
                           {imageData?.package_name}
                         </h3>
 
-                        <div className="flex items-center text-sm text-gray-500">
+                        <div className="flex items-center text-xs lg:text-md text-gray-500">
                           <span className="mr-4">📍 {imageData?.city}, {imageData?.country}</span>
                           <span>⏳ {imageData?.duration} days</span>
                         </div>

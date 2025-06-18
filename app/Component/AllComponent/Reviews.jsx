@@ -15,73 +15,73 @@ const Testimonial = () => {
 
   const reviewData = [
     {
-      title: "Amazing Instructors!",
+      title: "Exceptional Travel Experience!",
       rating: 5,
-      content: "Trip Sit NextGenTrip transformed our digital presence with their innovative solutions. Their expertise in Next.js and Tailwind CSS made our website faster and more responsive than ever!",
+      content: "Next Gen Trip Tour and Travels planned our vacation perfectly. From flights to hotel bookings, everything was smooth and stress-free. Highly recommended for personalized travel planning!",
       author: {
-        name: "Rajesh Verma ",
-        role: "CEO, Tech Innovations Pvt. Ltd.",
-        imageUrl: "https://images.ctfassets.net/h6goo9gw1hh6/2sNZtFAWOdP1lmQ33VwRN3/24e953b920a9cd0ff2e1d587742a2472/1-intro-photo-final.jpg?w=1200&h=992&fl=progressive&q=70&fm=jpg",
+        name: "Ankita Malhotra",
+        role: "Frequent Traveler",
+        imageUrl: "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg",
         image: "/images/googleicon.webp",
         profileLink: "#"
       }
     },
     {
-      title: "Amazing Instructors!",
+      title: "Best Tour Service Ever!",
       rating: 5,
-      content: "The professionalism and dedication of the Trip Sit NextGenTrip team are commendable. They delivered a sleek and user-friendly design that greatly improved our customer engagement.",
+      content: "The team at Next Gen Trip Tour and Travels is incredibly professional. They curated a perfect honeymoon package for us, and every detail was handled with care.",
       author: {
-        name: "Priya Sharma",
-        role: "Digital Marketing Head",
-        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyW2MAFrFnfa_bT1jSttLbmvfotJcqQyCCGg&s",
+        name: "Rahul Singh",
+        role: "Marketing Executive",
+        imageUrl: "/mail-2.webp",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
     },
     {
-      title: "Amazing Instructors!",
+      title: "Highly Recommended!",
       rating: 5,
-      content: "Trip Sit NextGenTrip played a crucial role in our startup's success. Their innovative approach and technical skills helped us build a scalable and efficient platform.",
+      content: "Next Gen Trip Tour and Travels made our family vacation unforgettable. Great service, friendly support, and timely arrangements. We’ll definitely book again.",
       author: {
-        name: "Amit Khanna ",
-        role: "Startup Founder",
-        imageUrl: "https://play-lh.googleusercontent.com/vco-LT_M58j9DIAxlS1Cv9uvzbRhB6cYIZJS7ocZksWRqoEPat_QXb6fVFi77lciJZQ=w526-h296-rw",
+        name: "Sonal Deshmukh",
+        role: "Entrepreneur",
+        imageUrl: "/women-4.avif",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
     },
     {
-      title: "Amazing Instructors!",
+      title: "Stress-Free and Enjoyable!",
       rating: 5,
-      content: "Our online store needed a fresh look and better performance. Thanks to Trip Sit NextGenTrip, our website is now faster, more responsive, and visually appealing!",
+      content: "I was amazed by how easy and enjoyable the whole process was with Next Gen Trip Tour and Travels. They took care of everything, and we just relaxed and enjoyed.",
       author: {
-        name: "Neha Iyer",
-        role: "E-commerce Entrepreneur",
-        imageUrl: "https://play-lh.googleusercontent.com/t2tJJ3PvHpZwSVH20B7zGBqcqMrUMnNpQ8re_BiS6vqdxboDm_RM_pcJvuRY-n8KvGA=w526-h296-rw",
+        name: "Sodhi Singh",
+        role: "Bank Manager",
+        imageUrl: "/sardar-ji-1.jpg",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
     },
     {
-      title: "Amazing Instructors!",
+      title: "Incredible Holiday Package!",
       rating: 5,
-      content: "We wanted a seamless and modern web experience, and Trip Sit NextGenTrip delivered exactly that. Their solutions helped us improve our website's speed and functionality.",
+      content: "Our trip to Kerala was arranged by Next Gen Trip Tour and Travels, and it was flawless. Excellent coordination and beautiful properties throughout.",
       author: {
-        name: "Vikram Patil ",
-        role: "IT Manager",
-        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTw0PDKrErulLlbJkbv5KtsCeICczdgJSyurA&s",
+        name: "Deepika Nair",
+        role: "Software Developer",
+        imageUrl: "/women-2-test.jpg",
         image: "/images/LinkedIn.svg",
-        profileLink: ""
+        profileLink: "#"
       }
     },
     {
-      title: "Amazing Instructors!",
+      title: "Best Travel Agency Around!",
       rating: 5,
-      content: "The expertise and professionalism of Trip Sit NextGenTrip are truly impressive. Their ability to integrate modern web technologies helped us scale our platform effortlessly.",
+      content: "Next Gen Trip Tour and Travels provided top-notch service with transparent pricing and timely updates. A trustworthy agency for all your travel needs.",
       author: {
-        name: "Rohan Mehta",
-        role: "Product Manager, TechSphere",
-        imageUrl: "https://img.freepik.com/free-photo/portrait-handsome-young-man-with-arms-crossed-holding-white-headphone-around-his-neck_23-2148096439.jpg?semt=ais_hybrid&w=740",
+        name: "Manoj Verma",
+        role: "Operations Lead",
+        imageUrl: "/women-4.jpg",
         image: "/images/LinkedIn.svg",
         profileLink: "#"
       }
@@ -132,9 +132,7 @@ const Testimonial = () => {
                   <div className="text-sm font-semibold text-gray-900">{review.author.name}</div>
                   <div className="text-xs text-gray-500">{review.author.role}</div>
                 </div>
-                <Link href={review.author.profileLink} className="ml-auto">
-                  <img src={review.author.image} alt="Social" className="w-6 h-6" />
-                </Link>
+               
               </div>
             </SwiperSlide>
           ))}

@@ -153,9 +153,9 @@ const HotelSliderCompo = ({ isLoading, children }) => {
 
 
 
-        <div className=" lg:flex-row px-2 lg:px-28 gap-4 w-full md:my-15 flex justify-center ">
+        <div className=" lg:flex-row  lg:px-28 gap-4 w-full md:my-15 flex justify-center px-[5%] ">
         <Swiper
-            className=" w-full h-[200px]  md:h-[250px] "
+            className=" w-full  h-[300px]  md:h-[400px] lg:h-full"
             loop={true}
               autoplay={{
                 delay: 2500,
@@ -182,7 +182,7 @@ const HotelSliderCompo = ({ isLoading, children }) => {
               className="flex flex-col   rounded-2xl shadow-sm bg-white-900"
             > 
 
-              <div className="rounded-2xl   h-[200px]  md:h-[400px] lg:h-full ">
+              <div className="rounded-2xl   h-[300px]  md:h-[400px] lg:h-full ">
 
 
                 <img src={`/slide/${img}`} alt="" className="h-full w-full  rounded-2xl" />
