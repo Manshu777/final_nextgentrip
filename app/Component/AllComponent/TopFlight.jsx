@@ -199,14 +199,14 @@ const TopFlight = () => {
                   {topport.map((imageData, i) => (
                     <Link
                       href={`flightto=${imageData.from_code}&from=${imageData.to_code}&date=${date}&prfdate=${date}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`}
-                      className="items-center border-b px-4 flex hover:shadow-lg cursor-pointer"
+                      className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
                       key={i}
                     >
                       <div className="city-image">
                         <img
                           src={cityData[0].images[i].image}
                           alt={imageData.from}
-                          className="rounded-full h-9 object-cover w-9"
+                           className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                       <div className="px-4 w-[80%]">
@@ -268,14 +268,14 @@ const TopFlight = () => {
                 {cityData[2].images.map((imageData, i) => (
                   <Link
                     href={imageData.link}
-                    className="items-center border-b px-4 flex hover:shadow-lg cursor-pointer"
+                    className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
                     key={i}
                   >
                     <div className="city-image">
                       <img
                         src={imageData.image}
                         alt={imageData.title}
-                        className="rounded-full h-9 object-cover w-9"
+                    className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <div className="px-4 w-[80%]">
