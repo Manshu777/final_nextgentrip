@@ -71,7 +71,7 @@ const Topbar = () => {
    
 
     const handleScroll = () => {
-      console.log("scrollY", window.scrollY);
+  
       if (window.scrollY > 180) {
         setShowIcons(true);
       } else {

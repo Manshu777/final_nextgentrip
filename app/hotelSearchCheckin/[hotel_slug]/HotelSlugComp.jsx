@@ -58,27 +58,46 @@ const HotelSlugComp = ({ slugs }) => {
     sethotelinfo(state);
   }, [state]);
 
-  const handelprebooking = async (BookingCode) => {
+  const handlePreBooking = async (BookingCode) => {
     setLoading(true);
     try {
+      // Dispatch the API call
       await dispatch(gethotelPreBookingApi({ BookingCode }));
-      if (preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]) {
+  
+      // Check if preBookinghotelState and its nested properties exist
+      if (
+        preBookinghotelState &&
+        preBookinghotelState?.info &&
+        preBookinghotelState?.info?.HotelResult &&
+        Array.isArray(preBookinghotelState?.info?.HotelResult) &&
+        preBookinghotelState?.info?.HotelResult?.length > 0 &&
+        preBookinghotelState?.info?.HotelResult[0]?.Rooms &&
+        Array.isArray(preBookinghotelState?.info?.HotelResult[0]?.Rooms) &&
+        preBookinghotelState?.info?.HotelResult[0]?.Rooms?.length > 0
+      ) {
         // Save cancellation policies to localStorage
-        const cancellationPolicies = preBookinghotelState.info.HotelResult[0].Rooms[0].CancelPolicies;
-        const validationpolices = preBookinghotelState.info.ValidationInfo;
-
+        const cancellationPolicies = preBookinghotelState?.info?.HotelResult[0]?.Rooms[0]?.CancelPolicies;
+        const validationPolicies = preBookinghotelState?.info?.ValidationInfo;
+  
+        console.log('Validation Policies:', validationPolicies);
+  
         localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
-        localStorage.setItem("validationpolices", JSON.stringify(validationpolices));
+        localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
         setIsOpen(true);
+      } else {
+        console.error("Required data is missing in preBookinghotelState");
+        // Optionally, show an error message to the user
       }
-      setIsOpen(true);
+    } catch (error) {
+      console.error("Error during pre-booking:", error);
+      // Optionally, show an error message to the user
     } finally {
       setLoading(false);
     }
   };
-
+  
   useEffect(() => {
-    sethotel(preBookinghotelState && preBookinghotelState.info && preBookinghotelState.info.HotelResult && preBookinghotelState.info.HotelResult[0]);
+    sethotel(preBookinghotelState && preBookinghotelState?.info && preBookinghotelState?.info?.HotelResult && preBookinghotelState?.info?.HotelResult[0]);
   }, [preBookinghotelState]);
 
   const togglePopup = () => setIsOpen(!isOpen);
@@ -423,7 +442,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div className="mt-5 flex items-center">
                         <button
-                          onClick={() => handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
+                          onClick={() => handlePreBooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
                           className={`px-5 py-2 text-white font-bold rounded-xl transition-all duration-200 ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
                           disabled={loading}
                         >
@@ -530,7 +549,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div className="mt-5 flex items-center">
                         <button
-                          onClick={() => handelprebooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
+                          onClick={() => handlePreBooking(hotelinfo.info.hoteldetail2[0].Rooms[0].BookingCode)}
                           className="px-5 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700"
                         >
                           BOOK THIS NOW

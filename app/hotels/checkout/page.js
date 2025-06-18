@@ -36,11 +36,9 @@ export default function Book() {
     taxFare: 0,
     netAmount: 0,
   });
-
   const [childAges, setChildAges] = useState([]);
 
   // Fetch IP address and hotel data
-
   useEffect(() => {
     const fetchIpAddress = async () => {
       try {
@@ -61,104 +59,126 @@ export default function Book() {
       const hotelCheckData = JSON.parse(localStorage.getItem("hotelcheckdata"));
       const searchData = JSON.parse(localStorage.getItem("hotelSearchData"));
       const hotelItems = JSON.parse(localStorage.getItem("hotelItems"));
-      const validationPolices = JSON.parse(localStorage.getItem("validationpolices"));
+      const validationPolices = JSON.parse(
+        localStorage.getItem("validationPolicies")
+      );
 
+      console.log("Validation Policies:", validationPolices); // Debug log
       setValidationPolicies(validationPolices || {});
       setCancellationPolicies(hotelCheckData.Rooms?.[0].CancelPolicies || []);
-      setChildAges(hotelItems?.childAges || []); // Set childAges from hotelItems
+      setChildAges(hotelItems?.childAges || []);
 
       if (hotelCheckData && hotelItems) {
         const mappedHotelData = {
           HotelName: hotelCheckData.Rooms[0].Name[0] || "Unknown Hotel",
-          CheckInDate: searchData?.CheckInDate || new Date().toISOString().split("T")[0],
-          CheckOutDate: searchData?.CheckOutDate || new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+          CheckInDate:
+            searchData?.CheckInDate || new Date().toISOString().split("T")[0],
+          CheckOutDate:
+            searchData?.CheckOutDate ||
+            new Date(Date.now() + 4 * 24 * 60 * 60 * 1000)
+              .toISOString()
+              .split("T")[0],
           BookingCode: hotelCheckData.Rooms[0].BookingCode || "BOOK12345",
           className: "Price",
           Price: {
-            TotalDisplayFare: parseFloat(hotelCheckData?.Rooms[0]?.TotalFare || 0),
+            TotalDisplayFare: parseFloat(
+              hotelCheckData?.Rooms[0]?.TotalFare || 0
+            ),
           },
           IsPackageFare: hotelCheckData?.IsPackageFare || false,
           IsPackageDetails: {
             IsMandatory: hotelCheckData.IsPackageDetailsMandatory || false,
           },
-          HotelRoomsDetails: hotelCheckData.Rooms?.map((room, index) => {
-            const roomData = Array.isArray(hotelItems) ? hotelItems[index] : hotelItems;
-            const adultCount = parseInt(roomData?.adultcount, 10) || 1;
-            const childCount = parseInt(roomData?.childcount, 10) || 0;
+          HotelRoomsDetails:
+            hotelCheckData.Rooms?.map((room, index) => {
+              const roomData = Array.isArray(hotelItems)
+                ? hotelItems[index]
+                : hotelItems;
+              const adultCount = parseInt(roomData?.adultcount, 10) || 1;
+              const childCount = parseInt(roomData?.childcount, 10) || 0;
 
-            const guestDetails = [
-              ...Array(adultCount).fill().map((_, guestIndex) => ({
-                PaxType: 1,
-                LeadPassenger: guestIndex === 0,
-                Title: "",
-                FirstName: "",
-                MiddleName: "",
-                LastName: "",
-                Phoneno: "",
-                Email: "",
-                PassportNo: "",
-                PassportIssueDate: "0001-01-01T00:00:00:00",
-                PassportExpDate: "0001-01-01T00:00:00:00",
-                PAN: "",
-                Age: null,
-              })),
-              ...Array(childCount).fill().map(() => ({
-                PaxType: 2,
-                LeadPassenger: false,
-                Title: "",
-                FirstName: "",
-                MiddleName: "",
-                LastName: "",
-                Email: "",
-                Age: "", // Initialize as empty; user will select from childAges
-                PassportNo: "",
-                PassportIssueDate: "0001-01-01T00:00:00:00",
-                PassportExpDate: "0001-01-01T00:00:00:00",
-                PAN: "",
-              })),
-            ];
+              const guestDetails = [
+                ...Array(adultCount)
+                  .fill()
+                  .map((_, guestIndex) => ({
+                    PaxType: 1,
+                    LeadPassenger: guestIndex === 0,
+                    Title: "",
+                    FirstName: "",
+                    MiddleName: "",
+                    LastName: "",
+                    Phoneno: "",
+                    Email: "",
+                    PassportNo: "",
+                    PassportIssueDate: "0001-01-01T00:00:00:00",
+                    PassportExpDate: "0001-01-01T00:00:00:00",
+                    PAN: "",
+                    Age: null,
+                  })),
+                ...Array(childCount)
+                  .fill()
+                  .map(() => ({
+                    PaxType: 2,
+                    LeadPassenger: false,
+                    Title: "",
+                    FirstName: "",
+                    MiddleName: "",
+                    LastName: "",
+                    Email: "",
+                    Age: "",
+                    PassportNo: "",
+                    PassportIssueDate: "0001-01-01T00:00:00:00",
+                    PassportExpDate: "0001-01-01T00:00:00:00",
+                    PAN: "",
+                  })),
+              ];
 
-            return {
-              RoomIndex: index + 1,
-              RoomTypeName: room.Name?.[0] || "Standard Room",
-              Price: {
-                PublishedPrice: parseFloat(room.PriceBreakUp?.[0]?.RoomRate || 0),
-              },
-              GuestDetails: guestDetails,
-            };
-          }) || [],
+              return {
+                RoomIndex: index + 1,
+                RoomTypeName: room.Name?.[0] || "Standard Room",
+                Price: {
+                  PublishedPrice: parseFloat(
+                    room.PriceBreakUp?.[0]?.RoomRate || 0
+                  ),
+                },
+                GuestDetails: guestDetails,
+              };
+            }) || [],
         };
         setHotelData(mappedHotelData);
         setRooms(mappedHotelData.HotelRoomsDetails);
         setBookingDetails((prev) => ({
           ...prev,
           isPackageFare: mappedHotelData.IsPackageFare,
-          isPackageDetailsMandatory: mappedHotelData.IsPackageDetailsMandatory,
+          isPackageDetailsMandatory:
+            mappedHotelData.IsPackageDetails.IsMandatory,
         }));
 
-        // Calculate fare details
         const taxRate = 0.18;
         const roomTotal = mappedHotelData.HotelRoomsDetails.reduce(
           (sum, room) => sum + (parseFloat(room.Price.PublishedPrice) || 0),
           0
         );
-        const taxFare = hotelCheckData?.Rooms[0]?.TotalTax;
-        const totalFare = hotelCheckData?.Rooms[0]?.TotalFare;
-        const netAmount = hotelCheckData?.Rooms[0]?.NetAmount;
+        const taxFare = parseFloat(hotelCheckData?.Rooms[0]?.TotalTax || 0);
+        const totalFare = parseFloat(hotelCheckData?.Rooms[0]?.TotalFare || 0);
+        const netAmount = parseFloat(
+          hotelCheckData?.Rooms[0]?.NetAmount || totalFare
+        );
 
         console.log("Fare Calculation:", {
-          roomTotal: roomTotal,
-          taxRate: taxRate,
-          taxFare: taxFare,
-          totalFare: totalFare,
-          netAmount: netAmount,
-          matchesTotalDisplayFare: netAmount === parseFloat(hotelCheckData.Rooms[0].TotalFare || 0),
+          roomTotal,
+          taxRate,
+          taxFare,
+          totalFare,
+          netAmount,
+          matchesTotalDisplayFare:
+            netAmount === parseFloat(hotelCheckData.Rooms[0].TotalFare || 0),
         });
 
         setFareDetails({
-          totalFare: totalFare,
-          taxFare: taxFare,
-          netAmount: netAmount,
+          totalFare,
+          taxFare,
+          netAmount,
         });
       } else {
         throw new Error("No hotel data found in localStorage");
@@ -175,36 +195,38 @@ export default function Book() {
     }
   }, [router]);
 
-
   // Initialize rooms based on hotel data
   useEffect(() => {
     if (hotelData?.HotelRoomsDetails) {
-      const initialRooms = hotelData.HotelRoomsDetails.map((room, roomIndex) => ({
-        RoomIndex: room.RoomIndex,
-        RoomTypeName: room.RoomTypeName,
-        Guests: room.GuestDetails?.map((guest, guestIndex) => ({
-          Title: "",
-          FirstName: "",
-          MiddleName: "",
-          LastName: "",
-          Phoneno: "",
-          Email: "",
-          PaxType: guest.PaxType,
-          LeadPassenger: guestIndex === 0 && guest.PaxType === 1,
-          Age: guest.PaxType === 2 ? "" : null,
-          PassportNo: "",
-          PassportIssueDate: "0001-01-01T00:00:00:00",
-          PassportExpDate: "0001-01-01T00:00:00:00",
-          PAN: "",
-        })) || [],
-      }));
+      const initialRooms = hotelData.HotelRoomsDetails.map(
+        (room, roomIndex) => ({
+          RoomIndex: room.RoomIndex,
+          RoomTypeName: room.RoomTypeName,
+          Guests:
+            room.GuestDetails?.map((guest, guestIndex) => ({
+              Title: "",
+              FirstName: "",
+              MiddleName: "",
+              LastName: "",
+              Phoneno: "",
+              Email: "",
+              PaxType: guest.PaxType,
+              LeadPassenger: guestIndex === 0 && guest.PaxType === 1,
+              Age: guest.PaxType === 2 ? "" : null,
+              PassportNo: "",
+              PassportIssueDate: "0001-01-01T00:00:00:00",
+              PassportExpDate: "0001-01-01T00:00:00:00",
+              PAN: "",
+            })) || [],
+        })
+      );
       setRooms(initialRooms);
       setShowForms(Array(hotelData.HotelRoomsDetails.length).fill(true));
     }
   }, [hotelData]);
 
   const handleChange = (e, roomIndex, guestIndex) => {
-    const { name, value, type, checked } = e.target;
+    let { name, value, type, checked } = e.target;
     let sanitizedValue = value;
 
     if (name === "FirstName" || name === "LastName" || name === "MiddleName") {
@@ -215,20 +237,33 @@ export default function Book() {
         sanitizedValue = sanitizedValue.replace(/\s/g, "");
       }
       if (validationPolicies?.CharLimit) {
-        sanitizedValue = sanitizedValue.slice(0, validationPolicies.PaxNameMaxLength);
-        if (sanitizedValue.length < validationPolicies.PaxNameMinLength) {
+        sanitizedValue = sanitizedValue.slice(
+          0,
+          validationPolicies.PaxNameMaxLength || 50
+        );
+        if (
+          sanitizedValue.length < (validationPolicies.PaxNameMinLength || 2)
+        ) {
           sanitizedValue = value;
         }
       }
     } else if (name === "PAN") {
-      sanitizedValue = value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+      sanitizedValue = value
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "")
+        .slice(0, 10);
+    } else if (name === "PassportNo") {
+      sanitizedValue = value.replace(/[^A-Z0-9]/g, "").slice(0, 20);
+    } else if (name === "PassportIssueDate" || name === "PassportExpDate") {
+      sanitizedValue = value || "0001-01-01T00:00:00:00";
     } else if (name === "arrivalTransportType") {
       sanitizedValue = parseInt(value, 10);
     }
 
     if (roomIndex !== undefined && guestIndex !== undefined) {
       const updatedRooms = [...rooms];
-      updatedRooms[roomIndex].Guests[guestIndex][name] = type === "checkbox" ? checked : sanitizedValue;
+      updatedRooms[roomIndex].Guests[guestIndex][name] =
+        type === "checkbox" ? checked : sanitizedValue;
       setRooms(updatedRooms);
     } else if (name.startsWith("arrivalTransport")) {
       const field = name.replace("arrivalTransport.", "");
@@ -267,123 +302,206 @@ export default function Book() {
   const validateAllForms = () => {
     const newErrors = {};
 
-    // Validate top-level fields
-    if (!bookingDetails.endUserIp || !/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(bookingDetails.endUserIp)) {
+    if (
+      !bookingDetails.endUserIp ||
+      !/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(bookingDetails.endUserIp)
+    ) {
       newErrors.endUserIp = "Valid IP address is required (e.g., 192.168.1.1)";
     }
-    if (!bookingDetails.guestNationality || !/^[A-Z]{2}$/.test(bookingDetails.guestNationality)) {
-      newErrors.guestNationality = "Valid ISO country code is required (e.g., IN, GB)";
+    if (
+      !bookingDetails.guestNationality ||
+      !/^[A-Z]{2}$/.test(bookingDetails.guestNationality)
+    ) {
+      newErrors.guestNationality =
+        "Valid ISO country code is required (e.g., IN, GB)";
     }
-    if (bookingDetails.isVoucherBooking === null || bookingDetails.isVoucherBooking === undefined) {
+    if (
+      bookingDetails.isVoucherBooking === null ||
+      bookingDetails.isVoucherBooking === undefined
+    ) {
       newErrors.isVoucherBooking = "Voucher booking selection is required";
     }
 
-    // Validate arrival transport if mandatory
     if (validationPolicies?.PackageDetailsMandatory) {
-      if (![0, 1].includes(bookingDetails.arrivalTransport.arrivalTransportType)) {
-        newErrors.arrivalTransportType = "Arrival transport type must be Flight (0) or Surface (1)";
+      if (
+        ![0, 1].includes(bookingDetails.arrivalTransport.arrivalTransportType)
+      ) {
+        newErrors.arrivalTransportType =
+          "Arrival transport type must be Flight (0) or Surface (1)";
       }
-      if (!bookingDetails.arrivalTransport.time || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(bookingDetails.arrivalTransport.time)) {
-        newErrors.arrivalTransportTime = "Valid arrival time is required (e.g., 0001-01-01T00:00:00:00)";
+      if (
+        !bookingDetails.arrivalTransport.time ||
+        !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(
+          bookingDetails.arrivalTransport.time
+        )
+      ) {
+        newErrors.arrivalTransportTime =
+          "Valid arrival time is required (e.g., 2025-06-18T12:00:00:00)";
       }
     }
 
-    // Validate guest details
     let totalPanCount = 0;
     const nameSet = validationPolicies?.SamePaxNameAllowed ? null : new Set();
 
     rooms.forEach((room, roomIndex) => {
       let hasLeadPassenger = false;
       room.Guests.forEach((guest, guestIndex) => {
-        // Validate Title
         if (!["Mr", "Mrs", "Miss", "Ms"].includes(guest.Title)) {
-          newErrors[`Title_${roomIndex}_${guestIndex}`] = "Title must be Mr, Mrs, Miss, or Ms";
+          newErrors[`Title_${roomIndex}_${guestIndex}`] =
+            "Title must be Mr, Mrs, Miss, or Ms";
         }
 
-        // Validate FirstName and LastName
-        if (!guest.FirstName || guest.FirstName.length < (validationPolicies?.PaxNameMinLength || 2)) {
-          newErrors[`FirstName_${roomIndex}_${guestIndex}`] = `First Name must be at least ${validationPolicies?.PaxNameMinLength || 2} characters`;
-        } else if (validationPolicies?.CharLimit && guest.FirstName.length > (validationPolicies?.PaxNameMaxLength || 50)) {
-          newErrors[`FirstName_${roomIndex}_${guestIndex}`] = `First Name must not exceed ${validationPolicies?.PaxNameMaxLength || 50} characters`;
+        if (
+          !guest.FirstName ||
+          guest.FirstName.length < (validationPolicies?.PaxNameMinLength || 2)
+        ) {
+          newErrors[
+            `FirstName_${roomIndex}_${guestIndex}`
+          ] = `First Name must be at least ${
+            validationPolicies?.PaxNameMinLength || 2
+          } characters`;
+        } else if (
+          validationPolicies?.CharLimit &&
+          guest.FirstName.length > (validationPolicies?.PaxNameMaxLength || 50)
+        ) {
+          newErrors[
+            `FirstName_${roomIndex}_${guestIndex}`
+          ] = `First Name must not exceed ${
+            validationPolicies?.PaxNameMaxLength || 50
+          } characters`;
         }
-        if (!guest.LastName || guest.LastName.length < (validationPolicies?.PaxNameMinLength || 2)) {
-          newErrors[`LastName_${roomIndex}_${guestIndex}`] = `Last Name must be at least ${validationPolicies?.PaxNameMinLength || 2} characters`;
-        } else if (validationPolicies?.CharLimit && guest.LastName.length > (validationPolicies?.PaxNameMaxLength || 50)) {
-          newErrors[`LastName_${roomIndex}_${guestIndex}`] = `Last Name must not exceed ${validationPolicies?.PaxNameMaxLength || 50} characters`;
+        if (
+          !guest.LastName ||
+          guest.LastName.length < (validationPolicies?.PaxNameMinLength || 2)
+        ) {
+          newErrors[
+            `LastName_${roomIndex}_${guestIndex}`
+          ] = `Last Name must be at least ${
+            validationPolicies?.PaxNameMinLength || 2
+          } characters`;
+        } else if (
+          validationPolicies?.CharLimit &&
+          guest.LastName.length > (validationPolicies?.PaxNameMaxLength || 50)
+        ) {
+          newErrors[
+            `LastName_${roomIndex}_${guestIndex}`
+          ] = `Last Name must not exceed ${
+            validationPolicies?.PaxNameMaxLength || 50
+          } characters`;
         }
 
-        // Validate unique names
-        if (!validationPolicies?.SamePaxNameAllowed && guest.FirstName && guest.LastName) {
+        if (
+          !validationPolicies?.SamePaxNameAllowed &&
+          guest.FirstName &&
+          guest.LastName
+        ) {
           const fullName = `${guest.FirstName} ${guest.LastName}`;
           if (nameSet.has(fullName)) {
-            newErrors[`FirstName_${roomIndex}_${guestIndex}`] = "Duplicate names are not allowed";
+            newErrors[`FirstName_${roomIndex}_${guestIndex}`] =
+              "Duplicate names are not allowed";
           } else {
             nameSet.add(fullName);
           }
         }
 
-        // Validate PAN
+        console.log('validationPolicies',validationPolicies?.PanMandatory);
+
         if (validationPolicies?.PanMandatory) {
           if (!guest.PAN || !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(guest.PAN)) {
-            newErrors[`PAN_${roomIndex}_${guestIndex}`] = "PAN must be in format AAAAA1234A";
+            newErrors[`PAN_${roomIndex}_${guestIndex}`] =
+              "PAN must be in format AAAAA1234A";
           } else {
             totalPanCount += 1;
           }
         } else if (guest.PAN && !/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(guest.PAN)) {
-          newErrors[`PAN_${roomIndex}_${guestIndex}`] = "PAN must be in format AAAAA1234A";
+          newErrors[`PAN_${roomIndex}_${guestIndex}`] =
+            "PAN must be in format AAAAA1234A";
         }
 
-        // Validate Passport
         if (validationPolicies?.PassportMandatory) {
-          if (!guest.PassportNo) {
-            newErrors[`PassportNo_${roomIndex}_${guestIndex}`] = "Passport Number is required";
+          if (!guest.PassportNo || guest.PassportNo.trim() === "") {
+            newErrors[`PassportNo_${roomIndex}_${guestIndex}`] =
+              "Passport Number is required";
+          } else if (!/^[A-Z0-9]{6,20}$/.test(guest.PassportNo)) {
+            newErrors[`PassportNo_${roomIndex}_${guestIndex}`] =
+              "Passport Number must be 6-20 alphanumeric characters";
           }
-          if (!guest.PassportIssueDate || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(guest.PassportIssueDate)) {
-            newErrors[`PassportIssueDate_${roomIndex}_${guestIndex}`] = "Passport Issue Date must be in format YYYY-MM-DDTHH:MM:SS:00";
+          if (
+            !guest.PassportIssueDate ||
+            guest.PassportIssueDate === "0001-01-01T00:00:00:00" ||
+            !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(
+              guest.PassportIssueDate
+            )
+          ) {
+            newErrors[`PassportIssueDate_${roomIndex}_${guestIndex}`] =
+              "Valid Passport Issue Date is required (e.g., 2020-01-01T00:00:00:00)";
           }
-          if (!guest.PassportExpDate || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(guest.PassportExpDate)) {
-            newErrors[`PassportExpDate_${roomIndex}_${guestIndex}`] = "Passport Expiry Date must be in format YYYY-MM-DDTHH:MM:SS:00";
+          if (
+            !guest.PassportExpDate ||
+            guest.PassportExpDate === "0001-01-01T00:00:00:00" ||
+            !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(
+              guest.PassportExpDate
+            )
+          ) {
+            newErrors[`PassportExpDate_${roomIndex}_${guestIndex}`] =
+              "Valid Passport Expiry Date is required (e.g., 2030-01-01T00:00:00:00)";
           }
-        } else if (guest.PassportIssueDate && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(guest.PassportIssueDate)) {
-          newErrors[`PassportIssueDate_${roomIndex}_${guestIndex}`] = "Passport Issue Date must be in format YYYY-MM-DDTHH:MM:SS:00";
-        } else if (guest.PassportExpDate && !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(guest.PassportExpDate)) {
-          newErrors[`PassportExpDate_${roomIndex}_${guestIndex}`] = "Passport Expiry Date must be in format YYYY-MM-DDTHH:MM:SS:00";
+        } else if (
+          guest.PassportIssueDate &&
+          guest.PassportIssueDate !== "0001-01-01T00:00:00:00" &&
+          !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(
+            guest.PassportIssueDate
+          )
+        ) {
+          newErrors[`PassportIssueDate_${roomIndex}_${guestIndex}`] =
+            "Passport Issue Date must be in format YYYY-MM-DDTHH:MM:SS:00";
+        } else if (
+          guest.PassportExpDate &&
+          guest.PassportExpDate !== "0001-01-01T00:00:00:00" &&
+          !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}:\d{2}$/.test(
+            guest.PassportExpDate
+          )
+        ) {
+          newErrors[`PassportExpDate_${roomIndex}_${guestIndex}`] =
+            "Passport Expiry Date must be in format YYYY-MM-DDTHH:MM:SS:00";
         }
 
-        // Validate PaxType
         if (![1, 2].includes(guest.PaxType)) {
-          newErrors[`PaxType_${roomIndex}_${guestIndex}`] = "Guest Type must be Adult or Child";
+          newErrors[`PaxType_${roomIndex}_${guestIndex}`] =
+            "Guest Type must be Adult or Child";
         }
 
-        // Validate Phone Number for all adults
-        { console.log('guest.Phoneno', !guest.Phoneno || !/^\+?\d{9,15}$/.test(guest.Phoneno)) }
         if (guest.PaxType === 1) {
           if (!guest.Phoneno) {
-            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number is required for adult guests";
+            newErrors[`Phoneno_${roomIndex}_${guestIndex}`] =
+              "Phone number is required for adult guests";
           } else {
-            const digits = guest.Phoneno.replace(/^\+?/, '').replace(/[^0-9]/g, '');
-            { console.log('guest.Phoneno', digits.length) }
-
+            const digits = guest.Phoneno.replace(/^\+?/, "").replace(
+              /[^0-9]/g,
+              ""
+            );
             if (digits.length < 10 || digits.length > 15) {
-              newErrors[`Phoneno_${roomIndex}_${guestIndex}`] = "Phone number must be 10 to 15 digits long";
+              newErrors[`Phoneno_${roomIndex}_${guestIndex}`] =
+                "Phone number must be 10 to 15 digits long";
             }
           }
         }
 
-        // Validate Lead Passenger fields
         if (guest.LeadPassenger) {
           if (!guest.Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest.Email)) {
-            newErrors[`Email_${roomIndex}_${guestIndex}`] = "Valid email is required for lead guest";
+            newErrors[`Email_${roomIndex}_${guestIndex}`] =
+              "Valid email is required for lead guest";
           }
         }
 
-        // Validate Child-specific fields
         if (guest.PaxType === 2) {
           if (!guest.Age || guest.Age > 12 || guest.Age < 0) {
-            newErrors[`Age_${roomIndex}_${guestIndex}`] = "Age is required for children and must be ≤ 12";
+            newErrors[`Age_${roomIndex}_${guestIndex}`] =
+              "Age is required for children and must be ≤ 12";
           }
           if (!guest.Email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guest.Email)) {
-            newErrors[`Email_${roomIndex}_${guestIndex}`] = "Valid parent email is required for child";
+            newErrors[`Email_${roomIndex}_${guestIndex}`] =
+              "Valid parent email is required for child";
           }
         }
 
@@ -393,12 +511,16 @@ export default function Book() {
       });
 
       if (!hasLeadPassenger) {
-        newErrors[`LeadPassenger_${roomIndex}`] = `Room ${roomIndex + 1} must have one adult as lead passenger`;
+        newErrors[`LeadPassenger_${roomIndex}`] = `Room ${
+          roomIndex + 1
+        } must have one adult as lead passenger`;
       }
     });
 
-    // Validate PanCountRequired
-    if (validationPolicies?.PanCountRequired > 0 && totalPanCount < validationPolicies.PanCountRequired) {
+    if (
+      validationPolicies?.PanCountRequired > 0 &&
+      totalPanCount < validationPolicies.PanCountRequired
+    ) {
       newErrors.panCount = `At least ${validationPolicies.PanCountRequired} PAN number(s) are required across all guests`;
     }
 
@@ -409,9 +531,9 @@ export default function Book() {
   const handleBookHotel = async (e) => {
     e.preventDefault();
     const isValid = validateAllForms();
-  
+
     const bookingCode = hotelData?.BookingCode;
-  
+
     if (isValid) {
       setIsLoading(true);
       const payload = {
@@ -431,40 +553,45 @@ export default function Book() {
               FirstName: guest.FirstName,
               MiddleName: guest.MiddleName || "",
               LastName: guest.LastName,
-              Phoneno: guest.Phoneno ? parseInt(guest.Phoneno.replace(/^\+?/, ""), 10) : null,
+              Phoneno: guest.Phoneno
+                ? parseInt(guest.Phoneno.replace(/^\+?/, ""), 10)
+                : null,
               Email: guest.Email || null,
               PaxType: parseInt(guest.PaxType, 10),
               LeadPassenger: guest.LeadPassenger,
               Age: guest.Age ? parseInt(guest.Age, 10) : null,
             };
-  
-            if (validationPolicies?.PanMandatory || (guest.PAN && guest.PAN !== "")) {
+
+            if (
+              validationPolicies?.PanMandatory ||
+              (guest.PAN && guest.PAN !== "")
+            ) {
               passenger.PAN = guest.PAN || null;
             }
-  
-            if (
-              validationPolicies?.PassportMandatory ||
-              (guest.PassportNo && guest.PassportNo !== "") ||
-              (guest.PassportIssueDate && guest.PassportIssueDate !== "0001-01-01T00:00:00:00") ||
-              (guest.PassportExpDate && guest.PassportExpDate !== "0001-01-01T00:00:00:00")
-            ) {
+
+            if (validationPolicies?.PassportMandatory || guest.PassportNo) {
               passenger.PassportNo = guest.PassportNo || null;
-              passenger.PassportIssueDate = guest.PassportIssueDate || null;
-              passenger.PassportExpDate = guest.PassportExpDate || null;
+              passenger.PassportIssueDate =
+                guest.PassportIssueDate || "0001-01-01T00:00:00:00";
+              passenger.PassportExpDate =
+                guest.PassportExpDate || "0001-01-01T00:00:00:00";
             }
-  
+
             return passenger;
           }),
         })),
         ...(bookingDetails.isPackageDetailsMandatory && {
           ArrivalTransport: {
-            ArrivalTransportType: bookingDetails.arrivalTransport.arrivalTransportType,
-            TransportInfoId: bookingDetails.arrivalTransport.transportInfoId || "",
-            Time: bookingDetails.arrivalTransport.time || "0001-01-01T00:00:00:00",
+            ArrivalTransportType:
+              bookingDetails.arrivalTransport.arrivalTransportType,
+            TransportInfoId:
+              bookingDetails.arrivalTransport.transportInfoId || "",
+            Time:
+              bookingDetails.arrivalTransport.time || "0001-01-01T00:00:00:00",
           },
         }),
       };
-  
+
       try {
         const response = await axios.post(`${apilink}/hotel/book`, payload);
         setBookingResponse(response.data);
@@ -473,11 +600,11 @@ export default function Book() {
       } catch (error) {
         setIsLoading(false);
         let errorMessage = "An error occurred while booking the hotel.";
-        
-        // Check for session expiration error
+
         if (
           error.response?.data?.data?.BookResult?.Error?.ErrorCode === 5 ||
-          error.response?.data?.data?.BookResult?.Error?.ErrorMessage === "Your session (TraceId) is expired."
+          error.response?.data?.data?.BookResult?.Error?.ErrorMessage ===
+            "Your session (TraceId) is expired."
         ) {
           Swal.fire({
             icon: "error",
@@ -488,11 +615,15 @@ export default function Book() {
             router.push("/hotels");
           });
         } else {
-          // Handle other errors
           if (error.response?.data?.errors) {
-            errorMessage = Object.values(error.response.data.errors).flat().join(" ");
-          } else if (error.response?.data?.data?.BookResult?.Error?.ErrorMessage) {
-            errorMessage = error.response.data.data.BookResult.Error.ErrorMessage;
+            errorMessage = Object.values(error.response.data.errors)
+              .flat()
+              .join(" ");
+          } else if (
+            error.response?.data?.data?.BookResult?.Error?.ErrorMessage
+          ) {
+            errorMessage =
+              error.response.data.data.BookResult.Error.ErrorMessage;
           } else if (error.message) {
             errorMessage = error.message;
           }
@@ -518,7 +649,11 @@ export default function Book() {
 
   const HotelConfirmationModal = ({ bookingResponse, onClose }) => {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50" role="dialog" aria-modal="true">
+      <div
+        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        role="dialog"
+        aria-modal="true"
+      >
         <div className="bg-white p-6 rounded-lg shadow-lg w-11/12 max-w-2xl">
           <h2 className="text-2xl font-bold text-center mb-4 text-[#DA5200]">
             🎉 Hotel Booked!
@@ -545,7 +680,7 @@ export default function Book() {
             </p>
             <p>
               <strong>Total Amount:</strong> INR{" "}
-              {fareDetails.totalFare.toLocaleString() || "N/A"}
+              {fareDetails.netAmount.toLocaleString() || "N/A"}
             </p>
           </div>
           <div className="mt-6 text-center">
@@ -563,11 +698,35 @@ export default function Book() {
   };
 
   const formatCancellationPolicy = (policy) => {
-    const date = new Date(policy.FromDate).toLocaleDateString();
-    const charge = policy.CancellationCharge === 0
-      ? "Free cancellation"
-      : `${policy.ChargeType === "Fixed" ? "INR " : ""}${policy.CancellationCharge}${policy.ChargeType === "Percentage" ? "%" : ""}`;
-    return `From ${date}: ${charge}`;
+    if (!policy || !policy.FromDate) {
+      console.error("Invalid or missing FromDate:", policy?.FromDate);
+      return "Invalid cancellation policy date";
+    }
+
+    let date;
+    try {
+      const formattedDate = policy.FromDate.replace(
+        /(\d{2})-(\d{2})-(\d{4})/,
+        "$3-$2-$1"
+      );
+      date = new Date(formattedDate);
+      if (isNaN(date.getTime())) {
+        throw new Error("Invalid Date");
+      }
+    } catch (error) {
+      console.error("Error parsing date:", policy.FromDate, error);
+      return "Invalid cancellation policy date";
+    }
+
+    const formattedDate = date.toLocaleDateString();
+    const charge =
+      policy.CancellationCharge === 0
+        ? "Free cancellation"
+        : `${policy.ChargeType === "Fixed" ? "INR " : ""}${
+            policy.CancellationCharge
+          }${policy.ChargeType === "Percentage" ? "%" : ""}`;
+
+    return `From ${formattedDate}: ${charge}`;
   };
 
   return (
@@ -576,11 +735,16 @@ export default function Book() {
         {/* Booking Details Section */}
         <div className="border rounded-lg shadow-lg">
           <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg flex items-center gap-3">
-            <span className="text-sm md:text-xl font-medium">Booking Details</span>
+            <span className="text-sm md:text-xl font-medium">
+              Booking Details
+            </span>
           </div>
           <div className="p-4 space-y-4">
             <div>
-              <label className="block text-[10px] font-bold" htmlFor="endUserIp">
+              <label
+                className="block text-[10px] font-bold"
+                htmlFor="endUserIp"
+              >
                 End User IP *
               </label>
               <input
@@ -593,7 +757,9 @@ export default function Book() {
                 placeholder="e.g., 192.168.1.1"
                 required
                 aria-label="End User IP Address"
-                aria-describedby={errors.endUserIp ? "endUserIp-error" : undefined}
+                aria-describedby={
+                  errors.endUserIp ? "endUserIp-error" : undefined
+                }
               />
               {errors.endUserIp && (
                 <p id="endUserIp-error" className="text-red-500 text-sm">
@@ -602,7 +768,10 @@ export default function Book() {
               )}
             </div>
             <div>
-              <label className="block text-[10px] font-bold" htmlFor="guestNationality">
+              <label
+                className="block text-[10px] font-bold"
+                htmlFor="guestNationality"
+              >
                 Guest Nationality (ISO Code) *
               </label>
               <input
@@ -615,7 +784,9 @@ export default function Book() {
                 placeholder="e.g., IN, GB"
                 required
                 aria-label="Guest Nationality ISO Code"
-                aria-describedby={errors.guestNationality ? "guestNationality-error" : undefined}
+                aria-describedby={
+                  errors.guestNationality ? "guestNationality-error" : undefined
+                }
               />
               {errors.guestNationality && (
                 <p id="guestNationality-error" className="text-red-500 text-sm">
@@ -633,7 +804,10 @@ export default function Book() {
                 className="mr-2"
                 aria-label="Voucher Booking Immediately"
               />
-              <label className="text-[10px] font-bold" htmlFor="isVoucherBooking">
+              <label
+                className="text-[10px] font-bold"
+                htmlFor="isVoucherBooking"
+              >
                 Voucher Booking Immediately
               </label>
               {errors.isVoucherBooking && (
@@ -642,10 +816,13 @@ export default function Book() {
                 </p>
               )}
             </div>
-            {bookingDetails.isPackageDetailsMandatory && (
+            {validationPolicies?.PackageDetailsMandatory && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[10px] font-bold" htmlFor="arrivalTransportType">
+                  <label
+                    className="block text-[10px] font-bold"
+                    htmlFor="arrivalTransportType"
+                  >
                     Arrival Transport Type *
                   </label>
                   <select
@@ -656,19 +833,29 @@ export default function Book() {
                     className="w-full border p-2 rounded-md"
                     required
                     aria-label="Arrival Transport Type"
-                    aria-describedby={errors.arrivalTransportType ? "arrivalTransportType-error" : undefined}
+                    aria-describedby={
+                      errors.arrivalTransportType
+                        ? "arrivalTransportType-error"
+                        : undefined
+                    }
                   >
                     <option value="0">Flight</option>
                     <option value="1">Surface</option>
                   </select>
                   {errors.arrivalTransportType && (
-                    <p id="arrivalTransportType-error" className="text-red-500 text-sm">
+                    <p
+                      id="arrivalTransportType-error"
+                      className="text-red-500 text-sm"
+                    >
                       {errors.arrivalTransportType}
                     </p>
                   )}
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold" htmlFor="transportInfoId">
+                  <label
+                    className="block text-[10px] font-bold"
+                    htmlFor="transportInfoId"
+                  >
                     Transport Info ID
                   </label>
                   <input
@@ -683,23 +870,47 @@ export default function Book() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold" htmlFor="arrivalTransportTime">
+                  <label
+                    className="block text-[10px] font-bold"
+                    htmlFor="arrivalTransportTime"
+                  >
                     Arrival Time *
                   </label>
                   <input
-                    type="text"
+                    type="datetime-local"
                     id="arrivalTransportTime"
                     name="arrivalTransport.time"
-                    value={bookingDetails.arrivalTransport.time}
-                    onChange={handleChange}
+                    value={
+                      bookingDetails.arrivalTransport.time &&
+                      bookingDetails.arrivalTransport.time !==
+                        "0001-01-01T00:00:00:00"
+                        ? bookingDetails.arrivalTransport.time.slice(0, 16)
+                        : ""
+                    }
+                    onChange={(e) =>
+                      handleChange({
+                        target: {
+                          name: "arrivalTransport.time",
+                          value: e.target.value
+                            ? `${e.target.value}:00`
+                            : "0001-01-01T00:00:00:00",
+                        },
+                      })
+                    }
                     className="w-full border p-2 rounded-md"
-                    placeholder="YYYY-MM-DDTHH:MM:SS:00"
                     required
                     aria-label="Arrival Time"
-                    aria-describedby={errors.arrivalTransportTime ? "arrivalTransportTime-error" : undefined}
+                    aria-describedby={
+                      errors.arrivalTransportTime
+                        ? "arrivalTransportTime-error"
+                        : undefined
+                    }
                   />
                   {errors.arrivalTransportTime && (
-                    <p id="arrivalTransportTime-error" className="text-red-500 text-sm">
+                    <p
+                      id="arrivalTransportTime-error"
+                      className="text-red-500 text-sm"
+                    >
                       {errors.arrivalTransportTime}
                     </p>
                   )}
@@ -712,10 +923,14 @@ export default function Book() {
         {/* Hotel Details Section */}
         <div className="border rounded-lg shadow-lg">
           <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg flex items-center gap-3">
-            <span className="text-sm md:text-xl font-medium">Hotel Details</span>
+            <span className="text-sm md:text-xl font-medium">
+              Hotel Details
+            </span>
           </div>
           <div className="p-4 space-y-4">
-            <h3 className="text-xl font-semibold">{hotelData?.HotelName || "N/A"}</h3>
+            <h3 className="text-xl font-semibold">
+              {hotelData?.HotelName || "N/A"}
+            </h3>
             <p>
               <strong>Check-In:</strong>{" "}
               {hotelData?.CheckInDate
@@ -744,7 +959,9 @@ export default function Book() {
         {/* Cancellation Policies Section */}
         <div className="border rounded-lg shadow-lg">
           <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg flex items-center gap-3">
-            <span className="text-sm md:text-xl font-medium">Cancellation Policies</span>
+            <span className="text-sm md:text-xl font-medium">
+              Cancellation Policies
+            </span>
           </div>
           <div className="p-4 space-y-4">
             {cancellationPolicies?.length > 0 ? (
@@ -770,11 +987,16 @@ export default function Book() {
         {/* Guest Details Section */}
         <div className="border rounded-lg shadow-lg">
           <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg flex items-center gap-3">
-            <span className="text-sm md:text-xl font-medium">Guest Details</span>
+            <span className="text-sm md:text-xl font-medium">
+              Guest Details
+            </span>
           </div>
 
           {rooms.map((room, roomIndex) => (
-            <div key={room.RoomIndex} className="m-4 rounded-lg shadow-lg border-2">
+            <div
+              key={room.RoomIndex}
+              className="m-4 rounded-lg shadow-lg border-2"
+            >
               <div className="flex items-center justify-between p-4">
                 <h3 className="text-lg font-semibold">
                   Room {roomIndex + 1} ({room.RoomTypeName})
@@ -784,31 +1006,47 @@ export default function Book() {
                   aria-label={`Toggle form for Room ${roomIndex + 1}`}
                 >
                   <RiArrowDropDownLine
-                    className={`text-2xl transform ${showForms[roomIndex] ? "rotate-180" : ""}`}
+                    className={`text-2xl transform ${
+                      showForms[roomIndex] ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
               </div>
               {showForms[roomIndex] && (
                 <div className="p-4 space-y-4">
                   {room.Guests.map((guest, guestIndex) => (
-                    <div key={`guest_${roomIndex}_${guestIndex}`} className="border-t pt-4">
+                    <div
+                      key={`guest_${roomIndex}_${guestIndex}`}
+                      className="border-t pt-4"
+                    >
                       <h4 className="text-md font-semibold">
-                        Guest {guestIndex + 1} {guest.LeadPassenger ? "(Lead)" : ""}
+                        Guest {guestIndex + 1}{" "}
+                        {guest.LeadPassenger ? "(Lead)" : ""} (
+                        {guest.PaxType === 1 ? "Adult" : "Child"})
                       </h4>
                       <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                         <div>
-                          <label className="block text-[10px] font-bold" htmlFor={`title_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="block text-[10px] font-bold"
+                            htmlFor={`title_${roomIndex}_${guestIndex}`}
+                          >
                             Title *
                           </label>
                           <select
                             id={`title_${roomIndex}_${guestIndex}`}
                             name="Title"
                             value={guest.Title}
-                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            onChange={(e) =>
+                              handleChange(e, roomIndex, guestIndex)
+                            }
                             className="w-full border p-2 rounded-md"
                             required
                             aria-label="Guest Title"
-                            aria-describedby={errors[`Title_${roomIndex}_${guestIndex}`] ? `title-error_${roomIndex}_${guestIndex}` : undefined}
+                            aria-describedby={
+                              errors[`Title_${roomIndex}_${guestIndex}`]
+                                ? `title-error_${roomIndex}_${guestIndex}`
+                                : undefined
+                            }
                           >
                             <option value="">Select</option>
                             <option value="Mr">Mr</option>
@@ -817,13 +1055,19 @@ export default function Book() {
                             <option value="Miss">Miss</option>
                           </select>
                           {errors[`Title_${roomIndex}_${guestIndex}`] && (
-                            <p id={`title-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                            <p
+                              id={`title-error_${roomIndex}_${guestIndex}`}
+                              className="text-red-500 text-sm"
+                            >
                               {errors[`Title_${roomIndex}_${guestIndex}`]}
                             </p>
                           )}
                         </div>
                         <div>
-                          <label className="block text-[10px] font-bold" htmlFor={`firstName_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="block text-[10px] font-bold"
+                            htmlFor={`firstName_${roomIndex}_${guestIndex}`}
+                          >
                             First Name *
                           </label>
                           <input
@@ -831,21 +1075,37 @@ export default function Book() {
                             id={`firstName_${roomIndex}_${guestIndex}`}
                             name="FirstName"
                             value={guest.FirstName}
-                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            onChange={(e) =>
+                              handleChange(e, roomIndex, guestIndex)
+                            }
                             className="w-full border p-2 rounded-md"
-                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            maxLength={
+                              validationPolicies?.PaxNameMaxLength || 50
+                            }
                             required
+                            placeholder="e.g., John"
                             aria-label="Guest First Name"
-                            aria-describedby={errors[`FirstName_${roomIndex}_${guestIndex}`] ? `firstName-error_${roomIndex}_${guestIndex}` : undefined}
+                            aria-describedby={
+                              errors[`FirstName_${roomIndex}_${guestIndex}`]
+                                ? `firstName-error_${roomIndex}_${guestIndex}`
+                                : undefined
+                            }
                           />
                           {errors[`FirstName_${roomIndex}_${guestIndex}`] && (
-                            <p id={`firstName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                            <p
+                              id={`firstName-error_${roomIndex}_${guestIndex}`}
+                              className="text-red-500 text-sm"
+                            >
                               {errors[`FirstName_${roomIndex}_${guestIndex}`]}
                             </p>
                           )}
                         </div>
+
                         <div>
-                          <label className="block text-[10px] font-bold" htmlFor={`middleName_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="block text-[10px] font-bold"
+                            htmlFor={`middleName_${roomIndex}_${guestIndex}`}
+                          >
                             Middle Name
                           </label>
                           <input
@@ -853,14 +1113,23 @@ export default function Book() {
                             id={`middleName_${roomIndex}_${guestIndex}`}
                             name="MiddleName"
                             value={guest.MiddleName}
-                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            onChange={(e) =>
+                              handleChange(e, roomIndex, guestIndex)
+                            }
                             className="w-full border p-2 rounded-md"
-                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            maxLength={
+                              validationPolicies?.PaxNameMaxLength || 50
+                            }
+                            placeholder="e.g., Michael"
                             aria-label="Guest Middle Name"
                           />
                         </div>
+
                         <div>
-                          <label className="block text-[10px] font-bold" htmlFor={`lastName_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="block text-[10px] font-bold"
+                            htmlFor={`lastName_${roomIndex}_${guestIndex}`}
+                          >
                             Last Name *
                           </label>
                           <input
@@ -868,37 +1137,68 @@ export default function Book() {
                             id={`lastName_${roomIndex}_${guestIndex}`}
                             name="LastName"
                             value={guest.LastName}
-                            onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                            onChange={(e) =>
+                              handleChange(e, roomIndex, guestIndex)
+                            }
                             className="w-full border p-2 rounded-md"
-                            maxLength={validationPolicies?.PaxNameMaxLength || 50}
+                            maxLength={
+                              validationPolicies?.PaxNameMaxLength || 50
+                            }
                             required
+                            placeholder="e.g., Doe"
                             aria-label="Guest Last Name"
-                            aria-describedby={errors[`LastName_${roomIndex}_${guestIndex}`] ? `lastName-error_${roomIndex}_${guestIndex}` : undefined}
+                            aria-describedby={
+                              errors[`LastName_${roomIndex}_${guestIndex}`]
+                                ? `lastName-error_${roomIndex}_${guestIndex}`
+                                : undefined
+                            }
                           />
                           {errors[`LastName_${roomIndex}_${guestIndex}`] && (
-                            <p id={`lastName-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                            <p
+                              id={`lastName-error_${roomIndex}_${guestIndex}`}
+                              className="text-red-500 text-sm"
+                            >
                               {errors[`LastName_${roomIndex}_${guestIndex}`]}
                             </p>
                           )}
                         </div>
                         {(guest.LeadPassenger || guest.PaxType === 2) && (
                           <div>
-                            <label className="block text-[10px] font-bold" htmlFor={`email_${roomIndex}_${guestIndex}`}>
-                              {guest.PaxType === 2 ? "Parent Email *" : "Email *"}
+                            <label
+                              className="block text-[10px] font-bold"
+                              htmlFor={`email_${roomIndex}_${guestIndex}`}
+                            >
+                              {guest.PaxType === 2
+                                ? "Parent Email *"
+                                : "Email *"}
                             </label>
                             <input
                               type="email"
                               id={`email_${roomIndex}_${guestIndex}`}
                               name="Email"
                               value={guest.Email}
-                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              onChange={(e) =>
+                                handleChange(e, roomIndex, guestIndex)
+                              }
                               className="w-full border p-2 rounded-md"
                               required
-                              aria-label={guest.PaxType === 2 ? "Parent Email" : "Guest Email"}
-                              aria-describedby={errors[`Email_${roomIndex}_${guestIndex}`] ? `email-error_${roomIndex}_${guestIndex}` : undefined}
+                              placeholder="e.g., john.doe@example.com"
+                              aria-label={
+                                guest.PaxType === 2
+                                  ? "Parent Email"
+                                  : "Guest Email"
+                              }
+                              aria-describedby={
+                                errors[`Email_${roomIndex}_${guestIndex}`]
+                                  ? `email-error_${roomIndex}_${guestIndex}`
+                                  : undefined
+                              }
                             />
                             {errors[`Email_${roomIndex}_${guestIndex}`] && (
-                              <p id={`email-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              <p
+                                id={`email-error_${roomIndex}_${guestIndex}`}
+                                className="text-red-500 text-sm"
+                              >
                                 {errors[`Email_${roomIndex}_${guestIndex}`]}
                               </p>
                             )}
@@ -906,7 +1206,10 @@ export default function Book() {
                         )}
                         {(guest.LeadPassenger || guest.PaxType === 1) && (
                           <div>
-                            <label className="block text-[10px] font-bold" htmlFor={`phoneno_${roomIndex}_${guestIndex}`}>
+                            <label
+                              className="block text-[10px] font-bold"
+                              htmlFor={`phoneno_${roomIndex}_${guestIndex}`}
+                            >
                               Phone Number *
                             </label>
                             <input
@@ -914,14 +1217,24 @@ export default function Book() {
                               id={`phoneno_${roomIndex}_${guestIndex}`}
                               name="Phoneno"
                               value={guest.Phoneno}
-                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              onChange={(e) =>
+                                handleChange(e, roomIndex, guestIndex)
+                              }
                               className="w-full border p-2 rounded-md"
                               required
+                              placeholder="e.g., +1234567890"
                               aria-label="Guest Phone Number"
-                              aria-describedby={errors[`Phoneno_${roomIndex}_${guestIndex}`] ? `phoneno-error_${roomIndex}_${guestIndex}` : undefined}
+                              aria-describedby={
+                                errors[`Phoneno_${roomIndex}_${guestIndex}`]
+                                  ? `phoneno-error_${roomIndex}_${guestIndex}`
+                                  : undefined
+                              }
                             />
                             {errors[`Phoneno_${roomIndex}_${guestIndex}`] && (
-                              <p id={`phoneno-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              <p
+                                id={`phoneno-error_${roomIndex}_${guestIndex}`}
+                                className="text-red-500 text-sm"
+                              >
                                 {errors[`Phoneno_${roomIndex}_${guestIndex}`]}
                               </p>
                             )}
@@ -930,7 +1243,10 @@ export default function Book() {
                         {validationPolicies?.PassportMandatory && (
                           <>
                             <div>
-                              <label className="block text-[10px] font-bold" htmlFor={`passportNo_${roomIndex}_${guestIndex}`}>
+                              <label
+                                className="block text-[10px] font-bold"
+                                htmlFor={`passportNo_${roomIndex}_${guestIndex}`}
+                              >
                                 Passport Number *
                               </label>
                               <input
@@ -938,58 +1254,150 @@ export default function Book() {
                                 id={`passportNo_${roomIndex}_${guestIndex}`}
                                 name="PassportNo"
                                 value={guest.PassportNo}
-                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                onChange={(e) =>
+                                  handleChange(e, roomIndex, guestIndex)
+                                }
                                 className="w-full border p-2 rounded-md"
                                 maxLength={20}
                                 required
+                                placeholder="e.g., A12345678"
                                 aria-label="Passport Number"
-                                aria-describedby={errors[`PassportNo_${roomIndex}_${guestIndex}`] ? `passportNo-error_${roomIndex}_${guestIndex}` : undefined}
+                                aria-describedby={
+                                  errors[
+                                    `PassportNo_${roomIndex}_${guestIndex}`
+                                  ]
+                                    ? `passportNo-error_${roomIndex}_${guestIndex}`
+                                    : undefined
+                                }
                               />
-                              {errors[`PassportNo_${roomIndex}_${guestIndex}`] && (
-                                <p id={`passportNo-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                                  {errors[`PassportNo_${roomIndex}_${guestIndex}`]}
+                              {errors[
+                                `PassportNo_${roomIndex}_${guestIndex}`
+                              ] && (
+                                <p
+                                  id={`passportNo-error_${roomIndex}_${guestIndex}`}
+                                  className="text-red-500 text-sm"
+                                >
+                                  {
+                                    errors[
+                                      `PassportNo_${roomIndex}_${guestIndex}`
+                                    ]
+                                  }
                                 </p>
                               )}
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold" htmlFor={`passportIssueDate_${roomIndex}_${guestIndex}`}>
+                              <label
+                                className="block text-[10px] font-bold"
+                                htmlFor={`passportIssueDate_${roomIndex}_${guestIndex}`}
+                              >
                                 Passport Issue Date *
                               </label>
                               <input
                                 type="datetime-local"
                                 id={`passportIssueDate_${roomIndex}_${guestIndex}`}
                                 name="PassportIssueDate"
-                                value={guest.PassportIssueDate ? guest.PassportIssueDate.slice(0, 16) : ""}
-                                onChange={(e) => handleChange({ target: { name: "PassportIssueDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
+                                value={
+                                  guest.PassportIssueDate &&
+                                  guest.PassportIssueDate !==
+                                    "0001-01-01T00:00:00:00"
+                                    ? guest.PassportIssueDate.slice(0, 16)
+                                    : ""
+                                }
+                                onChange={(e) =>
+                                  handleChange(
+                                    {
+                                      target: {
+                                        name: "PassportIssueDate",
+                                        value: e.target.value
+                                          ? `${e.target.value}:00`
+                                          : "0001-01-01T00:00:00:00",
+                                      },
+                                    },
+                                    roomIndex,
+                                    guestIndex
+                                  )
+                                }
                                 className="w-full border p-2 rounded-md"
                                 required
                                 aria-label="Passport Issue Date"
-                                aria-describedby={errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] ? `passportIssueDate-error_${roomIndex}_${guestIndex}` : undefined}
+                                aria-describedby={
+                                  errors[
+                                    `PassportIssueDate_${roomIndex}_${guestIndex}`
+                                  ]
+                                    ? `passportIssueDate-error_${roomIndex}_${guestIndex}`
+                                    : undefined
+                                }
                               />
-                              {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`] && (
-                                <p id={`passportIssueDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                                  {errors[`PassportIssueDate_${roomIndex}_${guestIndex}`]}
+                              {errors[
+                                `PassportIssueDate_${roomIndex}_${guestIndex}`
+                              ] && (
+                                <p
+                                  id={`passportIssueDate-error_${roomIndex}_${guestIndex}`}
+                                  className="text-red-500 text-sm"
+                                >
+                                  {
+                                    errors[
+                                      `PassportIssueDate_${roomIndex}_${guestIndex}`
+                                    ]
+                                  }
                                 </p>
                               )}
                             </div>
                             <div>
-                              <label className="block text-[10px] font-bold" htmlFor={`passportExpDate_${roomIndex}_${guestIndex}`}>
+                              <label
+                                className="block text-[10px] font-bold"
+                                htmlFor={`passportExpDate_${roomIndex}_${guestIndex}`}
+                              >
                                 Passport Expiry Date *
                               </label>
                               <input
                                 type="datetime-local"
                                 id={`passportExpDate_${roomIndex}_${guestIndex}`}
                                 name="PassportExpDate"
-                                value={guest.PassportExpDate ? guest.PassportExpDate.slice(0, 16) : ""}
-                                onChange={(e) => handleChange({ target: { name: "PassportExpDate", value: e.target.value + ":00" } }, roomIndex, guestIndex)}
+                                value={
+                                  guest.PassportExpDate &&
+                                  guest.PassportExpDate !==
+                                    "0001-01-01T00:00:00:00"
+                                    ? guest.PassportExpDate.slice(0, 16)
+                                    : ""
+                                }
+                                onChange={(e) =>
+                                  handleChange(
+                                    {
+                                      target: {
+                                        name: "PassportExpDate",
+                                        value: e.target.value
+                                          ? `${e.target.value}:00`
+                                          : "0001-01-01T00:00:00:00",
+                                      },
+                                    },
+                                    roomIndex,
+                                    guestIndex
+                                  )
+                                }
                                 className="w-full border p-2 rounded-md"
                                 required
                                 aria-label="Passport Expiry Date"
-                                aria-describedby={errors[`PassportExpDate_${roomIndex}_${guestIndex}`] ? `passportExpDate-error_${roomIndex}_${guestIndex}` : undefined}
+                                aria-describedby={
+                                  errors[
+                                    `PassportExpDate_${roomIndex}_${guestIndex}`
+                                  ]
+                                    ? `passportExpDate-error_${roomIndex}_${guestIndex}`
+                                    : undefined
+                                }
                               />
-                              {errors[`PassportExpDate_${roomIndex}_${guestIndex}`] && (
-                                <p id={`passportExpDate-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
-                                  {errors[`PassportExpDate_${roomIndex}_${guestIndex}`]}
+                              {errors[
+                                `PassportExpDate_${roomIndex}_${guestIndex}`
+                              ] && (
+                                <p
+                                  id={`passportExpDate-error_${roomIndex}_${guestIndex}`}
+                                  className="text-red-500 text-sm"
+                                >
+                                  {
+                                    errors[
+                                      `PassportExpDate_${roomIndex}_${guestIndex}`
+                                    ]
+                                  }
                                 </p>
                               )}
                             </div>
@@ -997,7 +1405,10 @@ export default function Book() {
                         )}
                         {validationPolicies?.PanMandatory && (
                           <div>
-                            <label className="block text-[10px] font-bold">
+                            <label
+                              className="block text-[10px] font-bold"
+                              htmlFor={`pan_${roomIndex}_${guestIndex}`}
+                            >
                               PAN *
                             </label>
                             <input
@@ -1005,23 +1416,35 @@ export default function Book() {
                               id={`pan_${roomIndex}_${guestIndex}`}
                               name="PAN"
                               value={guest.PAN}
-                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              onChange={(e) =>
+                                handleChange(e, roomIndex, guestIndex)
+                              }
                               className="w-full border p-2 rounded-md"
                               placeholder="e.g., AAAAA1234A"
                               maxLength={10}
                               required
                               aria-label="PAN"
-                              aria-describedby={errors[`PAN_${roomIndex}_${guestIndex}`] ? `pan-error_${roomIndex}_${guestIndex}` : undefined}
+                              aria-describedby={
+                                errors[`PAN_${roomIndex}_${guestIndex}`]
+                                  ? `pan-error_${roomIndex}_${guestIndex}`
+                                  : undefined
+                              }
                             />
                             {errors[`PAN_${roomIndex}_${guestIndex}`] && (
-                              <p id={`pan-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              <p
+                                id={`pan-error_${roomIndex}_${guestIndex}`}
+                                className="text-red-500 text-sm"
+                              >
                                 {errors[`PAN_${roomIndex}_${guestIndex}`]}
                               </p>
                             )}
                           </div>
                         )}
                         <div>
-                          <label className="block text-[10px] font-bold" htmlFor={`paxType_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="block text-[10px] font-bold"
+                            htmlFor={`paxType_${roomIndex}_${guestIndex}`}
+                          >
                             Guest Type *
                           </label>
                           <select
@@ -1030,27 +1453,48 @@ export default function Book() {
                             value={guest.PaxType}
                             onChange={(e) => {
                               const updatedRooms = [...rooms];
-                              updatedRooms[roomIndex].Guests[guestIndex].PaxType = parseInt(e.target.value, 10);
+                              updatedRooms[roomIndex].Guests[
+                                guestIndex
+                              ].PaxType = parseInt(e.target.value, 10);
                               if (e.target.value === "2") {
-                                updatedRooms[roomIndex].Guests[guestIndex].Age = "";
-                                updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
+                                updatedRooms[roomIndex].Guests[guestIndex].Age =
+                                  "";
+                                updatedRooms[roomIndex].Guests[
+                                  guestIndex
+                                ].LeadPassenger = false;
                               } else {
-                                updatedRooms[roomIndex].Guests[guestIndex].Age = null;
+                                updatedRooms[roomIndex].Guests[guestIndex].Age =
+                                  null;
                               }
                               setRooms(updatedRooms);
                             }}
                             className="w-full border p-2 rounded-md"
                             required
                             aria-label="Guest Type"
+                            aria-describedby={
+                              errors[`PaxType_${roomIndex}_${guestIndex}`]
+                                ? `paxType-error_${roomIndex}_${guestIndex}`
+                                : undefined
+                            }
                           >
                             <option value="1">Adult</option>
                             <option value="2">Child</option>
                           </select>
+                          {errors[`PaxType_${roomIndex}_${guestIndex}`] && (
+                            <p
+                              id={`paxType-error_${roomIndex}_${guestIndex}`}
+                              className="text-red-500 text-sm"
+                            >
+                              {errors[`PaxType_${roomIndex}_${guestIndex}`]}
+                            </p>
+                          )}
                         </div>
                         {guest.PaxType === 2 && (
-
                           <div>
-                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+                            <label
+                              className="block text-[10px] font-bold"
+                              htmlFor={`age_${roomIndex}_${guestIndex}`}
+                            >
                               Age *
                             </label>
                             {childAges.length > 0 ? (
@@ -1058,15 +1502,24 @@ export default function Book() {
                                 id={`age_${roomIndex}_${guestIndex}`}
                                 name="Age"
                                 value={guest.Age}
-                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                onChange={(e) =>
+                                  handleChange(e, roomIndex, guestIndex)
+                                }
                                 className="w-full border p-2 rounded-md"
                                 required
                                 aria-label="Child Age"
-                                aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+                                aria-describedby={
+                                  errors[`Age_${roomIndex}_${guestIndex}`]
+                                    ? `age-error_${roomIndex}_${guestIndex}`
+                                    : undefined
+                                }
                               >
                                 <option value="">Select Age</option>
                                 {childAges.map((age, index) => (
-                                  <option key={`child_age_${index}`} value={age}>
+                                  <option
+                                    key={`child_age_${index}`}
+                                    value={age}
+                                  >
                                     {age}
                                   </option>
                                 ))}
@@ -1077,26 +1530,38 @@ export default function Book() {
                                 id={`age_${roomIndex}_${guestIndex}`}
                                 name="Age"
                                 value={guest.Age}
-                                onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                                onChange={(e) =>
+                                  handleChange(e, roomIndex, guestIndex)
+                                }
                                 className="w-full border p-2 rounded-md"
                                 max="12"
                                 min="0"
                                 required
+                                placeholder="e.g., 5"
                                 aria-label="Child Age"
-                                aria-describedby={errors[`Age_${roomIndex}_${guestIndex}`] ? `age-error_${roomIndex}_${guestIndex}` : undefined}
+                                aria-describedby={
+                                  errors[`Age_${roomIndex}_${guestIndex}`]
+                                    ? `age-error_${roomIndex}_${guestIndex}`
+                                    : undefined
+                                }
                               />
                             )}
                             {errors[`Age_${roomIndex}_${guestIndex}`] && (
-                              <p id={`age-error_${roomIndex}_${guestIndex}`} className="text-red-500 text-sm">
+                              <p
+                                id={`age-error_${roomIndex}_${guestIndex}`}
+                                className="text-red-500 text-sm"
+                              >
                                 {errors[`Age_${roomIndex}_${guestIndex}`]}
                               </p>
                             )}
                           </div>
-
                         )}
                         {guest.PaxType === 1 && (
                           <div>
-                            <label className="block text-[10px] font-bold" htmlFor={`age_${roomIndex}_${guestIndex}`}>
+                            <label
+                              className="block text-[10px] font-bold"
+                              htmlFor={`age_${roomIndex}_${guestIndex}`}
+                            >
                               Age
                             </label>
                             <input
@@ -1104,9 +1569,12 @@ export default function Book() {
                               id={`age_${roomIndex}_${guestIndex}`}
                               name="Age"
                               value={guest.Age || ""}
-                              onChange={(e) => handleChange(e, roomIndex, guestIndex)}
+                              onChange={(e) =>
+                                handleChange(e, roomIndex, guestIndex)
+                              }
                               className="w-full border p-2 rounded-md"
                               min="0"
+                              placeholder="e.g., 30"
                               aria-label="Adult Age"
                             />
                           </div>
@@ -1120,20 +1588,25 @@ export default function Book() {
                             onChange={(e) => {
                               const updatedRooms = [...rooms];
                               if (e.target.checked && guest.PaxType === 1) {
-                                updatedRooms[roomIndex].Guests = updatedRooms[roomIndex].Guests.map(
-                                  (g, idx) => ({
-                                    ...g,
-                                    LeadPassenger: idx === guestIndex && g.PaxType === 1,
-                                  })
-                                );
+                                updatedRooms[roomIndex].Guests = updatedRooms[
+                                  roomIndex
+                                ].Guests.map((g, idx) => ({
+                                  ...g,
+                                  LeadPassenger:
+                                    idx === guestIndex && g.PaxType === 1,
+                                }));
                               } else {
-                                updatedRooms[roomIndex].Guests[guestIndex].LeadPassenger = false;
+                                updatedRooms[roomIndex].Guests[
+                                  guestIndex
+                                ].LeadPassenger = false;
                               }
                               setRooms(updatedRooms);
                               if (errors[`LeadPassenger_${roomIndex}`]) {
                                 setErrors((prevErrors) => {
                                   const newErrors = { ...prevErrors };
-                                  delete newErrors[`LeadPassenger_${roomIndex}`];
+                                  delete newErrors[
+                                    `LeadPassenger_${roomIndex}`
+                                  ];
                                   return newErrors;
                                 });
                               }
@@ -1142,84 +1615,29 @@ export default function Book() {
                             disabled={guest.PaxType === 2}
                             aria-label="Lead Passenger"
                           />
-                          <label className="text-[10px] font-bold" htmlFor={`leadPassenger_${roomIndex}_${guestIndex}`}>
+                          <label
+                            className="text-[10px] font-bold"
+                            htmlFor={`leadPassenger_${roomIndex}_${guestIndex}`}
+                          >
                             Lead Passenger
                           </label>
                         </div>
                       </form>
                     </div>
                   ))}
+                  {errors[`LeadPassenger_${roomIndex}`] && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {errors[`LeadPassenger_${roomIndex}`]}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
           ))}
-
+          {errors.panCount && (
+            <p className="text-red-500 text-sm mt-2 px-4">{errors.panCount}</p>
+          )}
         </div>
-
-        {validationPolicies?.PackageDetailsMandatory && (
-          <div className="space-y-4">
-            <div>
-              <label className="block text-[10px] font-bold" htmlFor="arrivalTransportType">
-                Arrival Transport Type *
-              </label>
-              <select
-                id="arrivalTransportType"
-                name="arrivalTransportType"
-                value={bookingDetails.arrivalTransport.arrivalTransportType}
-                onChange={handleChange}
-                className="w-full border p-2 rounded-md"
-                required
-                aria-label="Arrival Transport Type"
-                aria-describedby={errors.arrivalTransportType ? "arrivalTransportType-error" : undefined}
-              >
-                <option value="0">Flight</option>
-                <option value="1">Surface</option>
-              </select>
-              {errors.arrivalTransportType && (
-                <p id="arrivalTransportType-error" className="text-red-500 text-sm">
-                  {errors.arrivalTransportType}
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold" htmlFor="transportInfoId">
-                Transport Info ID
-              </label>
-              <input
-                type="text"
-                id="transportInfoId"
-                name="arrivalTransport.transportInfoId"
-                value={bookingDetails.arrivalTransport.transportInfoId}
-                onChange={handleChange}
-                className="w-full border p-2 rounded-md"
-                placeholder="Enter transport info ID"
-                aria-label="Transport Info ID"
-              />
-            </div>
-            <div>
-              <label className="block text-[10px] font-bold" htmlFor="arrivalTransportTime">
-                Arrival Time *
-              </label>
-              <input
-                type="text"
-                id="arrivalTransportTime"
-                name="arrivalTransport.time"
-                value={bookingDetails.arrivalTransport.time}
-                onChange={handleChange}
-                className="w-full border p-2 rounded-md"
-                placeholder="YYYY-MM-DDTHH:MM:SS:00"
-                required
-                aria-label="Arrival Time"
-                aria-describedby={errors.arrivalTransportTime ? "arrivalTransportTime-error" : undefined}
-              />
-              {errors.arrivalTransportTime && (
-                <p id="arrivalTransportTime-error" className="text-red-500 text-sm">
-                  {errors.arrivalTransportTime}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
 
         {showModal && (
           <HotelConfirmationModal
@@ -1241,7 +1659,8 @@ export default function Book() {
                   <p>{room.RoomTypeName}</p>
                   <p className="flex items-center font-bold">
                     <FaRupeeSign />
-                    {room.Price?.PublishedPrice?.toLocaleString('en-IN') || "N/A"}
+                    {room.Price?.PublishedPrice?.toLocaleString("en-IN") ||
+                      "N/A"}
                   </p>
                 </div>
               )) || <p>No price details available</p>}
@@ -1249,31 +1668,30 @@ export default function Book() {
                 <p>Base Fare</p>
                 <p className="flex items-center">
                   <FaRupeeSign />
-                  {fareDetails.totalFare.toLocaleString('en-IN') || "N/A"}
+                  {fareDetails.totalFare.toLocaleString("en-IN") || "N/A"}
                 </p>
               </div>
               <div className="flex justify-between">
                 <p>Taxes & Fees (18%)</p>
                 <p className="flex items-center">
                   <FaRupeeSign />
-                  {fareDetails.taxFare.toLocaleString('en-IN') || "N/A"}
+                  {fareDetails.taxFare.toLocaleString("en-IN") || "N/A"}
                 </p>
               </div>
-              <div className="flex justify-between font-semibold text-lg border-t pt-2 relative">
+              <div className="flex justify-between font-semibold text-lg border-t pt-2">
                 <p>Total</p>
                 <p className="flex items-center">
                   <FaRupeeSign />
-                  {fareDetails.netAmount.toLocaleString('en-IN') || "N/A"}
+                  {fareDetails.netAmount.toLocaleString("en-IN") || "N/A"}
                 </p>
-                {/* Tooltip for assistance */}
-
               </div>
             </div>
           </div>
           <div className="flex justify-center mt-3">
             <button
-              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${isLoading ? "opacity-75 cursor-not-allowed" : ""
-                }`}
+              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${
+                isLoading ? "opacity-75 cursor-not-allowed" : ""
+              }`}
               onClick={handleBookHotel}
               disabled={isLoading}
               aria-label="Book Hotel"

@@ -91,7 +91,7 @@ const comp = ({ slug }) => {
   const localDate = new Date(date.getTime() + offset);
   const localFormattedDate = localDate.toISOString().slice(0, 19);
 
-  console.log("localFormattedDate", localFormattedDate);
+  // console.log("localFormattedDate", localFormattedDate);
 
   useEffect(() => {
     const getIp = async () => {
