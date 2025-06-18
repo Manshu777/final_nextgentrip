@@ -137,7 +137,7 @@ const Page = () => {
     e.preventDefault();
     const isValid = validateAllForms();
     const traceID = localStorage.getItem("selectedInsuranceTraceId");
-
+  
     if (!isValid) {
       Swal.fire({
         icon: "error",
@@ -146,51 +146,14 @@ const Page = () => {
       });
       return;
     }
-
+  
     setIsLoading(true);
-
+  
     try {
       const leadPassenger = passengers[0];
       const amount = insuranceData?.Price?.PublishedPriceRoundedOff;
-
-      // 1. Prepare booking payload
-      const payload = {
-        EndUserIp: "223.178.210.95",
-        TraceId: traceID,
-        ResultIndex: insuranceData.ResultIndex,
-        GenerateInsurancePolicy: "false",
-        Passenger: passengers.map((passenger) => ({
-          Title: passenger.Title,
-          BeneficiaryTitle: passenger.Title,
-          FirstName: passenger.FirstName,
-          BeneficiaryName: `${passenger.Title} ${passenger.FirstName} ${passenger.LastName}`.trim(),
-          LastName: passenger.LastName,
-          RelationShipToInsured: "Self",
-          RelationToBeneficiary: passenger.RelationToBeneficiary,
-          DOB: passenger.DOB,
-          Gender: passenger.Gender,
-          AddressLine1: passenger.AddressLine1,
-          City: passenger.City,
-          CityCode: passenger.CityCode,
-          PinCode: passenger.PinCode,
-          CountryCode: passenger.CountryCode,
-          PhoneNumber: passenger.PhoneNumber,
-          EmailId: passenger.EmailId,
-          PassportNo: passenger.PassportNo,
-          MajorDestination: passenger.MajorDestination,
-          PassportCountry: passenger.PassportCountry,
-          IsLeadPax: passenger.IsLeadPax,
-        })),
-      };
-
-      // 2. Book insurance first
-      const bookingRes = await axios.post(`${apilink}/insurance-book`, payload);
-
-      // Optional: Store booking response for reference
-      setBookingResponse(bookingRes.data);
-
-
-      // 3. Proceed to payment
+  
+      // 1. Create Razorpay Order
       const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
         amount,
         currency: "INR",
@@ -199,26 +162,66 @@ const Page = () => {
         user_name: `${leadPassenger.FirstName} ${leadPassenger.LastName}`,
         user_phone: leadPassenger.PhoneNumber || "9999999999",
       });
-
+  
       const { order_id } = orderResponse.data;
-
+  
       const options = {
-        key: "rzp_test_heUFNPhcTPl901",
+        key: "rzp_live_GHQAKE32vCoZBA",
         amount,
         currency: "INR",
         name: "Next Gen Trip",
         description: "Insurance Payment",
         order_id,
         handler: async (response) => {
-          // Optional: Confirm payment with your backend here
-
-          Swal.fire({
-            icon: "success",
-            title: "Payment Successful",
-            text: `Payment ID: ${response.razorpay_payment_id}`,
-          });
-
-
+          try {
+            // 2. On successful payment, call insurance booking API
+            const payload = {
+              EndUserIp: "223.178.210.95",
+              TraceId: traceID,
+              ResultIndex: insuranceData.ResultIndex,
+              GenerateInsurancePolicy: "false",
+              Passenger: passengers.map((passenger) => ({
+                Title: passenger.Title,
+                BeneficiaryTitle: passenger.Title,
+                FirstName: passenger.FirstName,
+                BeneficiaryName: `${passenger.Title} ${passenger.FirstName} ${passenger.LastName}`.trim(),
+                LastName: passenger.LastName,
+                RelationShipToInsured: "Self",
+                RelationToBeneficiary: passenger.RelationToBeneficiary,
+                DOB: passenger.DOB,
+                Gender: passenger.Gender,
+                AddressLine1: passenger.AddressLine1,
+                City: passenger.City,
+                CityCode: passenger.CityCode,
+                PinCode: passenger.PinCode,
+                CountryCode: passenger.CountryCode,
+                PhoneNumber: passenger.PhoneNumber,
+                EmailId: passenger.EmailId,
+                PassportNo: passenger.PassportNo,
+                MajorDestination: passenger.MajorDestination,
+                PassportCountry: passenger.PassportCountry,
+                IsLeadPax: passenger.IsLeadPax,
+              })),
+            };
+  
+            const bookingRes = await axios.post(`${apilink}/insurance-book`, payload);
+  
+            setBookingResponse(bookingRes.data);
+  
+            Swal.fire({
+              icon: "success",
+              title: "Payment & Booking Successful",
+              text: `Payment ID: ${response.razorpay_payment_id}`,
+            });
+  
+          } catch (bookingError) {
+            console.error("Booking failed after payment:", bookingError);
+            Swal.fire({
+              icon: "error",
+              title: "Booking Failed",
+              text: "Payment succeeded, but booking failed. Please contact support.",
+            });
+          }
         },
         prefill: {
           name: `${leadPassenger.FirstName} ${leadPassenger.LastName}`,
@@ -229,22 +232,23 @@ const Page = () => {
           color: "#0086da",
         },
       };
-
+  
       const razorpay = new window.Razorpay(options);
       razorpay.open();
       setShowModal(true);
-
+  
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: error?.response?.data?.message || "Something went wrong during booking or payment.",
+        text: error?.response?.data?.message || "Something went wrong during payment initialization.",
       });
     } finally {
       setIsLoading(false);
     }
   };
+  
 
 
   const closeModal = () => setShowModal(false);

@@ -487,7 +487,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       const { order_id } = orderResponse.data;
   
       const options = {
-        key: 'rzp_test_heUFNPhcTPl901',
+        key: 'rzp_live_GHQAKE32vCoZBA',
         amount: amount * 100,
         currency: "INR",
         name: "Next Gen Trip Pvt Ltd",
