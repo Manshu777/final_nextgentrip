@@ -190,9 +190,13 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     const newErrors = {};
     let checkMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
 
-   
+    setCheckPassport(checkMEEE?.data?.Response?.Results.IsPassportRequiredAtBook);
+
+    console.log('checkMEEE',checkPassport)
+
 
     // setCheckPassport(checkMEEE.data.Results.IsPassportRequiredAtBook);
+    console.log('passengers',passengers)
     passengers.forEach((passenger, index) => {
       if (!passenger.Title) {
         newErrors[`Title_${index}`] = "Title is required.";
@@ -211,7 +215,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       }
 
       // Validate passport fields if required
-      if (checkMEEE.data.IsPassportRequiredAtBook) {
+      if (checkPassport) {
         if (!passenger.PassportNo) {
           newErrors[`PassportNo_${index}`] = "Passport Number is required.";
         } else if (passenger.PassportNo.length !== 8) {
@@ -246,7 +250,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       }
 
       // Validate GST for lead passenger if required
-      if (checkMEEE.data.IsGSTMandatory && passenger.IsLeadPax) {
+      if (checkMEEE?.data?.Response?.Results.IsGSTMandatory && passenger.IsLeadPax) {
         if (!gstDetails.GSTNumber) {
           newErrors[`GSTNumber_${index}`] = "GST Number is required for lead passenger.";
         }
@@ -273,7 +277,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   useEffect(() => {
     const initialPassengers = () => {
       let passengers = [];
-      console.log('fdatas?.data?.Response?.Results?.FareBreakdown',fdatas?.data?.Response?.Results?.FareBreakdown)
+   
       if (fdatas?.data?.Response?.Results?.FareBreakdown) {
         fdatas?.data?.Response?.Results?.FareBreakdown?.forEach((fare) => {
           for (let i = 0; i < fare.PassengerCount; i++) {
@@ -389,6 +393,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
         fFareBreakdown: fareBreakdown,
         email: leadPassenger?.Email,
         user_id: '4',
+        checkPassport: checkPassport,
         Passengers: passengers.map((passenger, index) => {
           const passengerFare = fareBreakdown.find(
             (fare) => fare.PassengerType === passenger.PaxType
@@ -482,7 +487,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       const { order_id } = orderResponse.data;
   
       const options = {
-        key: 'rzp_live_PWu6Om6oZlA7pn',
+        key: 'rzp_test_heUFNPhcTPl901',
         amount: amount * 100,
         currency: "INR",
         name: "Next Gen Trip Pvt Ltd",

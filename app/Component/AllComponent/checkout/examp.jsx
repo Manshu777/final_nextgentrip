@@ -254,7 +254,7 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
       const { order_id } = orderResponse.data;
   
       const options = {
-        key: 'rzp_live_PWu6Om6oZlA7pn', 
+        key: 'rzp_test_heUFNPhcTPl901', 
         amount: amount,
         currency: "INR",
         name: "Your Company",
