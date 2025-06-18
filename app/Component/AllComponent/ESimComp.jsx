@@ -17,7 +17,7 @@ import { IoLocationSharp } from "react-icons/io5";
 import TypeWriterHeaderEffect from "./TypeWriterHeaderEffect";
 
 
-const ESimComp = () => {
+const EsimComp = () => {
   const [selected, setSelected] = useState("");
   const defaultStore = JSON.parse(localStorage.getItem("esimSearch"));
 
@@ -251,4 +251,4 @@ const SearchComponents = ({ handleCountry }) => {
   );
 };
 
-export default ESimComp;
+export default EsimComp;
