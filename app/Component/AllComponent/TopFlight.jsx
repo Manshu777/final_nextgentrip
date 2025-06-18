@@ -98,51 +98,41 @@ const TopFlight = () => {
           image: "/images/car1.webp",
           title: "Delhi",
           description: t("desb1"),
-          link: `/hotels/cityName=delhi&citycode=130443&checkin=${
-            date.split("T")[0]
-          }&checkout=${
-            date.split("T")[0]
-          }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=delhi&citycode=130443&checkin=${date.split("T")[0]
+            }&checkout=${date.split("T")[0]
+            }&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/24.webp",
           title: "Mumbai",
           description: t("desb2"),
-          link: `/hotels/cityName=Mumbai,%20%20%20Maharashtra&citycode=144306&checkin=${
-            date.split("T")[0]
-          }&checkout=${
-            date.split("T")[0]
-          }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Mumbai,%20%20%20Maharashtra&citycode=144306&checkin=${date.split("T")[0]
+            }&checkout=${date.split("T")[0]
+            }&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/wifi.webp",
           title: "Shimla",
           description: t("desb3"),
-          link: `/hotels/cityName=Shimla,%20%20%20Himachal%20Pradesh&citycode=138673&checkin=${
-            date.split("T")[0]
-          }&checkout=${
-            date.split("T")[0]
-          }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Shimla,%20%20%20Himachal%20Pradesh&citycode=138673&checkin=${date.split("T")[0]
+            }&checkout=${date.split("T")[0]
+            }&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/safety-first.webp",
           title: "Guwahati Assam",
           description: t("desb4"),
-          link: `/hotels/cityName=Guwahati,%20%20%20Assam&citycode=121139&checkin=${
-            date.split("T")[0]
-          }&checkout=${
-            date.split("T")[0]
-          }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Guwahati,%20%20%20Assam&citycode=121139&checkin=${date.split("T")[0]
+            }&checkout=${date.split("T")[0]
+            }&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/businesswoman.webp",
           title: "Amritsar Punjab",
           description: t("desb5"),
-          link: `/hotels/cityName=Amritsar,%20%20%20Punjab&citycode=101129&checkin=${
-            date.split("T")[0]
-          }&checkout=${
-            date.split("T")[0]
-          }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Amritsar,%20%20%20Punjab&citycode=101129&checkin=${date.split("T")[0]
+            }&checkout=${date.split("T")[0]
+            }&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
       ],
     },
@@ -169,17 +159,17 @@ const TopFlight = () => {
     { name: "Thar", icon: "🏜️", link: "/FamousPlaces/Kerala" },
   ];
   const [topport, settopport] = useState();
-const [toppkage,setToppackage]=useState()
+  const [toppkage, setToppackage] = useState()
 
-const fetchPAckage=async()=>{
-  const data = await axios.get(`${apilink}/holidays/list`);
-  setToppackage(data.data);
+  const fetchPAckage = async () => {
+    const data = await axios.get(`${apilink}/holidays/list`);
+    setToppackage(data.data);
 
-}
-const fetchTopport = async () => {
-  const data = await axios.get(`${apilink}/Popular-Flight`);
-  settopport(data.data);
-};
+  }
+  const fetchTopport = async () => {
+    const data = await axios.get(`${apilink}/Popular-Flight`);
+    settopport(data.data);
+  };
   useEffect(() => {
     fetchPAckage()
     fetchTopport();
@@ -232,40 +222,42 @@ const fetchTopport = async () => {
                 </div>
               )}
             </div>
-{toppkage && 
-            <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto lg:mx-2 rounded-xl overflow-hidden relative  w-full ">
-              <div className="city-head bg-[#0291d2] text-center">
-                <h4 className="text-white text-lg font-semibold py-3">
-                  {t("heading2")}
-                </h4>
+            {toppkage &&
+              <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto lg:mx-2 rounded-xl overflow-hidden relative  w-full ">
+                <div className="city-head bg-[#0291d2] text-center">
+                  <h4 className="text-white text-lg font-semibold py-3">
+                    {t("heading2")}
+                  </h4>
+                </div>
+                <div className=" ">
+                  {toppkage?.map((imageData, i) => (
+                    <Link
+                      href={`/holidayspackage/package/${imageData.slug}`}
+                      className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
+                      key={i}
+                    >
+                      <div className="city-image flex-shrink-0">
+                        <img
+                          src={`${storageLink}/${imageData?.banner_image}`}
+                          alt={imageData?.package_name}
+                          className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
+                        />
+                      </div>
+                      <div className="px-6 w-full">
+                        <h3 className="text-md font-semibold text-gray-800 mb-1 mt-1">
+                          {imageData?.package_name}
+                        </h3>
+
+                        <div className="flex items-center text-sm text-gray-500">
+                          <span className="mr-4">📍 {imageData?.city}, {imageData?.country}</span>
+                          <span>⏳ {imageData?.duration} days</span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
               </div>
-              <div className=" ">
-                {toppkage?.map((imageData, i) => (
-                  <Link
-                    href={`/holidayspackage/package/${imageData.url}`}
-                    className="items-center border-b px-4 flex hover:shadow-lg cursor-pointer"
-                    key={i}
-                  >
-                    <div className="city-image">
-                      <img
-                        src={ `${storageLink}/${imageData?.img}`}
-                        alt={imageData?.title}
-                        className="rounded-full h-9 object-cover w-9"
-                      />
-                    </div>
-                    <div className="px-4 w-[80%]">
-                      <h3 className="text-sm font-semibold mb-0 mt-4 ">
-                        {imageData?.title}
-                      </h3>
-                      <p className="text-[#525252] text-xs font-normal mb-5 pt-1">
-                        {imageData?.des}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-}
+            }
             <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto lg:mx-2 rounded-xl overflow-hidden relative  w-full ">
               <div className="city-head bg-[#0291d2] text-center">
                 <h4 className="text-white text-lg font-semibold py-3">
@@ -308,8 +300,8 @@ const fetchTopport = async () => {
       <div className='px-2  my-8'>
 
         <h3 className="text-center text-3xl font-bold my-4"> Our Packages</h3>
-      {/* <FeaturedProperties /> */}
-      <HotelSliderCompo />
+        {/* <FeaturedProperties /> */}
+        <HotelSliderCompo />
 
       </div>
 
