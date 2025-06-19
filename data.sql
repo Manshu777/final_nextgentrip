@@ -1,0 +1,11 @@
+ALTER TABLE bookedhotels
+    DROP COLUMN hotel_booking_status,
+    DROP COLUMN confirmation_no,
+    DROP COLUMN net_amount,
+    DROP COLUMN last_cancellation_date,
+    DROP COLUMN star_rating,
+    DROP COLUMN address_line1,
+    DROP COLUMN city,
+    DROP COLUMN country_code,
+    DROP COLUMN no_of_rooms,
+    DROP COLUMN booking_date;
