@@ -155,7 +155,7 @@ const HotelSliderCompo = ({ isLoading, children }) => {
 
         <div className=" lg:flex-row  lg:px-28 gap-4 w-full md:my-15 flex justify-center px-[5%] ">
         <Swiper
-            className=" w-full  h-[300px]  md:h-[400px] lg:h-full"
+            className=" w-full  h-[250px]  md:h-[350px] lg:h-full"
             loop={true}
               autoplay={{
                 delay: 2500,
