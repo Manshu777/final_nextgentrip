@@ -8,7 +8,7 @@ export default function HotelCancellation() {
   const [ipAddress, setIpAddress] = useState('Fetching...');
   const [ipError, setIpError] = useState(null);
   const [bookingId, setBookingId] = useState('');
-  const [remarks, setRemarks] = useState('Cancellation requested by user');
+  const [remarks, setRemarks] = useState('');
   const [apiError, setApiError] = useState(null);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancelMessage, setCancelMessage] = useState(null);
@@ -42,7 +42,7 @@ export default function HotelCancellation() {
         Remarks: remarks,
       };
 
-      const response = await fetch(`${apilink}/v1/hotel-cancellation`, {
+      const response = await fetch(`${apilink}/hotel-cancellation`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export default function HotelCancellation() {
 
       setCancelMessage('Booking cancelled successfully!');
       setBookingId('');
-      setRemarks('Cancellation requested by user');
+      setRemarks('');
     } catch (err) {
       setApiError(err.message || 'Failed to cancel booking');
     } finally {
@@ -70,7 +70,7 @@ export default function HotelCancellation() {
   // Handle retry
   const handleRetry = () => {
     setBookingId('');
-    setRemarks('Cancellation requested by user');
+    setRemarks('');
     setApiError(null);
     setCancelMessage(null);
   };

@@ -297,7 +297,7 @@ const PlansPage = () => {
             No eSIM plans available for {country || selectedCountry || 'the selected country'}.
           </p>
         ) : (
-          <div className="grid grid-cols-1 px-[4%] my-2 lg:my-[61px] lg:px-[5%] md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 px-[4%]  lg:my-[61px] lg:px-[5%] md:grid-cols-2 lg:grid-cols-3 gap-4">
             {plans.map((plan) =>
               plan.id && plan.planName && plan.totalPrice ? (
                 <div
