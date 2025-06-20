@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { apilink } from "../../Component/common";
-
+import { v4 as uuidv4 } from 'uuid';
 export default function Book() {
   const router = useRouter();
   const [rooms, setRooms] = useState([]);
@@ -533,6 +533,14 @@ export default function Book() {
     const isValid = validateAllForms();
 
     const bookingCode = hotelData?.BookingCode;
+    const requestId = uuidv4();
+    const requestLog = {
+      requestId,
+      timestamp: new Date().toISOString(),
+      endpoint: `${apilink}/hotel/book`,
+      payload: {},
+      response: null,
+    };
 
     if (isValid) {
       setIsLoading(true);
@@ -592,13 +600,102 @@ export default function Book() {
         }),
       };
 
+      requestLog.payload = payload;
+
       try {
-        const response = await axios.post(`${apilink}/hotel/book`, payload);
-        setBookingResponse(response.data);
-        setShowModal(true);
-        setIsLoading(false);
+        // Find lead passenger
+        const leadPassenger = rooms
+          .flatMap(room => room.Guests)
+          .find(guest => guest.LeadPassenger);
+
+        // Create Razorpay order
+        const amount = fareDetails.netAmount;
+        const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
+          amount: amount,
+          currency: "INR",
+          receipt: `hotel_receipt_${Date.now()}`,
+          user_email: leadPassenger?.Email,
+          user_name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
+          user_phone: leadPassenger?.Phoneno,
+        });
+
+        const { order_id } = orderResponse.data;
+
+        const options = {
+          key: 'rzp_test_Bi57EMsQ6K7ZZH',
+          amount: amount * 100,
+          currency: "INR",
+          name: "Next Gen Trip Pvt Ltd",
+          description: "Hotel Booking Payment",
+          order_id: order_id,
+          handler: async (response) => {
+            try {
+              const bookingResponse = await axios.post(`${apilink}/hotel/book`, payload);
+              requestLog.response = bookingResponse.data;
+
+              if (bookingResponse.data?.status === "success") {
+                await axios.post(`${apilink}/capture-razorpay-payment`, {
+                  payment_id: response.razorpay_payment_id,
+                  amount: amount,
+                });
+
+                localStorage.setItem(`hotel_apiLog_${requestId}`, JSON.stringify(requestLog));
+                setBookingResponse(bookingResponse.data);
+                setShowModal(true);
+
+                Swal.fire({
+                  icon: "success",
+                  title: "Booking and Payment Successful",
+                  text: "Your hotel has been booked!",
+                  confirmButtonText: "OK",
+                });
+              } else {
+                throw new Error(bookingResponse.data?.message || "Booking failed");
+              }
+            } catch (bookingError) {
+              requestLog.response = { error: bookingError.message };
+              localStorage.setItem(`hotel_apiLog_${requestId}`, JSON.stringify(requestLog));
+
+              Swal.fire({
+                icon: "error",
+                title: "Booking Failed",
+                text: bookingError?.response?.data?.message || "Booking failed. No payment was captured.",
+                confirmButtonText: "OK",
+              });
+            } finally {
+              setIsLoading(false);
+            }
+          },
+          prefill: {
+            name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
+            email: leadPassenger?.Email,
+            contact: leadPassenger?.Phoneno || "",
+          },
+          theme: {
+            color: "#0086da",
+          },
+        };
+
+        const razorpay = new window.Razorpay(options);
+        razorpay.on('payment.failed', function (response) {
+          setIsLoading(false);
+          requestLog.response = { error: response.error.description };
+          localStorage.setItem(`hotel_apiLog_${requestId}`, JSON.stringify(requestLog));
+
+          Swal.fire({
+            icon: "error",
+            title: "Payment Failed",
+            text: response.error.description || "Payment was not successful. Please try again.",
+            confirmButtonText: "OK",
+          });
+        });
+        razorpay.open();
+
       } catch (error) {
         setIsLoading(false);
+        requestLog.response = { error: error.message };
+        localStorage.setItem(`hotel_apiLog_${requestId}`, JSON.stringify(requestLog));
+
         let errorMessage = "An error occurred while booking the hotel.";
 
         if (
@@ -629,7 +726,7 @@ export default function Book() {
           }
           Swal.fire({
             icon: "error",
-            title: "Booking Failed",
+            title: "Operation Failed",
             text: errorMessage,
             confirmButtonText: "OK",
           });
@@ -643,14 +740,21 @@ export default function Book() {
         confirmButtonText: "OK",
       });
     }
-  };
+};
+
+useEffect(() => {
+  const script = document.createElement("script");
+  script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  script.async = true;
+  document.body.appendChild(script);
+}, []);
 
   const closeModal = () => setShowModal(false);
 
   const HotelConfirmationModal = ({ bookingResponse, onClose }) => {
     return (
       <div
-        className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        className="fixed inset-0 flex z-[999] items-center justify-center bg-black bg-opacity-50"
         role="dialog"
         aria-modal="true"
       >
@@ -659,10 +763,7 @@ export default function Book() {
             🎉 Hotel Booked!
           </h2>
           <div className="space-y-4">
-            <p>
-              <strong>Booking Reference:</strong>{" "}
-              {bookingResponse?.bookingReference || "N/A"}
-            </p>
+          
             <p>
               <strong>Hotel Name:</strong> {hotelData?.HotelName || "N/A"}
             </p>
@@ -685,7 +786,7 @@ export default function Book() {
           </div>
           <div className="mt-6 text-center">
             <button
-              className="bg-[#DA5200] text-white px-6 py-2 rounded-full hover:bg-[#C44A00]"
+              className="bg-[#022149] text-white px-6 py-2 rounded-full hover:bg-[#0e1a35]"
               onClick={onClose}
               aria-label="Close confirmation modal"
             >
