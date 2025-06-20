@@ -3,26 +3,21 @@
 import React, { useEffect, useState } from "react";
 import InfoSection from "./InfoSection";
 import Link from "next/link";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import axios from "axios";
-import { apilink, imgurl, storageLink } from "../common";
-import FeaturedProperties from "./FeaturedProperties";
+import { apilink, storageLink } from "../common";
 import HotelSliderCompo from "../../hotels/HotelSliderCompo";
 
 const TopFlight = () => {
   const [viewAll, setviewAll] = useState(true);
   const t = useTranslations("Popular");
+
   let date = new Date(Date.now());
   date.setMonth(date.getMonth() + 1);
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
-  const hours = "00";
-  const minutes = "00";
-  const seconds = "00";
-  date = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
-
+  const formattedDate = `${year}-${month}-${day}T00:00:00`;
 
   const cityData = [
     {
@@ -32,418 +27,219 @@ const TopFlight = () => {
           image: "/images/london.webp",
           title: "Delhi to UAE",
           description: t("des1"),
-          link: `flightto=DEL&from=BOM&date=${date}&prfdate=${date}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
+          link: `flightto=DEL&from=BOM&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
         },
         {
           image: "/images/lose.webp",
-          title: "Mumbai to indonesia",
+          title: "Mumbai to Indonesia",
           description: t("des2"),
-          link: `flightto=BOM&from=BOM&date=2024-12-22T00:00:00&prfdate=2024-12-22T00:00:00&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
+          link: `flightto=BOM&from=BOM&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
         },
         {
           image: "/images/tokyo.webp",
-          title: " delhi to Mumbai",
+          title: "Delhi to Mumbai",
           description: t("des3"),
-          link: `flightto=DEL&from=BOM&date=2024-12-22T00:00:00&prfdate=2024-12-22T00:00:00&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
+          link: `flightto=DEL&from=BOM&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
         },
         {
           image: "/images/rome.webp",
           title: "New York to London",
           description: t("des4"),
-          link: `flightto=DEL&from=BOM&date=2024-12-22T00:00:00&prfdate=2024-12-22T00:00:00&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
+          link: `flightto=DEL&from=BOM&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
         },
         {
           image: "/images/dubai.webp",
           title: "Dubai to Hong Kong",
           description: t("des5"),
-          link: `flightto=DEL&from=BOM&date=2024-12-22T00:00:00&prfdate=2024-12-22T00:00:00&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
+          link: `flightto=DEL&from=BOM&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`,
         },
       ],
     },
     {
       head: t("heading2"),
       images: [
-        {
-          image: "/images/europe.webp",
-          title: "Explore the Wonders of Europe",
-          description: t("desa1"),
-        },
-        {
-          image: "/images/getways.webp",
-          title: "Exotic Getaways to the Caribbean",
-          description: t("desa2"),
-        },
-        {
-          image: "/images/adventure.webp",
-          title: "Adventure Awaits in Southeast Asia ",
-          description: t("desa3"),
-        },
-        {
-          image: "/images/maldives.webp",
-          title: "Serene Escapes to the Maldives",
-          description: t("desa4"),
-        },
-        {
-          image: "/images/america2.webp",
-          title: "Cultural Immersion in South America",
-          description: t("desa5"),
-        },
+        { image: "/images/europe.webp", title: "Explore the Wonders of Europe", description: t("desa1") },
+        { image: "/images/getways.webp", title: "Exotic Getaways to the Caribbean", description: t("desa2") },
+        { image: "/images/adventure.webp", title: "Adventure Awaits in Southeast Asia", description: t("desa3") },
+        { image: "/images/maldives.webp", title: "Serene Escapes to the Maldives", description: t("desa4") },
+        { image: "/images/america2.webp", title: "Cultural Immersion in South America", description: t("desa5") },
       ],
     },
     {
       head: t("heading3"),
-
       images: [
         {
           image: "/images/car1.webp",
           title: "Delhi",
           description: t("desb1"),
-          link: `/hotels/cityName=delhi&citycode=130443&checkin=${date.split("T")[0]
-            }&checkout=${date.split("T")[0]
-            }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=delhi&citycode=130443&checkin=${formattedDate.split("T")[0]}&checkout=${formattedDate.split("T")[0]}&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/24.webp",
           title: "Mumbai",
           description: t("desb2"),
-          link: `/hotels/cityName=Mumbai,%20%20%20Maharashtra&citycode=144306&checkin=${date.split("T")[0]
-            }&checkout=${date.split("T")[0]
-            }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Mumbai&citycode=144306&checkin=${formattedDate.split("T")[0]}&checkout=${formattedDate.split("T")[0]}&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/wifi.webp",
           title: "Shimla",
           description: t("desb3"),
-          link: `/hotels/cityName=Shimla,%20%20%20Himachal%20Pradesh&citycode=138673&checkin=${date.split("T")[0]
-            }&checkout=${date.split("T")[0]
-            }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Shimla&citycode=138673&checkin=${formattedDate.split("T")[0]}&checkout=${formattedDate.split("T")[0]}&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/safety-first.webp",
-          title: "Guwahati Assam",
+          title: "Guwahati",
           description: t("desb4"),
-          link: `/hotels/cityName=Guwahati,%20%20%20Assam&citycode=121139&checkin=${date.split("T")[0]
-            }&checkout=${date.split("T")[0]
-            }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Guwahati&citycode=121139&checkin=${formattedDate.split("T")[0]}&checkout=${formattedDate.split("T")[0]}&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
         {
           image: "/images/businesswoman.webp",
-          title: "Amritsar Punjab",
+          title: "Amritsar",
           description: t("desb5"),
-          link: `/hotels/cityName=Amritsar,%20%20%20Punjab&citycode=101129&checkin=${date.split("T")[0]
-            }&checkout=${date.split("T")[0]
-            }&adult=1&child=0&roomes=1&page=0&star=0/`,
+          link: `/hotels/cityName=Amritsar&citycode=101129&checkin=${formattedDate.split("T")[0]}&checkout=${formattedDate.split("T")[0]}&adult=1&child=0&roomes=1&page=0&star=0/`,
         },
       ],
     },
   ];
 
   const attractions = [
-    {
-      name: "Jaipur",
-      icon: "🏰",
-      isNew: true,
-      link: "/FamousPlaces/InnerLakshadweep",
-    },
-    { name: "Bali", icon: "🏝️", link: "/FamousPlaces/Bali" },
-    { name: "Goa ", icon: "🏖️", link: "/FamousPlaces/Andaman" },
-    { name: "Australia ", icon: "🦘", link: "/FamousPlaces/Kashmir" },
-    { name: "Dubai", icon: "🏢", link: "/FamousPlaces/Dubai" },
-    { name: "Paris", icon: "🗼", link: "/FamousPlaces/Jaipur" },
-    { name: "Kashmir", icon: "🏔️", link: "/FamousPlaces/Bengaluru" },
-    { name: "Singapore", icon: "🛳️", link: "/FamousPlaces/Singapore" },
-    { name: "Leh", icon: "🏯", link: "/FamousPlaces/Leh" },
-    { name: "Singapore", icon: "🦁", link: "/FamousPlaces/Leh" },
-    { name: "France", icon: "🌉", link: "/FamousPlaces/Leh" },
-
-    { name: "Thar", icon: "🏜️", link: "/FamousPlaces/Kerala" },
+    { name: "Jaipur", image: "/images/jaipur.webp", isNew: true, link: "/FamousPlaces/InnerLakshadweep" },
+    { name: "Bali", image: "/images/bali.webp", link: "/FamousPlaces/Bali" },
+    { name: "Goa", image: "/images/goa.jpg", link: "/FamousPlaces/Andaman" },
+    { name: "Australia", image: "/images/austrailia.jpg", link: "/FamousPlaces/Kashmir" },
+    { name: "Dubai", image: "/images/dubai.jpg", link: "/FamousPlaces/Dubai" },
+    { name: "Paris", image: "/images/paris.jpg", link: "/FamousPlaces/Jaipur" },
+    { name: "Kashmir", image: "/images/kashmir.jpg", link: "/FamousPlaces/Bengaluru" },
+    { name: "Singapore", image: "/images/singapore.jpg", link: "/FamousPlaces/Singapore" },
+    { name: "Leh", image: "/images/leh.jpg", link: "/FamousPlaces/Leh" },
+    { name: "Singapore Alt", image: "/images/singapore2.jpg", link: "/FamousPlaces/Leh" },
+    { name: "France", image: "/images/france.jpg", link: "/FamousPlaces/Leh" },
+    { name: "Thar", image: "/images/thar.jpg", link: "/FamousPlaces/Kerala" },
   ];
-  const [topport, settopport] = useState();
-  const [toppkage, setToppackage] = useState()
 
-  const fetchPAckage = async () => {
-    const data = await axios.get(`${apilink}/holidays/list`);
-    setToppackage(data.data);
+  const [topport, setTopport] = useState([]);
+  const [toppkage, setToppackage] = useState([]);
 
-  }
-  const fetchTopport = async () => {
-    const data = await axios.get(`${apilink}/Popular-Flight`);
-    settopport(data.data);
-  };
   useEffect(() => {
-    fetchPAckage()
-    fetchTopport();
+    const fetchData = async () => {
+      const [flights, packages] = await Promise.all([
+        axios.get(`${apilink}/Popular-Flight`),
+        axios.get(`${apilink}/holidays/list`)
+      ]);
+      setTopport(flights.data);
+      setToppackage(packages.data);
+    };
+    fetchData();
   }, []);
 
   return (
     <>
-      <div>
-        <main className="flight pt-0 lg:pt-10 px-0 md:px-10  lg:px-28">
-          <div className="">
-            <div className="relative ">
-              <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2  mb-5 lg:mb-6">
-                {t("mainheading")}
-              </div>
-            </div>
+      {/* FLIGHT & PACKAGE GRID */}
+      <div className="flight pt-0 lg:pt-10 px-0 md:px-10 lg:px-28">
+        <h2 className="text-center text-3xl font-bold mb-6">{t("mainheading")}</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-5 p-3">
+          {/* Flights */}
+          <div className="bg-white border shadow-md rounded-xl">
+            <div className="bg-[#0291d2] text-center py-3 text-white text-lg font-semibold">{t("heading1")}</div>
+            {topport && topport.map((item, i) => (
+              <Link key={i} href={`flightto=${item.from_code}&from=${item.to_code}&date=${formattedDate}&prfdate=${formattedDate}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`} className="flex items-center border-b px-6 py-2 hover:bg-gray-50">
+                <img src={cityData[0].images[i]?.image} alt="" className="h-16 w-16 rounded-full object-cover border-2 shadow-sm" />
+                <div className="px-4 w-[80%]">
+                  <h3 className="text-sm font-semibold">{item.from} to {item.to}</h3>
+                  <p className="text-xs text-gray-500">{item.dis}</p>
+                </div>
+              </Link>
+            ))}
           </div>
 
-          <div className=" grid grid-cols-1 md:grid-cols-2   lg:grid-cols-3  gap-8   pb-5 justify-center p-3 ">
-            <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto  rounded-xl overflow-hidden relative  w-full ">
-              <div className="city-head bg-[#0291d2] text-center">
-                <h4 className="text-white text-lg font-semibold py-3">
-                  {t("heading1")}
-                </h4>
-              </div>
-              {topport && (
-                <div className=" ">
-                  {topport.map((imageData, i) => (
-                    <Link
-                      href={`flightto=${imageData.from_code}&from=${imageData.to_code}&date=${date}&prfdate=${date}&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1/`}
-                      className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
-                      key={i}
-                    >
-                      <div className="city-image">
-                        <img
-                          src={cityData[0].images[i].image}
-                          alt={imageData.from}
-                           className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="px-4 w-[80%]">
-                        <h3 className="text-sm font-semibold mb-0 mt-4 ">
-                          {imageData.from} to {imageData.to}
-                        </h3>
-                        <p className="text-[#525252] text-xs font-normal mb-5 pt-1">
-                          {imageData.dis}
-                        </p>
-                      </div>
-                    </Link>
-                  ))}
+          {/* Packages */}
+          <div className="bg-white border shadow-md rounded-xl">
+            <div className="bg-[#0291d2] text-center py-3 text-white text-lg font-semibold">{t("heading2")}</div>
+            {toppkage.map((pkg, i) => (
+              <Link key={i} href={`/holidayspackage/package/${pkg.slug}`} className="flex items-center border-b px-6 py-2 hover:bg-gray-50">
+                <img src={`${storageLink}/${pkg.banner_image}`} alt={pkg.package_name} className="h-16 w-16 rounded-full object-cover border shadow-sm" />
+                <div className="px-4 w-full">
+                  <h3 className="text-md font-semibold">{pkg.package_name}</h3>
+                  <p className="text-xs text-gray-500">📍 {pkg.city}, {pkg.country} ⏳ {pkg.duration} days</p>
                 </div>
-              )}
-            </div>
-            {toppkage &&
-              <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto lg:mx-2 rounded-xl overflow-hidden relative  w-full ">
-                <div className="city-head bg-[#0291d2] text-center">
-                  <h4 className="text-white text-lg font-semibold py-3">
-                    {t("heading2")}
-                  </h4>
-                </div>
-                <div className=" ">
-                  {toppkage?.map((imageData, i) => (
-                    <Link
-                      href={`/holidayspackage/package/${imageData.slug}`}
-                      className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
-                      key={i}
-                    >
-                      <div className="city-image flex-shrink-0">
-                        <img
-                          src={`${storageLink}/${imageData?.banner_image}`}
-                          alt={imageData?.package_name}
-                          className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="px-2 lg:px-6 w-full">
-                        <h3 className="text-md font-semibold text-gray-800 mb-1 mt-1">
-                          {imageData?.package_name}
-                        </h3>
-
-                        <div className="flex items-center text-xs lg:text-md text-gray-500">
-                          <span className="mr-4">📍 {imageData?.city}, {imageData?.country}</span>
-                          <span>⏳ {imageData?.duration} days</span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            }
-            <div className="bg-white border shadow-md my-5 lg:my-0  mx-auto lg:mx-2 rounded-xl overflow-hidden relative  w-full ">
-              <div className="city-head bg-[#0291d2] text-center">
-                <h4 className="text-white text-lg font-semibold py-3">
-                  {t("heading3")}
-                </h4>
-              </div>
-              <div className=" ">
-                {cityData[2].images.map((imageData, i) => (
-                  <Link
-                    href={imageData.link}
-                    className="flex items-center border-b px-6 py-2 hover:shadow-xl hover:bg-gray-50 transition-all duration-300 cursor-pointer rounded-lg"
-                    key={i}
-                  >
-                    <div className="city-image">
-                      <img
-                        src={imageData.image}
-                        alt={imageData.title}
-                    className="rounded-full h-16 w-16 object-cover border-2 border-gray-200 shadow-sm hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="px-4 w-[80%]">
-                      <h3 className="text-sm font-semibold mb-0 mt-4 ">
-                        {imageData.title}
-                      </h3>
-                      <p className="text-[#525252] text-xs font-normal mb-5 pt-1">
-                        {imageData.description}
-                      </p>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
+              </Link>
+            ))}
           </div>
-        </main>
+
+          {/* Hotels */}
+          <div className="bg-white border shadow-md rounded-xl">
+            <div className="bg-[#0291d2] text-center py-3 text-white text-lg font-semibold">{t("heading3")}</div>
+            {cityData[2].images.map((img, i) => (
+              <Link key={i} href={img.link} className="flex items-center border-b px-6 py-2 hover:bg-gray-50">
+                <img src={img.image} alt={img.title} className="h-16 w-16 rounded-full object-cover border shadow-sm" />
+                <div className="px-4 w-[80%]">
+                  <h3 className="text-sm font-semibold">{img.title}</h3>
+                  <p className="text-xs text-gray-500">{img.description}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       <InfoSection />
 
-
-      <div className='px-2  my-8'>
-
-        <h3 className="text-center text-3xl font-bold my-4"> Our Packages</h3>
-        {/* <FeaturedProperties /> */}
+      {/* Hotel Slider Section */}
+      <div className="px-2 my-8">
+        <h3 className="text-center text-3xl font-bold my-4">Our Packages</h3>
         <HotelSliderCompo />
-
       </div>
 
-      <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt:0 lg:pt-12 z-[-1]">
-        <div className="relative text-xl md:text-xl lg:text-4xl tracking-tighter	 gfont1  font-bold text-gray-900 flex justify-center items-center gap-2 mb-4 lg:mb-14">
-          Tourist 💕<span className="text-[#521010]"> Love</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  xl:grid-cols-4 gap-5 md:gap-y-8 ">
-          {viewAll &&
-            attractions.slice(0, 7).map((attraction, index) => (
-              <div className="  border-b-4 border-b-[#009dff]  duration-200 text-xl shadow-md">
-                <Link href={attraction.link}>
-                  <div className="bg-white shadow-md rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="icon-box">
-                        <p className="text-3xl ">{attraction.icon}</p>
-                      </div>
-                      <div className="ml-4">
-                        <h5 className="font-semibold text-lg">
-                          {attraction.name}
-                        </h5>
-                        <span className="text-gray-500 text-[1rem]">
-                          View All Pakage
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          {!viewAll &&
-            attractions.map((attraction, index) => (
-              <div className="col-span-1 border-b-4 border-b-[#009dff] duration-200 text-xl shadow-md">
-                <Link href={attraction.link}>
-                  <div className="bg-white shadow-md rounded-lg p-4">
-                    <div className="flex items-center">
-                      <div className="icon-box">
-                        <p className="text-3xl ">{attraction.icon}</p>
-                      </div>
-                      <div className="ml-4">
-                        <h5 className="font-semibold text-lg">
-                          {attraction.name}
-                        </h5>
-                        <span className="text-gray-500 text-[1rem]">
-                          View All Pakage
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-            ))}
-          {viewAll && (
-            <div
-              onClick={() => setviewAll(false)}
-              className="col-span-1 border-b-4 hover:border-b-[#009dff] duration-200 text-xl shadow-md cursor-pointer"
-            >
-              <span>
-                <div className="bg-white shadow-md rounded-lg p-4">
-                  <div className="flex items-center">
-                    <div className="icon-box">
-                      <p className="text-2xl ">🧾</p>
-                    </div>
-                    <div className="ml-4">
-                      <h5 className="font-semibold text-lg">View All</h5>
-                      <span className="text-gray-500 text-[1rem]">
-                        Destination Pakage
-                      </span>
-                    </div>
-                  </div>
+      {/* Tourist Love Section */}
+      <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt-0 lg:pt-12">
+        <h2 className="text-center text-4xl font-bold text-[#10325a] mb-12">Tourist <span className="text-[#45a183]">Love</span></h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          {(viewAll ? attractions.slice(0, 7) : attractions).map((attraction, index) => (
+            <Link href={attraction.link} key={index} className="border-b-4 border-b-[#009dff] shadow-md rounded-lg p-4 bg-white">
+              <div className="flex items-center">
+                <img src={attraction.image} alt={attraction.name} className="h-16 w-16 rounded-full object-cover border shadow-sm" />
+                <div className="ml-4">
+                  <h5 className="text-lg font-semibold">{attraction.name}</h5>
+                  <p className="text-sm text-gray-500">View All Package</p>
                 </div>
-              </span>
+              </div>
+            </Link>
+          ))}
+          {viewAll && (
+            <div onClick={() => setviewAll(false)} className="cursor-pointer border-b-4 hover:border-b-[#009dff] shadow-md rounded-lg p-4 bg-white">
+              <div className="flex items-center">
+                <p className="text-3xl">🧾</p>
+                <div className="ml-4">
+                  <h5 className="text-lg font-semibold">View All</h5>
+                  <p className="text-sm text-gray-500">Destination Package</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
-
-        <div className="view_btn my-10 flex justify-center">
-          {/* <Link
-            href="/FamousPlaces/Cities"
-            className="bg-[#2196F3] text-white py-2 px-4 rounded-full"
-          >
-            View All
-          </Link> */}
-        </div>
       </div>
 
+      {/* Services Section */}
       <div className="bg-gray-100 p-5 lg:p-20 mt-12">
-        <div className=" flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
-          <div className="">
-            <div className="p-4">
-              <h3 className="text-4xl font-normal">
-                {t("service")} <br />
-              </h3>
-              <p className="mt-4 mb-6">{t("serviceans")}</p>
-              <ul className="space-y-6">
-                <li className="flex flex-col items-center lg:items-start lg:flex-row space-x-4">
-                  <img
-                    src="/images/blog2.webp"
-                    alt=""
-                    className="w-16 h-16 object-cover"
-                  />
+        <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
+          <div className="p-4">
+            <h3 className="text-4xl font-normal">{t("service")}</h3>
+            <p className="mt-4 mb-6">{t("serviceans")}</p>
+            <ul className="space-y-6">
+              {["blog2", "shield", "general"].map((img, i) => (
+                <li key={i} className="flex flex-col lg:flex-row items-center space-x-4">
+                  <img src={`/images/${img}.webp`} className="w-16 h-16 object-cover" alt="" />
                   <div>
-                    <h5 className="text-lg font-semibold">{t("moreabout")}</h5>
-                    <p className="mt-2">{t("moreaboutans")}</p>
+                    <h5 className="text-lg font-semibold">{t(i === 0 ? "moreabout" : i === 1 ? "serviceprovider" : "happyservice")}</h5>
+                    <p className="mt-2">{t(i === 0 ? "moreaboutans" : i === 1 ? "serviceproviderans" : "happyserviceans")}</p>
                   </div>
                 </li>
-                <li className="flex  flex-col items-center lg:items-start lg:flex-row space-x-4">
-                  <img
-                    src="/images/shield.webp"
-                    alt=""
-                    className="w-16 h-16 object-cover"
-                  />
-                  <div>
-                    <h5 className="text-lg font-semibold">
-                      {t("serviceprovider")}
-                    </h5>
-                    <p className="mt-2">{t("serviceproviderans")}</p>
-                  </div>
-                </li>
-                <li className="flex flex-col items-center lg:items-start lg:flex-row space-x-4">
-                  <img
-                    src="/images/general.webp"
-                    alt=""
-                    className="w-16 h-16 object-cover"
-                  />
-                  <div>
-                    <h5 className="text-lg font-semibold">
-                      {t("happyservice")}
-                    </h5>
-                    <p className="mt-2">{t("happyserviceans")}</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+              ))}
+            </ul>
           </div>
-          <div className="p-4 my-3 lg:my-0">
-            <img
-              src="/images/online-booking.webp"
-              alt=""
-              className="rounded-lg"
-            />
+          <div className="p-4">
+            <img src="/images/online-booking.webp" alt="" className="rounded-lg" />
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@ const page = () => {
     {
       from: "Delhi",
       to: "Agra, Bareilly, Dehradun, Amritsar, Chandigarh, Haridwar",
-      img: "/images/Routes/mumbai-img.webp",
+      img: "/images/delhi.jpg",
     },
     {
       from: "Agra",
@@ -26,33 +26,38 @@ const page = () => {
     {
       from: "Pune",
       to: "Shirdi, Mumbai, Nashik, Aurangabad, Mahabaleshwar",
-      img: "/images/Routes/mumbai-img.webp",
+      img: "/images/pune.jpg",
     },
     {
-      from: "Bengaluru",
-      to: "Puducherry, Tirupati, Ooty, Madikeri, Mysuru, Chennai",
-      img: "/images/Routes/lucknow-img.webp",
-    },
-    {
-      from: "Lucknow",
-      to: "Varanasi, Agra, Noida, Ayodhya, Farrukhabad, Kanpur",
-      img: "/images/Routes/dubai-img.webp",
-    },
-    {
-      from: "Chennai",
-      to: "Mahabalipuram, Puducherry, Bengaluru, Tirupati, Hosur",
-      img: "/images/Routes/kolkata-img.webp",
-    },
-    {
-      from: "Bengaluru",
-      to: "Puducherry, Tirupati, Ooty, Madikeri, Mysuru, Chennai",
-      img: "/images/Routes/lucknow-img.webp",
-    },
-    {
-      from: "Chennai",
-      to: "Mahabalipuram, Puducherry, Bengaluru, Tirupati, Hosur",
-      img: "/images/Routes/kolkata-img.webp",
-    },
+    country: "UAE",
+    from: "Dubai",
+    to: "Abu Dhabi, Sharjah, Al Ain, Fujairah",
+    img: "/images/dubai.jpg",
+  },
+  {
+    country: "USA",
+    from: "New York",
+    to: "Washington D.C., Boston, Philadelphia, Chicago",
+    img: "/images/newyork.jpeg",
+  },
+  {
+    country: "UK",
+    from: "London",
+    to: "Manchester, Birmingham, Liverpool, Oxford",
+    img: "/images/london.jpg",
+  },
+  {
+    country: "Australia",
+    from: "Sydney",
+    to: "Melbourne, Brisbane, Canberra, Perth",
+    img: "/images/sydney.jpg",
+  },
+  {
+    country: "Canada",
+    from: "Toronto",
+    to: "Vancouver, Montreal, Calgary, Ottawa",
+    img: "/images/canada.jpg",
+  },
   ];
 
   return (
@@ -99,8 +104,8 @@ const page = () => {
         },
       ].map((item, index) => (
         <div key={index} className="w-full md:w-1/2 lg:w-1/5 px-2 mb-4">
-          <Link
-            href="#"
+          <div
+            href=""
             className="flex flex-col justify-between bg-white text-center rounded-lg p-7 shadow-md h-full"
           >
             <Image
@@ -113,7 +118,7 @@ const page = () => {
             <h3 className="text-lg font-semibold text-gray-800">
               {item.title}
             </h3>
-          </Link>
+          </div>
         </div>
       ))}
     </div>
@@ -132,7 +137,7 @@ const page = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {routes.map((route, index) => (
             <div key={index} className="flex items-center space-x-4  p-4 ">
-              <div className="w-16 h-16 relative">
+              <div className="w-24 h-20 relative">
                 <Image
                   src={route.img}
                   alt={`${route.from} to ${route.to}`}

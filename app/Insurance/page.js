@@ -78,7 +78,10 @@ export default function InsurancePage() {
     </div>
 
       <main>
-       <section className="bg-[url(/images/Insurance.webp)] min-h-[80vh] py-10 flex items-center relative bg-center bg-cover text-white px-5 md:px-16 xl:px-32  ">
+      <section
+  style={{ backgroundImage: "url('/images/Insurance.webp')" }}
+  className="min-h-[80vh] py-10 flex items-center relative bg-center bg-cover text-white px-5 md:px-16 xl:px-32"
+>
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
           <div className="z-20 text-white  text-center space-y-5  w-full h-full">
           <h4 className="text-3xl font-bold">Protecting Your Today, Securing Your Tomorrow</h4>
@@ -98,7 +101,7 @@ export default function InsurancePage() {
                 <div className="text-4xl mb-4 text-blue-600">{service.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
                 <p className="text-gray-600">{service.description}</p>
-                <button className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                <button className="mt-4 bg-[#10325a] text-white px-4 py-2 rounded-lg hover:bg-[#45a183]">
                   Learn More
                 </button>
               </div>
@@ -109,7 +112,7 @@ export default function InsurancePage() {
     </section>
     <section className="bg-gray-100 py-16 px-5 md:px-16 xl:px-32">
       <div className="container   ">
-        <h2 className="text-3xl  text-center font-bold text-gray-800 mb-8">
+        <h2 className="text-3xl  text-center font-bold text-[#10325a] mb-8">
           Why Choose Our Insurance Services?
         </h2>
         <p className="text-base md:text-xl text-gray-600 mb-12 text-center">
@@ -118,7 +121,7 @@ export default function InsurancePage() {
         <div className="space-y-12">
           {benefits.map((benefit, index) => (
             <div key={index} className="mb-8 bg-slate-100 shadow-lg px-5 rounded-md py-5">
-              <h3 className="text-2xl font-semibold text-blue-600 mb-4">{benefit.title}</h3>
+              <h3 className="text-2xl font-semibold text-[#10325a] mb-4">{benefit.title}</h3>
               <p className="text-lg text-gray-600 mb-4">{benefit.description}</p>
               <ul className="list-disc list-inside text-left text-gray-600">
                 {benefit.points.map((point, i) => (

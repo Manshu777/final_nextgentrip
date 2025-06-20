@@ -8,10 +8,13 @@ import { IoMdTrain } from "react-icons/io";
 import { IoIosInformationCircleOutline } from "react-icons/io";
 import axios from "axios";
 
+import { MdConfirmationNumber } from "react-icons/md"; // Ticket icon
+import { MdSupportAgent } from "react-icons/md"; // 24x7 support icon
+import { RiRefund2Fill } from "react-icons/ri"; // Refund icon
+import { MdTrain } from "react-icons/md"; // Live train status icon
+// import { FaCheckCircle } from "react-icons/fa"; // IRCTC partner icon
+
 const page = () => {
- 
-
-
 
   const [isLoading, setLoading] = useState(true);
   const [showLoader, setshowLoader] = useState(false);
@@ -19,7 +22,6 @@ const page = () => {
   const [pnr, setPnr] = useState(""); // State to store the entered PNR
   const [pnrData, setPnrData] = useState(null); // State to store API response
   const [error, setError] = useState(null);
-
   // data/tripOverview.js
   const tripOverview = {
     trainDetails: "Snsi Kalka Exp - 22455 | Sleeper Class",
@@ -193,7 +195,7 @@ const page = () => {
               />
             </div>
             <button
-              className="ml-2 primary-col text-white px-8 py-2 h-14 rounded-full hover:bg-[#ef6414ed]"
+              className="ml-2 primary-col text-white px-8 py-2 h-14 rounded-full hover:bg-[#45a183]"
               type="button"
               onClick={() => handleSearch()}
             >
@@ -368,107 +370,72 @@ const page = () => {
           </section>
         </div>:''}
 
-        <section className="">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            Why Check PNR Status with Next Gen?
-          </h2>
+       <section className="">
+  <h2 className="text-2xl font-bold mb-4 text-center">
+    Why Check PNR Status with Next Gen?
+  </h2>
 
-          <div className="flex items-center justify-center mb-6">
-            <img
-              src="/images/IRTC.webp"
-              alt="Official IRCTC Partner for train ticket booking"
-              width="50"
-              height="50"
-              className="mr-4"
-            />
-            <h4 className="text-lg font-semibold">IRCTC Authorised Partner</h4>
-          </div>
+  {/* <div className="flex items-center justify-center mb-6">
+    <FaCheckCircle className="text-green-600 text-4xl mr-3" />
+    <h4 className="text-lg font-semibold">IRCTC Authorised Partner</h4>
+  </div> */}
 
-          <div className="block md:flex gap-8">
-            <div className="text-center">
-              <img
-                src="/images/ticket.webp"
-                alt="Railway ticket check"
-                width="50"
-                height="50"
-                className="mx-auto"
-              />
-              <div>
-                <h4 className="text-lg font-bold my-3">
-                  PNR Status Indian Railways
-                </h4>
-                <p className="text-sm">
-                  Using PNR status 10 digit, you can check the latest PNR status
-                  with ease on Next Gen or use the PNR Prediction feature and
-                  avoid getting waitlisted.
-                </p>
-              </div>
-            </div>
+  <div className="block md:flex gap-8 mt-14">
+    {/* Ticket Check */}
+    <div className="text-center">
+      <MdConfirmationNumber className="text-blue-500 text-5xl mx-auto" />
+      <div>
+        <h4 className="text-lg font-bold my-3">PNR Status Indian Railways</h4>
+        <p className="text-sm">
+          Using PNR status 10 digit, you can check the latest PNR status
+          with ease on Next Gen or use the PNR Prediction feature and
+          avoid getting waitlisted.
+        </p>
+      </div>
+    </div>
 
-            <div className="text-center">
-              <img
-                src="/images/services.webp"
-                alt="24x7 Customer Support for train booking"
-                width="50"
-                height="50"
-                className="mx-auto"
-              />
-              <div>
-                <h4 className="text-lg font-bold my-3">
-                  24x7 Support for Ticket Booking
-                </h4>
-                <p className="text-sm">
-                  Whatever your questions may be, Next Gen will provide 24x7
-                  assistance. You can reach out to the Customer Support team by
-                  clicking on the 'Contact Us' section on the Next Gen Trains
-                  app.
-                </p>
-              </div>
-            </div>
+    {/* Support */}
+    <div className="text-center">
+      <MdSupportAgent className="text-yellow-500 text-5xl mx-auto" />
+      <div>
+        <h4 className="text-lg font-bold my-3">24x7 Support for Ticket Booking</h4>
+        <p className="text-sm">
+          Whatever your questions may be, Next Gen will provide 24x7
+          assistance. You can reach out to the Customer Support team by
+          clicking on the 'Contact Us' section on the Next Gen Trains app.
+        </p>
+      </div>
+    </div>
 
-            <div className="text-center">
-              <img
-                src="/images/cancelled.webp"
-                alt="Hassle-Free Cancellation on Train tickets"
-                width="50"
-                height="50"
-                className="mx-auto"
-              />
-              <div>
-                <h4 className="text-lg font-bold my-3">
-                  Free Cancellation on Train Tickets
-                </h4>
-                <p className="text-sm">
-                  Unsure of your travel plans? Opt for Assured Flex by paying a
-                  nominal fee and modify your train bookings without any hassle!
-                  Get an instant full train fare refund after cancellation with
-                  Assured Flex.
-                </p>
-              </div>
-            </div>
+    {/* Cancellation */}
+    <div className="text-center">
+      <RiRefund2Fill className="text-red-500 text-5xl mx-auto" />
+      <div>
+        <h4 className="text-lg font-bold my-3">Free Cancellation on Train Tickets</h4>
+        <p className="text-sm">
+          Unsure of your travel plans? Opt for Assured Flex by paying a
+          nominal fee and modify your train bookings without any hassle!
+          Get an instant full train fare refund after cancellation with
+          Assured Flex.
+        </p>
+      </div>
+    </div>
 
-            <div className="text-center">
-              <img
-                src="/images/mobile-app.webp"
-                alt="Live running status"
-                width="50"
-                height="50"
-                className="mx-auto"
-              />
-              <div>
-                <h4 className="text-lg font-bold my-3">
-                  Check Live Train Running Status
-                </h4>
-                <p className="text-sm">
-                  Is your train running late? Check the live status of your
-                  train on the Next Gen app or website. You can also see the
-                  train route, coach position, and the expected delays along the
-                  way.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+    {/* Live Train */}
+    <div className="text-center">
+      <MdTrain className="text-green-600 text-5xl mx-auto" />
+      <div>
+        <h4 className="text-lg font-bold my-3">Check Live Train Running Status</h4>
+        <p className="text-sm">
+          Is your train running late? Check the live status of your
+          train on the Next Gen app or website. You can also see the
+          train route, coach position, and the expected delays along the
+          way.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
       </div>
 
     

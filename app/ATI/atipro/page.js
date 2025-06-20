@@ -155,8 +155,13 @@ World where great service and ultimate indulgence blend with rare experience- th
   <h3 className="text-2xl font-semibold text-gray-800">Contact</h3>
   {/* <p className="text-lg text-gray-700"> Sector 48,</p>
   <p className="text-lg text-gray-700">Chandigarh, India</p> */}
-  <p className="text-lg text-gray-700">+(91) 9877579319</p>
-  <p className="text-lg text-gray-700">info@nextgentrip.com</p>
+ <a href="tel:+919877579319" className="text-lg text-gray-700">
+  +(91) 9877579319
+</a>
+<a href="mailto:info@nextgentrip.com" className="text-lg text-gray-700">
+  info@nextgentrip.com
+</a>
+
 
   <div className="space-y-4">
     <h4 className="text-xl font-semibold text-gray-800">Follow us on our Luxury Journeys</h4>
