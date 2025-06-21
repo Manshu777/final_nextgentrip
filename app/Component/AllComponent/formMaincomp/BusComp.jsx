@@ -32,13 +32,13 @@ const BusComp = () => {
   const [infantCount, setInfantCount] = useState(0);
   const [selectedOption, setSelectedOption] = useState("");
   const [fromCity, setFromCity] = useState((defaultstore && defaultstore.fromCity) || {
-    CityId: 9573,
+    CityId: 7485,
     CityName: "Hyderabad",
 
   });
   const [toCity, setToCity] = useState((defaultstore && defaultstore.toCity) || {
-    CityId: 8463,
-    CityName: "Bengaluru",
+    CityId: 6395,
+    CityName: "Bangalore",
 
   });
   const localTimeZone = getLocalTimeZone();

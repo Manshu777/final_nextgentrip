@@ -12,11 +12,16 @@ import { redirect } from "next/navigation";
 import { development } from "./Component/common";
 import Reviews from "./Component/AllComponent/Reviews";
 
+
+import MineHolidayPkgComp from "./Component/AllComponent/MineHolidayPkgComp";
+
 import FeaturedProperties from "./Component/AllComponent/FeaturedProperties";
 const page = () => {
   if (development == "production") {
     redirect("/maintenance");
   }
+
+
   return (
     <>
       <head>
@@ -34,11 +39,14 @@ const page = () => {
         <CustomSlider />
       </div>
 
+      <MineHolidayPkgComp/>
       <TopFlight />
 
       <Book />
 
       <TipsTricks />
+
+ 
 
       <Reviews />
     </>

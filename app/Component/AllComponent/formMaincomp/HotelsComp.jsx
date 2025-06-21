@@ -178,7 +178,7 @@ const HotelsComp = () => {
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
-            <div className="relative z-10 w-full max-w-xs" ref={dropdownRef}>
+            {/* <div className="relative z-10 w-full max-w-xs" ref={dropdownRef}>
               {isLoading && <p className="text-gray-500">Loading countries...</p>}
               {isError && <p className="text-red-500">Error: {error}</p>}
               <input
@@ -214,8 +214,8 @@ const HotelsComp = () => {
                   )}
                 </ul>
               )}
-            </div>
-            <div className="relative w-full lg:w-[27%]">
+            </div> */}
+            <div className="relative w-full lg:w-[50%]">
               <div
                 onClick={() => handleClick("city")}
                 className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
