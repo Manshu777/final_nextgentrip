@@ -191,6 +191,32 @@ const TopFlight = () => {
         <HotelSliderCompo />
       </div>
 
+      
+
+      {/* Services Section */}
+      <div className="bg-gray-100 p-5 lg:p-20 mt-12">
+        <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
+          <div className="p-4">
+            <h3 className="text-4xl font-normal">{t("service")}</h3>
+            <p className="mt-4 mb-6">{t("serviceans")}</p>
+            <ul className="space-y-6">
+              {["blog2", "shield", "general"].map((img, i) => (
+                <li key={i} className="flex flex-col lg:flex-row items-center space-x-4">
+                  <img src={`/images/${img}.webp`} className="w-16 h-16 object-cover" alt="" />
+                  <div>
+                    <h5 className="text-lg font-semibold">{t(i === 0 ? "moreabout" : i === 1 ? "serviceprovider" : "happyservice")}</h5>
+                    <p className="mt-2">{t(i === 0 ? "moreaboutans" : i === 1 ? "serviceproviderans" : "happyserviceans")}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="p-4">
+            <img src="/images/online-booking.webp" alt="" className="rounded-lg" />
+          </div>
+        </div>
+      </div>
+
       {/* Tourist Love Section */}
       <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt-0 lg:pt-12">
         <h2 className="text-center text-4xl font-bold text-[#10325a] mb-12">Tourist <span className="text-[#45a183]">Love</span></h2>
@@ -217,30 +243,6 @@ const TopFlight = () => {
               </div>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Services Section */}
-      <div className="bg-gray-100 p-5 lg:p-20 mt-12">
-        <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
-          <div className="p-4">
-            <h3 className="text-4xl font-normal">{t("service")}</h3>
-            <p className="mt-4 mb-6">{t("serviceans")}</p>
-            <ul className="space-y-6">
-              {["blog2", "shield", "general"].map((img, i) => (
-                <li key={i} className="flex flex-col lg:flex-row items-center space-x-4">
-                  <img src={`/images/${img}.webp`} className="w-16 h-16 object-cover" alt="" />
-                  <div>
-                    <h5 className="text-lg font-semibold">{t(i === 0 ? "moreabout" : i === 1 ? "serviceprovider" : "happyservice")}</h5>
-                    <p className="mt-2">{t(i === 0 ? "moreaboutans" : i === 1 ? "serviceproviderans" : "happyserviceans")}</p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="p-4">
-            <img src="/images/online-booking.webp" alt="" className="rounded-lg" />
-          </div>
         </div>
       </div>
     </>

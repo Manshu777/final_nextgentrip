@@ -35,16 +35,21 @@ const page = () => {
         />
       </head>
       <Header />
+      
+
+      <MineHolidayPkgComp/>
+
       <div className="hidden md:block">
         <CustomSlider />
       </div>
-
-      <MineHolidayPkgComp/>
+      
       <TopFlight />
+
+ <TipsTricks />
 
       <Book />
 
-      <TipsTricks />
+     
 
  
 
