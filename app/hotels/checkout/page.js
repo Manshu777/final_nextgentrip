@@ -21,8 +21,8 @@ export default function Book() {
   const [validationPolicies, setValidationPolicies] = useState(null);
   const [bookingDetails, setBookingDetails] = useState({
     endUserIp: "",
-    guestNationality: "",
-    isVoucherBooking: false,
+    guestNationality: "IN",
+    isVoucherBooking: true,
     isPackageFare: false,
     isPackageDetailsMandatory: false,
     arrivalTransport: {
@@ -851,6 +851,7 @@ useEffect(() => {
               <input
                 type="text"
                 id="endUserIp"
+                 disabled
                 name="endUserIp"
                 value={bookingDetails.endUserIp}
                 onChange={handleChange}

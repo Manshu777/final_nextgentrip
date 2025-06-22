@@ -709,6 +709,21 @@ input#a_FromSector_show:focus-visible {
   align-items: center;
   justify-content: center;
 }
+
+.marriages-icon {
+  width: 32px;
+  height: 45px;
+  background: url(../public/marriages-jj.png);
+  background-size: 32px 45px;
+  margin: 0px auto;
+  display: flex;
+  background-repeat: no-repeat;
+  background-position: center;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .buses-icon {
   width: 40px;
   height: 45px;

@@ -86,14 +86,17 @@ const Navbar = () => {
       class: "holiday-icon",
       link: "/holidayspackage",
     },
-    {
-      name: t("cab"),
-      className: "meuicowidth cabmenuico",
-      class: "cab-icon",
-      link: "/cabs",
-    },
+    // {
+    //   name: t("cab"),
+    //   className: "meuicowidth cabmenuico",
+    //   class: "cab-icon",
+    //   link: "/cabs",
+    // },
 
 
+
+
+  
 
     // {
     //   name: t("activities"),
@@ -132,6 +135,15 @@ const Navbar = () => {
       class: "trains-icon",
       link: "/train",
     },
+
+    {
+      name: "Join Marriages",
+      className: "meuicowidth marriages-icon",
+      class: "marriages-icon",
+      link: "http://joinmarriages.com",
+      title: "Foreign Guests Join Indian Weddings"
+    },
+    
 
 
   ];

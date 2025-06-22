@@ -58,6 +58,7 @@ const HotelSlugComp = ({ slugs }) => {
     sethotelinfo(state);
   }, [state]);
 
+
   const handlePreBooking = async (BookingCode) => {
     setLoading(true);
     try {
@@ -99,6 +100,8 @@ const HotelSlugComp = ({ slugs }) => {
   useEffect(() => {
     sethotel(preBookinghotelState && preBookinghotelState?.info && preBookinghotelState?.info?.HotelResult && preBookinghotelState?.info?.HotelResult[0]);
   }, [preBookinghotelState]);
+
+
 
   const togglePopup = () => setIsOpen(!isOpen);
 

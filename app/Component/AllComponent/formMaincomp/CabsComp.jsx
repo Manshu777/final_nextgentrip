@@ -433,7 +433,7 @@ const SearchComponents = ({ type, handelcity, searchType }) => {
                 <div className="h-4 bg-gray-300 rounded w-3/4"></div>
               </div>
             ))
-          : filteredDestinations.map((item) => (
+          : filteredDestinations?.map((item) => (
               <p
                 key={item.destination_id}
                 className="border-b px-3 py-2 cursor-pointer text-gray-700 transition-all"

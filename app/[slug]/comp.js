@@ -507,179 +507,190 @@ const togglePopup = async (id, ResultIndex) => {
     window.location.href = "/flight/checkout";
   };
 
+
+
   return (
     <>
       {activePopup === "view-price" && srrFairdata && !ssrFair.isLoading && (
-        <div className="fixed p-4 inset-0 flex  z-[9999] items-center justify-center bg-black bg-opacity-50  overflow-y-auto">
-          <div className="p-6  bg-gray-100  rounded-md h-auto md:max-h-screen relative">
-            <MdCancel
-              className="absolute top-2 right-2 text-2xl cursor-pointer"
-              onClick={() => setActivePopup(null)}
-            />
-
-            <div className="grid gap-6 lg:grid-cols-2">
-              {srrFairdata.Results?.Segments[0]?.map((flight, index) => (
-                <div
-                  key={index}
-                  className="bg-white shadow-xl border border-gray-100 rounded-2xl p-6 hover:shadow-2xl transition-shadow duration-300"
-                >
-                  <h2 className="text-2xl font-extrabold mb-4 text-gray-800 flex items-center">
-                    <FaPlaneDeparture className="mr-3 text-indigo-500" />
-                    {flight?.Origin?.Airport?.CityName} -{" "}
-                    {flight?.Destination?.Airport?.CityName}
-                  </h2>
-
-                  <h3 className="text-xl font-semibold text-gray-700 mb-2">
-                    {flight.airline}
-                  </h3>
-                  <p className="text-sm text-gray-600 flex flex-col lg:flex-row items-center mb-4">
-                    <FaPlaneDeparture className="mr-2 text-blue-500" />
-                    <strong>Departure:</strong>{" "}
-                    {new Intl.DateTimeFormat("en-GB", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }).format(new Date(flight?.Origin?.DepTime))}{" "}
-                    | <FaPlaneArrival className="ml-4 mr-2 text-blue-500" />
-                    <strong>Arrival:</strong>{" "}
-                    {new Intl.DateTimeFormat("en-GB", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false,
-                    }).format(new Date(flight?.Destination?.ArrTime))}
-                  </p>
-
-                  <div className="mt-4 space-y-3">
-                    <p className="text-sm text-gray-800 font-medium flex items-center">
-                      <FaLuggageCart className="mr-2 text-gray-500" />
-                      <strong>Baggage:</strong> {flight.CabinBaggage}
-                    </p>
-                    <p className="text-sm text-gray-800 font-medium flex items-center">
-                      <FaMoneyCheckAlt className="mr-2 text-green-500" />
-                      <strong>Refundable:</strong>{" "}
-                      {srrFairdata.Results.IsRefundable ? "Yes" : "No"}
-                    </p>
-                    <p className="text-sm text-gray-800 font-medium flex items-center">
-                      <FaChair className="mr-2 text-indigo-500" />
-                      <strong>Cabin Type:</strong>{" "}
-                      {[
-                        "All",
-                        "Economy",
-                        "PremiumEconomy",
-                        "Business",
-                        "PremiumBusiness",
-                        "First",
-                      ].filter((inf, ind) => ind + 1 == flight.CabinClass)}
-                    </p>
-                    <p className="text-sm text-gray-800 font-medium">
-                      <strong>Tax Breakdown:</strong>
-                      <div className="grid grid-cols-2 gap-2 mt-2">
-                        {srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.map(
-                          (taxinfo, index) => (
-                            <p
-                              key={index}
-                              className="text-sm text-gray-600 flex items-center"
-                            >
-                              <FaMoneyBillWave className="mr-2 text-yellow-500" />
-                              {taxinfo.key}: {taxinfo.value}
-                            </p>
-                          )
-                        ) || (
-                          <p className="textsm text-gray-500">
-                            No tax information available.
-                          </p>
-                        )}
-                      </div>
-                    </p>
-                  </div>
-
-                  {/* Conditionally render price and button only if there are not exactly 2 flights or if it's not the first card */}
-                  {srrFairdata.Results?.Segments[0]?.length !== 2 ||
-                  index !== 0 ? (
-                    <div className="mt-6 flex flex-col md:flex-row justify-between items-center">
-                      <div className="mb-4 md:mb-0">
-                        <p className="text-lg font-bold text-indigo-400 flex items-center">
-                          <FaMoneyBillWave className="mr-2 text-indigo-400" />
-                          Base Price: {defaultcurrency.symble}
-                          {(() => {
-                            const baseFare =
-                              srrFairdata?.Results?.FareBreakdown?.[0]
-                                ?.BaseFare || 0;
-                            const price = baseFare * cuntryprice;
-                            const priceString = price.toFixed(2);
-                            const [integerPart, decimalPart] =
-                              priceString.split(".");
-                            return `${integerPart},${(
-                              decimalPart || "00"
-                            ).slice(0, 2)}`;
-                          })()}
-                        </p>
-                        <p className="text-lg font-bold text-indigo-600 flex items-center">
-                          <FaMoneyBillWave className="mr-2 text-indigo-600" />
-                          Total Price: {defaultcurrency.symble}
-                          {(() => {
-                            const baseFare = Number(
-                              srrFairdata?.Results?.FareBreakdown?.[0]
-                                ?.BaseFare || 0
-                            );
-                            const taxBreakUpTotal =
-                              srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.reduce(
-                                (acc, arr) => acc + Number(arr.value || 0),
-                                0
-                              ) || 0;
-                            const totalPrice =
-                              (baseFare + taxBreakUpTotal) * cuntryprice;
-                            const priceString = totalPrice.toFixed(2);
-                            const [integerPart, decimalPart] =
-                              priceString.split(".");
-                            return `${integerPart},${(
-                              decimalPart || "00"
-                            ).slice(0, 2)}`;
-                          })()}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() =>
-                          saveDataInLocal(
-                            flight,
-                            (() => {
-                              const baseFare = Number(
-                                srrFairdata?.Results?.FareBreakdown?.[0]
-                                  ?.BaseFare || 0
-                              );
-                              const taxBreakUpTotal =
-                                srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.reduce(
-                                  (acc, arr) => acc + Number(arr.value || 0),
-                                  0
-                                ) || 0;
-                              const totalPrice =
-                                (baseFare + taxBreakUpTotal) * cuntryprice;
-                              const priceString = totalPrice.toFixed(2);
-                              const [integerPart, decimalPart] =
-                                priceString.split(".");
-                              return `${integerPart},${(
-                                decimalPart || "00"
-                              ).slice(0, 2)}`;
-                            })()
-                          )
-                        }
-                        className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center"
-                      >
-                        <FaPlaneDeparture className="mr-2" /> Book Now
-                      </button>
-                    </div>
-                  ) : null}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+         <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black bg-opacity-60 overflow-y-auto p-4 sm:p-6 transition-opacity duration-300">
+         <div className="relative w-full max-w-4xl bg-white rounded-xl shadow-2xl p-6 sm:p-8 m-4 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-indigo-500 scrollbar-track-gray-100">
+           <MdCancel
+             className="absolute top-4 right-4 text-2xl sm:text-3xl text-gray-600 hover:text-red-500 cursor-pointer transition-colors duration-200"
+             onClick={() => setActivePopup(null)}
+           />
+   
+           <div className="grid gap-6 sm:grid-cols-1 lg:grid-cols-2">
+             {srrFairdata.Results?.Segments[0]?.map((flight, index) => (
+               <div
+                 key={index}
+                 className="bg-gray-50 shadow-lg border border-gray-200 rounded-2xl p-5 sm:p-6 hover:shadow-xl transition-all duration-300"
+               >
+                 <h2 className="text-xl sm:text-2xl font-extrabold mb-3 text-gray-800 flex items-center">
+                   <FaPlaneDeparture className="mr-2 text-indigo-600 text-lg sm:text-xl" />
+                   {flight?.Origin?.Airport?.CityName} - {flight?.Destination?.Airport?.CityName}
+                 </h2>
+   
+                 <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
+                   {flight.airline}
+                 </h3>
+                 <p className="text-sm text-gray-600 flex flex-col  items-start sm:items-center mb-4 gap-2 sm:gap-4">
+                   <span className="flex items-center">
+                     <FaPlaneDeparture className="mr-2 text-blue-500" />
+                     <strong>Departure:</strong>{" "}
+                     {new Intl.DateTimeFormat("en-GB", {
+                       year: "numeric",
+                       month: "long",
+                       day: "numeric",
+                       hour: "2-digit",
+                       minute: "2-digit",
+                       hour12: false,
+                     }).format(new Date(flight?.Origin?.DepTime))}
+                   </span>
+                   <span className="flex items-center">
+                     <FaPlaneArrival className="ml-0 sm:ml-4 mr-2 text-blue-500" />
+                     <strong>Arrival:</strong>{" "}
+                     {new Intl.DateTimeFormat("en-GB", {
+                       year: "numeric",
+                       month: "long",
+                       day: "numeric",
+                       hour: "2-digit",
+                       minute: "2-digit",
+                       hour12: false,
+                     }).format(new Date(flight?.Destination?.ArrTime))}
+                   </span>
+                 </p>
+   
+                 <div className="mt-4 space-y-3 text-sm sm:text-base">
+                   <p className="text-gray-800 font-medium flex items-center">
+                     <FaLuggageCart className="mr-2 text-gray-500" />
+                     <strong>Baggage:</strong> {flight.CabinBaggage}
+                   </p>
+                   <p className="text-gray-800 font-medium flex items-center">
+                     <FaMoneyCheckAlt className="mr-2 text-green-500" />
+                     <strong>Refundable:</strong>{" "}
+                     {srrFairdata.Results.IsRefundable ? "Yes" : "No"}
+                   </p>
+                   <p className="text-gray-800 font-medium flex items-center">
+                     <FaChair className="mr-2 text-indigo-500" />
+                     <strong>Cabin Type:</strong>{" "}
+                     {[
+                       "All",
+                       "Economy",
+                       "PremiumEconomy",
+                       "Business",
+                       "PremiumBusiness",
+                       "First",
+                     ].filter((inf, ind) => ind + 1 === flight.CabinClass)}
+                   </p>
+                   <p className="text-gray-800 font-medium">
+                     <strong>Tax Breakdown:</strong>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+                       {srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.map(
+                         (taxinfo, index) => (
+                           <p
+                             key={index}
+                             className="text-sm text-gray-600 flex items-center"
+                           >
+                             <FaMoneyBillWave className="mr-2 text-yellow-500" />
+                             {taxinfo.key}: {taxinfo.value}
+                           </p>
+                         )
+                       ) || (
+                         <p className="text-sm text-gray-500">
+                           No tax information available.
+                         </p>
+                       )}
+                     </div>
+                   </p>
+                 </div>
+   
+                 {srrFairdata.Results?.Segments[0]?.length !== 2 || index !== 0 ? (
+                   <div className="mt-6 flex flex-col justify-between  gap-4">
+                     <div className="mb-4 sm:mb-0">
+                       <p className="text-base sm:text-lg font-bold text-indigo-400 flex items-center">
+                         <FaMoneyBillWave className="mr-2 text-indigo-400" />
+                         Base Price: {defaultcurrency.symble}
+                         {(() => {
+                           const baseFare =
+                             srrFairdata?.Results?.FareBreakdown?.[0]?.BaseFare || 0;
+                           const price = baseFare * cuntryprice;
+                           const priceString = price.toFixed(2);
+                           const [integerPart, decimalPart] = priceString.split(".");
+                           return `${integerPart},${(decimalPart || "00").slice(0, 2)}`;
+                         })()}
+                       </p>
+                       <p className="text-base sm:text-lg font-bold text-indigo-600 flex items-center">
+                         <FaMoneyBillWave className="mr-2 text-indigo-600" />
+                         Total Price: {defaultcurrency.symble}
+                         {(() => {
+                           const baseFare = Number(
+                             srrFairdata?.Results?.FareBreakdown?.[0]?.BaseFare || 0
+                           );
+                           const taxBreakUpTotal =
+                             srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.reduce(
+                               (acc, arr) => acc + Number(arr.value || 0),
+                               0
+                             ) || 0;
+                           const totalPrice = (baseFare + taxBreakUpTotal) * cuntryprice;
+                           const priceString = totalPrice.toFixed(2);
+                           const [integerPart, decimalPart] = priceString.split(".");
+                           return `${integerPart},${(decimalPart || "00").slice(0, 2)}`;
+                         })()}
+                       </p>
+                     </div>
+                     <button
+                       onClick={() =>
+                         saveDataInLocal(
+                           flight,
+                           (() => {
+                             const baseFare = Number(
+                               srrFairdata?.Results?.FareBreakdown?.[0]?.BaseFare || 0
+                             );
+                             const taxBreakUpTotal =
+                               srrFairdata?.Results?.FareBreakdown?.[0]?.TaxBreakUp?.reduce(
+                                 (acc, arr) => acc + Number(arr.value || 0),
+                                 0
+                               ) || 0;
+                             const totalPrice = (baseFare + taxBreakUpTotal) * cuntryprice;
+                             const priceString = totalPrice.toFixed(2);
+                             const [integerPart, decimalPart] = priceString.split(".");
+                             return `${integerPart},${(decimalPart || "00").slice(0, 2)}`;
+                           })()
+                         )
+                       }
+                       className="px-5 py-2 sm:px-6 sm:py-3 text-center bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm sm:text-base font-semibold rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 flex items-center"
+                     >
+                       <FaPlaneDeparture className="mr-2" /> Book Now
+                     </button>
+                   </div>
+                 ) : null}
+               </div>
+             ))}
+           </div>
+         </div>
+   
+         {/* Custom Scrollbar Styles */}
+         <style jsx>{`
+           .scrollbar-thin {
+             scrollbar-width: thin;
+             scrollbar-color: #6366f1 #f3f4f6;
+           }
+           .scrollbar-thin::-webkit-scrollbar {
+             width: 8px;
+           }
+           .scrollbar-thin::-webkit-scrollbar-track {
+             background: #f3f4f6;
+             border-radius: 4px;
+           }
+           .scrollbar-thin::-webkit-scrollbar-thumb {
+             background: #6366f1;
+             border-radius: 4px;
+           }
+           .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+             background: #4f46e5;
+           }
+         `}</style>
+       </div>
       )}
 
       <Header />
@@ -2557,10 +2568,10 @@ const togglePopup = async (id, ResultIndex) => {
 
       <div className="block md:hidden">
         <div
-          className="icon-container fixed bottom-5 right-4 z-[9999] grid"
+          className="icon-container fixed bottom-5 left-4 z-[9999] grid"
           onClick={() => togglePopup("flight-filter-popup")}
         >
-          <FaFilter className="bg-[#52c3f1] text-white p-1 text-3xl rounded cursor-pointer" />
+          <FaFilter className="bg-[#0e5449] text-white p-1 text-3xl rounded cursor-pointer" />
         </div>
 
         {activePopup === "flight-filter-popup" && (
