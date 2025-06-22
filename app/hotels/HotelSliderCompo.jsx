@@ -17,7 +17,6 @@ import { getSliderData } from "../Component/Store/slices/SliderSlice";
 
 
 
-
 const allData = [
   {
     title: "Exclusive Offer",

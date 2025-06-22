@@ -61,16 +61,28 @@ const Book = () => {
         </div>
       </div>
 
-      <section>
-        <div className="mt-5 px-5 md:px-10 lg:px-40 text-center bg-gray-100">
-          <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2 mb-10 pt-[50px]">
-            {t("packages")}
-          </div>
-          <p className="pb-2 text-justify leading-8">
-          {t("packageans")}
-          </p>
-        </div>
-      </section>
+   <section className="relative py-28  px-6 md:px-16 lg:px-32 bg-gradient-to-r from-[#10325a] to-[#45a183] text-white overflow-hidden">
+  {/* Decorative Elements */}
+  <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+    <div className="absolute w-96 h-96 bg-white opacity-10 rounded-full top-[-100px] left-[-100px] blur-3xl animate-spin-slow"></div>
+    <div className="absolute w-72 h-72 bg-white opacity-10 rounded-full bottom-[-80px] right-[-80px] blur-2xl animate-ping"></div>
+  </div>
+
+  {/* Main Content */}
+  <div className="relative z-10 text-center max-w-4xl mx-auto">
+    <h2 className="text-4xl md:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-200 mb-6">
+      {t("packages")}
+    </h2>
+    <p className="text-base md:text-lg text-white/80 font-normal leading-7">
+      {t("packageans")}
+    </p>
+  </div>
+</section>
+
+
+
+
+
     </>
   );
 };
