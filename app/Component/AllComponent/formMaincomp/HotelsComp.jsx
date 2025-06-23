@@ -56,9 +56,14 @@ const HotelsComp = () => {
       .filter((age) => age >= 1 && age <= 18);
     return Array(childcount).fill(1).map((_, i) => validAges[i] || 1);
   });
-
   const handleCitySelect = (city) => {
-    setcity(city);
+    // Validate city object
+    if (!city || !city.Name || !city.Code) {
+      console.error("Invalid city object:", city);
+      return;
+    }
+    console.log("Selected city:", city); // Debug log
+    setcity({ Name: city.Name, Code: city.Code }); // Ensure only Name and Code are set
     setIsVisible("");
   };
 
@@ -76,13 +81,13 @@ const HotelsComp = () => {
     setarivitime(date);
     setcheckOut(nextdate);
     setIsVisible("");
+    console.log("City after date change:", city); // Debug log
   };
-
-  const handelreturn2 = (newRange) => {
-    const date = new Date(newRange.year, newRange.month - 1, newRange.day);
-    setcheckOut(date);
-    setIsVisible("");
-  };
+  // const handelreturn2 = (newRange) => {
+  //   const date = new Date(newRange.year, newRange.month - 1, newRange.day);
+  //   setcheckOut(date);
+  //   setIsVisible("");
+  // };
 
   useEffect(() => {
     dispatch(getAllCountries());
@@ -106,7 +111,64 @@ const HotelsComp = () => {
     return `${year}-${month}-${day}`;
   };
 
+  // const handlehotelSearch = () => {
+  //   const validChildAges = childAges.filter(
+  //     (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
+  //   );
+
+  //   console.log('city.Code ',city.Code)
+  //   if (validChildAges.length !== childcount) {
+  //     alert("Please provide valid ages (1–18) for all children.");
+  //     return;
+  //   }
+
+  //   localStorage.setItem(
+  //     "hotelItems",
+  //     JSON.stringify({
+  //       place: { Name: city.Name, code: city.Code },
+  //       checkIntime: arivitime,
+  //       checkouttime: checkOut,
+  //       adultcount,
+  //       childcount,
+  //       childAges: validChildAges,
+  //       numberOfRoom,
+  //     })
+  //   );
+
+
+
+   
+  //   // Use local timezone date formatting
+  //   const checkInDate = formatDateToLocal(arivitime);
+  //   const checkOutDate = formatDateToLocal(checkOut);
+
+  //   const childAgesQuery =
+  //     validChildAges.length > 0
+  //       ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
+  //       : "";
+
+  //   route.push(
+  //     `/hotels/cityName=${encodeURIComponent(
+  //       city.Name
+  //     )}&citycode=${city.Code}&checkin=${checkInDate}&checkout=${checkOutDate}&adult=${adultcount}&child=${childcount}${childAgesQuery}&roomes=${numberOfRoom}&page=0&star=0`
+  //   );
+  // };
+
+
+  const handelreturn2 = (newRange) => {
+    const date = new Date(newRange.year, newRange.month - 1, newRange.day);
+    setcheckOut(date);
+    setIsVisible("");
+    console.log("City after checkout date change:", city); // Debug log
+  };
+
   const handlehotelSearch = () => {
+    console.log("City in search:", city); // Debug log
+    if (!city.Code) {
+      alert("Please select a valid city.");
+      return;
+    }
+
     const validChildAges = childAges.filter(
       (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
     );
@@ -119,7 +181,7 @@ const HotelsComp = () => {
     localStorage.setItem(
       "hotelItems",
       JSON.stringify({
-        place: { Name: city.Name, code: city.Code },
+        place: { Name: city.Name, Code: city.Code },
         checkIntime: arivitime,
         checkouttime: checkOut,
         adultcount,
@@ -129,7 +191,6 @@ const HotelsComp = () => {
       })
     );
 
-    // Use local timezone date formatting
     const checkInDate = formatDateToLocal(arivitime);
     const checkOutDate = formatDateToLocal(checkOut);
 
@@ -178,43 +239,7 @@ const HotelsComp = () => {
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
-            {/* <div className="relative z-10 w-full max-w-xs" ref={dropdownRef}>
-              {isLoading && <p className="text-gray-500">Loading countries...</p>}
-              {isError && <p className="text-red-500">Error: {error}</p>}
-              <input
-                type="text"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onClick={toggleDropdown}
-                placeholder="Select a country..."
-                className="w-full p-2 border rounded text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-expanded={isOpen}
-                aria-controls="country-dropdown"
-              />
-              {isOpen && (
-                <ul
-                  id="country-dropdown"
-                  className="absolute w-full mt-1 bg-white border rounded shadow-lg max-h-60 overflow-auto"
-                  role="listbox"
-                >
-                  {filteredCountries?.length > 0 ? (
-                    filteredCountries.map((country) => (
-                      <li
-                        key={country.Code}
-                        onClick={() => handleSelect(country)}
-                        className="p-2 text-gray-700 hover:bg-gray-100 cursor-pointer"
-                        role="option"
-                        aria-selected={search === country.Name}
-                      >
-                        {country.Name}
-                      </li>
-                    ))
-                  ) : (
-                    <li className="p-2 text-gray-500">No countries found</li>
-                  )}
-                </ul>
-              )}
-            </div> */}
+          
             <div className="relative w-full lg:w-[50%]">
               <div
                 onClick={() => handleClick("city")}
