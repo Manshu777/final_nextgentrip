@@ -184,13 +184,13 @@ const Page = () => {
           <ul className="px-0 list-none lg:px-20">{renderDeals(selectedMonth)}</ul>
         </div>
       </div>
-    <CustomSlider />
+   
       <div className="px-5 lg:px-20 py-5 lg:py-10">
         <h6 className="text-lg lg:text-xl font-semibold">{t("memorable")}</h6>
         <p className="mt-5 text-justify">{t("memorable_1")}</p>
         <p className="mt-5 text-justify">{t("memorable_2")}</p>
       </div>
-
+ <CustomSlider />
       <FAQSection />
     </>
   );

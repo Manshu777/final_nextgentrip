@@ -10,7 +10,6 @@ export default function InsurancePage() {
       icon: '🩺',
     },
    
-    
    
     {
       title: 'Travel Insurance',
