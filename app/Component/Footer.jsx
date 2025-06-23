@@ -160,7 +160,7 @@ const Footer = () => {
   return (
     <>
       <Subscribe />
-      <footer className="bg-white" aria-labelledby="footer-heading">
+      <footer className="bg-white px-24" aria-labelledby="footer-heading">
         <h2 id="footer-heading text-[300px] bg-red-500" className="sr-only">
           Footer
         </h2>

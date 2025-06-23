@@ -124,7 +124,7 @@ const Testimonial = () => {
                     <FaStar key={i} className="text-yellow-500" />
                   ))}
                 </div>
-                <p className="text-base text-justify text-gray-600 mt-3">{review.content}</p>
+                <p className="text-base text-justify h-[80px] overflow-y-auto hide-scrollbar scroll-y  text-gray-600 mt-3">{review.content}</p>
               </div>
               <div className="border-t mt-4 pt-4 flex items-center gap-3">
                 <img src={review.author.imageUrl} alt="User" className="w-[60px] h-[58px] rounded-full" />

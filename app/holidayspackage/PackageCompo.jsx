@@ -58,7 +58,7 @@ export const PackageCompo = () => {
       {!loader && allpackage?.map((tour) => (
         <div
           key={tour.id}
-          className="bg-white shadow-md  overflow-hidden"
+          className="bg-white shadow-md flex flex-col justify-between  overflow-hidden"
         >
           <div className="relative">
             <img
@@ -84,7 +84,7 @@ export const PackageCompo = () => {
                 ))}
               </div>
             </div>
-            <p className='h-12 text-sm overflow-hidden' dangerouslySetInnerHTML={{ __html: tour?.des }}></p>
+            {/* <p className='h-12 text-sm overflow-hidden' dangerouslySetInnerHTML={{ __html: tour?.des }}></p> */}
           </div>
 
           <div className="mt-4  flex justify-center border-t  space-x-2">

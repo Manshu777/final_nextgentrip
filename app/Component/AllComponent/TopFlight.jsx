@@ -194,10 +194,10 @@ const TopFlight = () => {
       
 
       {/* Services Section */}
-      <div className="bg-gray-100 p-5 lg:p-20 mt-12">
+      {/* <div className="bg-gray-100 p-1 lg:p-20 mt-12">
         <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
           <div className="p-4">
-            <h3 className="text-4xl font-normal">{t("service")}</h3>
+            <h3 className="text-4xl font-semibold">{t("service")}</h3>
             <p className="mt-4 mb-6">{t("serviceans")}</p>
             <ul className="space-y-6">
               {["blog2", "shield", "general"].map((img, i) => (
@@ -215,7 +215,7 @@ const TopFlight = () => {
             <img src="/images/online-booking.webp" alt="" className="rounded-lg" />
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Tourist Love Section */}
       <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt-0 lg:pt-12">

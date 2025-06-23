@@ -14,11 +14,11 @@ import LayoutCompo from "./LayoutCompo";
 
 const inter = Inter({ subsets: ["latin"] });
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"], // Add more weights if needed
-  display: "swap",
-});
+// const montserrat = Montserrat({
+//   subsets: ["latin"],
+//   weight: ["400", "500", "600", "700"], // Add more weights if needed
+//   display: "swap",
+// });
 
 export default async function RootLayout({ children }) {
   const locale = await getLocale();
@@ -113,7 +113,7 @@ export default async function RootLayout({ children }) {
         />
       </head>
 
-      <body className={montserrat.className}>
+      <body >
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-P6DBCLHP"

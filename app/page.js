@@ -11,7 +11,7 @@ import CustomSlider from "./Component/AllComponent/Slider";
 import { redirect } from "next/navigation";
 import { development } from "./Component/common";
 import Reviews from "./Component/AllComponent/Reviews";
-
+import Service from "./Component/AllComponent/Service";
 
 import MineHolidayPkgComp from "./Component/AllComponent/MineHolidayPkgComp";
 
@@ -35,24 +35,15 @@ const page = () => {
         />
       </head>
       <Header />
-      
 
-      <MineHolidayPkgComp/>
-
+      <MineHolidayPkgComp/>   
+     <Service/> 
       <div className="hidden md:block">
         <CustomSlider />
-      </div>
-      
-      <TopFlight />
-
+      </div>  
+ <TopFlight /> 
  <TipsTricks />
-
       <Book />
-
-     
-
- 
-
       <Reviews />
     </>
   );

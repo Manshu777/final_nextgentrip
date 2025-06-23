@@ -41,16 +41,16 @@ const MineHolidayPkgComp = () => {
     }, []);
 
     return (
-        <div className="max-w-7xl mx-auto my-5 lg:my-10 px-4 py-8">
+        <div className="max-w-7xl mx-auto my-5 lg:my-10 px-4 py-8  ">
             <div className="relative">
-                <div className="mb-6">
+                <div className="mb-6 px-28">
                     <h2 className="text-2xl font-bold">Top Travel Picks by Next Gen Trip</h2>
                     <p className="text-gray-500">
                         Handpicked escapes to inspire your next getaway.
                     </p>
                 </div>
 
-                <div className="relative">
+                <div className="relative px-28">
                     {loader ? (
                         <div className="flex justify-center items-center h-64">
                             <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
@@ -58,7 +58,7 @@ const MineHolidayPkgComp = () => {
                     ) : (
                         <div
                             ref={carouselRef}
-                            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide"
+                            className="flex gap-4 overflow-x-auto scroll-smooth scrollbar-hide "
                             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                         >
                             {allpackage.length > 0 ? (
@@ -78,7 +78,7 @@ const MineHolidayPkgComp = () => {
                                     </Link>
                                 ))
                             ) : (
-                                <p className="text-gray-500 text-center w-full">
+                                <p className="text-gray-500 text-center w-full ">
                                     No holiday packages available.
                                 </p>
                             )}
@@ -91,14 +91,14 @@ const MineHolidayPkgComp = () => {
                           <div className="">
                           <button
                                 onClick={() => scroll("left")}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10 ml-[80px]"
                                 aria-label="Scroll left"
                             >
                                 <FiChevronLeft className="w-6 h-6" />
                             </button>
                             <button
                                 onClick={() => scroll("right")}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-md z-10 mr-[80px]"
                                 aria-label="Scroll right"
                             >
                                 <FiChevronRight className="w-6 h-6" />
