@@ -33,6 +33,21 @@ const page = () => {
           name="keywords"
           content="best travel agency, budget hotels, tour agency in India, travel company in India, flight booking online, cruise booking, bus booking site, hotel booking, train ticket booking, charter plane, travel insurance"
         />
+          <script
+          data-noptimize="1"
+          data-cfasync="false"
+          data-wpfc-render="false"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                var script = document.createElement("script");
+                script.async = 1;
+                script.src = 'https://tp-em.com/NDI4OTAx.js?t=428901';
+                document.head.appendChild(script);
+              })();
+            `,
+          }}
+        />
       </head>
       <Header />
 
