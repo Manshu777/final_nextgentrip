@@ -159,57 +159,57 @@ const page = () => {
 </div>
 
 <CustomSlider />
-      <div className="min-h-max bg-gray-100">
-        <main className="max-w-7xl mx-auto px-4 py-8">
-          <section className="bg-white shadow-md rounded-lg p-6">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Hassle-Free Cab Booking with Next Gen 
-            </h1>
-            <p className="text-gray-700 mb-6">
-              At Next Gen , we’re dedicated to making your travel experience as
-              smooth and stress-free as possible. Our hassle-free cab booking
-              service is designed to meet all your transportation needs with
-              just a few taps on your smartphone.
-            </p>
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              {" "}
-              Here’s how we ensure a seamless experience for you:
-            </h2>
+     <div className="min-h-max bg-gray-100">
+  <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 py-8">
+    <section className="bg-white shadow-md rounded-lg p-6 sm:p-8">
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">
+        Hassle-Free Cab Booking with Next Gen
+      </h1>
+      <p className="text-gray-700 mb-6">
+        At Next Gen, we’re dedicated to making your travel experience as
+        smooth and stress-free as possible. Our hassle-free cab booking
+        service is designed to meet all your transportation needs with
+        just a few taps on your smartphone.
+      </p>
+      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+        Here’s how we ensure a seamless experience for you:
+      </h2>
 
-            <ol className="list-decimal list-inside mb-6 space-y-4">
-              <li className="text-gray-700">
-                <strong>User-Friendly App Interface:</strong> Our intuitive app
-                is designed to make booking a cab easy and quick. Whether you
-                need a ride for a business meeting or a family outing, you can
-                book a cab effortlessly in just a few steps.
-              </li>
-              <li className="text-gray-700">
-                <strong>Instant Booking Confirmation:</strong>Once you’ve booked
-                your ride, you’ll receive instant confirmation with details of
-                your driver and vehicle. No more waiting or uncertainty—just
-                reliable service at your fingertips.
-              </li>
-              <li className="text-gray-700">
-                <strong>Wide Range of Vehicles:</strong> Choose from a variety of
-                vehicles to suit your needs. From sedans to SUVs, we have the
-                right vehicle to accommodate your group size and preferences.
-              </li>
-              <li className="text-gray-700">
-                <strong>24/7 Customer Support:</strong> Our customer support team
-                is available around the clock to assist you with any queries or
-                concerns. We’re here to ensure that your journey is smooth from
-                start to finish.
-              </li>
-              <li className="text-gray-700">
-                <strong>Safe and Reliable Drivers:</strong>Our drivers are
-                experienced, professional, and thoroughly vetted to ensure your
-                safety and comfort. We prioritize your security and strive to
-                provide the best service possible.
-              </li>
-            </ol>
-          </section>
-        </main>
-      </div>
+      <ol className="list-decimal list-inside mb-6 space-y-4">
+        <li className="text-gray-700">
+          <strong>User-Friendly App Interface:</strong> Our intuitive app
+          is designed to make booking a cab easy and quick. Whether you
+          need a ride for a business meeting or a family outing, you can
+          book a cab effortlessly in just a few steps.
+        </li>
+        <li className="text-gray-700">
+          <strong>Instant Booking Confirmation:</strong> Once you’ve booked
+          your ride, you’ll receive instant confirmation with details of
+          your driver and vehicle. No more waiting or uncertainty—just
+          reliable service at your fingertips.
+        </li>
+        <li className="text-gray-700">
+          <strong>Wide Range of Vehicles:</strong> Choose from a variety of
+          vehicles to suit your needs. From sedans to SUVs, we have the
+          right vehicle to accommodate your group size and preferences.
+        </li>
+        <li className="text-gray-700">
+          <strong>24/7 Customer Support:</strong> Our customer support team
+          is available around the clock to assist you with any queries or
+          concerns. We’re here to ensure that your journey is smooth from
+          start to finish.
+        </li>
+        <li className="text-gray-700">
+          <strong>Safe and Reliable Drivers:</strong> Our drivers are
+          experienced, professional, and thoroughly vetted to ensure your
+          safety and comfort. We prioritize your security and strive to
+          provide the best service possible.
+        </li>
+      </ol>
+    </section>
+  </main>
+</div>
+
     </>
   );
 };

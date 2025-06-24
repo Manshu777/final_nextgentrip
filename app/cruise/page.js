@@ -75,7 +75,7 @@ const page = () => {
       description:
         "Recharge your mind and body with soothing spa treatments, peaceful ocean views, and serene onboard amenities.",
       icon: <FaSpa />,
-      price:1700000
+      price:170000
 
     },
     {
@@ -93,7 +93,7 @@ const page = () => {
       description:
         "Plan your dream vacation with customizable schedules and itineraries that fit your preferences perfectly.",
       icon: <FaCalendarAlt />,
-      price:350
+      price:35000
 
     },
   ];
