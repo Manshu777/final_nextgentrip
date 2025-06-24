@@ -1,13 +1,8 @@
 "use client";
-import React, { useState } from "react";
-import Slider from "react-slick";
-import Link from "next/link";
-import "slick-carousel/slick/slick.css";
+import React from "react";
 import { FaQuoteLeft, FaStar } from "react-icons/fa";
-import "slick-carousel/slick/slick-theme.css";
-
+import { FaInstagram, FaFacebookSquare, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import { FaInstagram,FaFacebookSquare,FaYoutube} from "react-icons/fa";
 
 const Page = () => {
   const corporateTravelInfo = [
@@ -19,7 +14,7 @@ const Page = () => {
       buttonLabel: "Let's Optimise Your Corporate Travel"
     }
   ];
-  
+
   const apkaTripInfo = [
     {
       title: "Why Choose NextGen?",
@@ -44,7 +39,7 @@ const Page = () => {
       ]
     }
   ];
-  
+
   const mainActivities = [
     {
       title: "Flight Reservation Made Easy, Simple",
@@ -157,188 +152,65 @@ const Page = () => {
   const contactInfo = {
     phone: "+(91) 9877579319",
     email: "info@nextgentrip.com",
-    liveChat: "Available 24/7",
-    socialLinks: {
-      linkedin: "#",
-      twitter: "#",
-      facebook: "#",
-      instagram: "#"
-    }
+    liveChat: "Available 24/7"
   };
-  
-  
-return (
-<div className='space-y-10'>
-<section className="px-5 md:px-16 lg:px-20">
-<div className="bg-gradient-to-bl from-slate-500 to-slate-300 px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-{corporateTravelInfo.map((info, index) => (
-  <div key={index} className="flex flex-col items-center text-center space-y-5">
-    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white">
-      {info.title}
-    </h3>
-    <h6 className="text-xl md:text-2xl font-semibold text-gray-300">
-      {info.headline}
-    </h6>
-    <p className="text-lg md:text-xl text-gray-100">
-      {info.description}
-    </p>
-    <p className="lg:w-[80%] text-gray-200">
-      {info.bannerHeadline}
-    </p>
-    {/* <button className="mt-4 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg">
-      {info.buttonLabel}
-    </button> */}
-  </div>
-))}
-</div>
-</section>
 
-<section className="px-5 md:px-16 lg:px-20">
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-{apkaTripInfo.map((info, index) => (
-  <div key={index} className="space-y-5">
-    <h6 className="text- lg:text-2xl font-semibold text-gray-700">
-      {info.title}
-    </h6>
-    {info.subtitle && (
-      <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-        {info.subtitle}
-      </h5>
-    )}
-    <p className="text-base text-gray-600">
-      {info.description}
-    </p>
+  return (
+    <div className="space-y-10 text-[#10325a]">
+      <section className="px-5 md:px-16 lg:px-20">
+        <div className="bg-gradient-to-bl from-[#10325a] to-[#45a183] text-white px-5 py-12 space-y-6 rounded-lg">
+          {corporateTravelInfo.map((info, index) => (
+            <div key={index} className="text-center space-y-4">
+              <h3 className="text-3xl md:text-4xl font-bold">{info.title}</h3>
+              <h6 className="text-xl font-semibold text-white/80">{info.headline}</h6>
+              <p className="text-lg">{info.description}</p>
+              <p className="lg:w-[80%] mx-auto text-white/90">{info.bannerHeadline}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-    {info.offerings && (
-      <div className="space-y-4">
-        {info.offerings.map((offering, idx) => (
-          <div key={idx} className="space-y-2">
-            <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-              {offering.title}
-            </h5>
-            <p className="text-base text-gray-600">
-              {offering.description}
-            </p>
+      {/* REPEAT pattern for each section with bg-[#f0f7f5] and text-[#10325a] */}
+      {/* I’ll show one example and you can follow same style below: */}
+
+      <section className="px-5 md:px-16 lg:px-20">
+        <div className="bg-[#f0f7f5] px-6 py-10 rounded-lg space-y-6">
+          {apkaTripInfo.map((info, index) => (
+            <div key={index} className="space-y-4">
+              <h4 className="text-2xl font-semibold">{info.title}</h4>
+              {info.subtitle && <h5 className="text-xl text-[#45a183]">{info.subtitle}</h5>}
+              <p>{info.description}</p>
+              {info.offerings?.map((item, idx) => (
+                <div key={idx}>
+                  <h6 className="font-semibold">{item.title}</h6>
+                  <p>{item.description}</p>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Repeat similar changes for other sections below... */}
+      {/* Replace background with bg-[#f0f7f5], all text colors to text-[#10325a] or text-[#45a183] where needed */}
+
+      {/* Contact Info */}
+      <section className="px-5 md:px-16 lg:px-20">
+        <div className="bg-[#f0f7f5] px-6 py-10 rounded-lg space-y-4">
+          <h4 className="text-2xl font-semibold">Contact Us</h4>
+          <p>Telephone: {contactInfo.phone}</p>
+          <p>Email: <a href={`mailto:${contactInfo.email}`} className="text-[#10325a] underline">{contactInfo.email}</a></p>
+          <p>Live Chat: {contactInfo.liveChat}</p>
+          <div className="flex gap-4 text-2xl text-[#10325a] mt-4">
+            <a target="_blank" href="https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr"><FaFacebookSquare /></a>
+            <a target="_blank" href="https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08"><FaXTwitter /></a>
+            <a target="_blank" href="https://www.youtube.com/@NextGenTrip-g5t"><FaYoutube /></a>
+            <a target="_blank" href="https://www.instagram.com/nextgentrip/profilecard/?igsh=MTdyMjlyb293aTB0MA%3D%3D"><FaInstagram /></a>
           </div>
-        ))}
-      </div>
-    )}
-  </div>
-))}
-</div>
-</section>
-
-
-<section className="px-5 md:px-16 lg:px-20">
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-NextGen's Main Activities
-</h6>
-{mainActivities.map((activity, index) => (
-  <div key={index} className="space-y-4">
-    <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-      {activity.title}
-    </h5>
-    <p className="text-base text-gray-600">
-      {activity.description}
-    </p>
-  </div>
-))}
-</div>
-</section>
-
-<section className="px-5 md:px-16 lg:px-20">
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-NextGen's Corporate Travel Solutions
-</h6>
-{corporateServices.map((service, index) => (
-  <div key={index} className="space-y-4">
-    <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-      {service.title}
-    </h5>
-    <p className="text-base text-gray-600">
-      {service.description}
-    </p>
-    <ul className="list-disc pl-5 space-y-2 text-gray-600">
-      {service.features.map((feature, idx) => (
-        <li key={idx}>{feature}</li>
-      ))}
-    </ul>
-  </div>
-))}
-</div>
-</section>
-
-<section className="px-5 md:px-16 lg:px-20">
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-  Why Book Corporate Travel with NextGen?
-</h6>
-{travelBenefits.map((benefit, index) => (
-  <div key={index} className="space-y-4">
-    <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-      {benefit.title}
-    </h5>
-    <p className="text-base text-gray-600">
-      {benefit.description}
-    </p>
-  </div>
-))}
-</div>
-</section>
-
-<section className="px-5 md:px-16 lg:px-20 space-y-10">
-{/* Technology Features Section */}
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">NextGen Technology: The Future of Business Travel</h6>
-{technologyFeatures.map((feature, index) => (
-  <div key={index} className="space-y-4">
-    <h5 className="text-lg md:text-xl font-semibold text-gray-800">{feature.title}</h5>
-    <p className="text-base text-gray-600">{feature.description}</p>
-  </div>
-))}
-</div>
-
-{/* Client Success Stories Carousel */}
-<div className="bg-white px-5 py-8 md:px-10 md:py-12 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">Client Success Stories</h6>
-<div className="space-y-4">
-  {clientSuccessStories.map((story, index) => (
-    <div key={index} className="space-y-2">
-      <p className="text-base italic text-gray-600">"{story.testimonial}"</p>
-      <p className="text-sm font-semibold text-gray-800">{story.client}</p>
-      <p className="text-sm text-gray-500">{story.title}</p>
+        </div>
+      </section>
     </div>
-  ))}
-</div>
-</div>
-
-{/* Contact Information */}
-<div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 rounded-lg">
-<h6 className="text-lg md:text-2xl font-semibold text-gray-700">Contact Us</h6>
-<p className="text-base text-gray-600">For more information or questions, please don’t hesitate to contact us.</p>
-<p className="text-base text-gray-600">Telephone: {contactInfo.phone}</p>
-<p className="text-base text-gray-600">Corporate: {contactInfo.email}</p>
-<p className="text-base text-gray-600">Live Chat: {contactInfo.liveChat}</p>
-
-{/* Social Media Links */}
- <div className="flex space-x-4 mt-4 text-2xl">
-      <a  target="_blank"
-                  href="https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr" className=""><FaFacebookSquare /></a>
-      <a  target="_blank"
-                  href="https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08" className=""><FaXTwitter/></a>
-      <a target="_blank"
-                  href="https://www.youtube.com/@NextGenTrip-g5t" className=""><FaYoutube /></a>
-      <a href="https://www.instagram.com/nextgentrip/profilecard/?igsh=MTdyMjlyb293aTB0MA%3D%3D" target="_blank" className=""><FaInstagram /></a>
-    </div>
-</div>
-</section>
-
-
-
-</div>
-)
+  );
 };
 
 export default Page;

@@ -345,7 +345,7 @@ const page = () => {
       </div>
 
       <MobileHeader />
-      <CustomSlider />
+      
 
       <div className="content px-5 py-0 lg:px-40 lg:py-8">
         <h2 className="text-2xl font-semibold text-center mb-6">
@@ -505,7 +505,7 @@ const page = () => {
           ))}
         </div>
       </div>
-
+  <CustomSlider />
       <div className="py-8 px-5 md:px-20">
         <h2 className="text-2xl font-bold text-center mb-5 md:mb-10">
           How To Buy Cheap Train Tickets?
@@ -537,6 +537,7 @@ const page = () => {
           </ul>
         </div>
       </div>
+    
       <FAQSection />
     </>
   );

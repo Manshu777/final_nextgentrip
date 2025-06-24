@@ -1,220 +1,121 @@
+
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Subscribe from "./AllComponent/Subscribe";
 import { useTranslations } from "next-intl";
+import axios from "axios";
+import { apilink } from "./common";
 
 const Footer = () => {
   const t = useTranslations("footer");
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(2);
+  const [allpackage, setAllpackage] = useState([]);
+  const [loader, setLoader] = useState(true);
+
+  const fetchPackage = async () => {
+    try {
+      setLoader(true);
+      const response = await axios.get(`${apilink}/holidays/top`);
+      if (response.data) {
+        setAllpackage(response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPackage();
+  }, []);
+
   const tabsContent = {
-    bestCheapFlight: [
-      { name: "Ryanair", link: "https://www.ryanair.com" },
-      { name: "easyJet", link: "https://www.easyjet.com" },
-      { name: "Southwest Airlines", link: "https://www.southwest.com" },
-      { name: "AirAsia", link: "https://www.airasia.com" },
-      { name: "JetBlue Airways", link: "https://www.jetblue.com" },
-      { name: "Spirit Airlines", link: "https://www.spirit.com" },
-      { name: "IndiGo", link: "https://www.goindigo.in" },
-      { name: "Wizz Air", link: "https://www.wizzair.com" },
-      { name: "Norwegian Air Shuttle", link: "https://www.norwegian.com" },
-      { name: "Frontier Airlines", link: "https://www.flyfrontier.com" },
-      { name: "Scoot", link: "https://www.flyscoot.com" },
-      { name: "Vueling", link: "https://www.vueling.com" },
-      { name: "Allegiant Air", link: "https://www.allegiantair.com" },
-      { name: "Tigerair", link: "https://www.tigerair.com" },
-      { name: "Peach Aviation", link: "https://www.flypeach.com" },
-      { name: "VivaAerobus", link: "https://www.vivaaerobus.com" },
-      { name: "Flynas", link: "https://www.flynas.com" },
-      { name: "Azul Brazilian Airlines", link: "https://www.voeazul.com.br" },
-      { name: "Cebu Pacific", link: "https://www.cebupacificair.com" },
-      { name: "Gol Linhas Aéreas", link: "https://www.voegol.com.br" },
-      { name: "Air Arabia", link: "https://www.airarabia.com" },
-      { name: "Jeju Air", link: "https://www.jejuair.net" },
-      { name: "Flydubai", link: "https://www.flydubai.com" },
-      { name: "Blue Air", link: "https://www.flyblueair.com" },
-      { name: "HK Express", link: "https://www.hkexpress.com" },
-      { name: "Sun Country Airlines", link: "https://www.suncountry.com" },
-      { name: "Transavia", link: "https://www.transavia.com" },
-      { name: "AirBaltic", link: "https://www.airbaltic.com" },
-      { name: "Eurowings", link: "https://www.eurowings.com" },
-      { name: "Volotea", link: "https://www.volotea.com" },
-    ],
     FavouriteAirlineAndAirports: [
       { type: "Airline", name: "Ryanair", link: "https://www.ryanair.com" },
       { type: "Airline", name: "easyJet", link: "https://www.easyjet.com" },
-      {
-        type: "Airline",
-        name: "Southwest Airlines",
-        link: "https://www.southwest.com",
-      },
+      { type: "Airline", name: "Southwest Airlines", link: "https://www.southwest.com" },
       { type: "Airline", name: "AirAsia", link: "https://www.airasia.com" },
-      {
-        type: "Airline",
-        name: "JetBlue Airways",
-        link: "https://www.jetblue.com",
-      },
-      {
-        type: "Airline",
-        name: "Spirit Airlines",
-        link: "https://www.spirit.com",
-      },
+      { type: "Airline", name: "JetBlue Airways", link: "https://www.jetblue.com" },
+      { type: "Airline", name: "Spirit Airlines", link: "https://www.spirit.com" },
       { type: "Airline", name: "IndiGo", link: "https://www.goindigo.in" },
       { type: "Airline", name: "Wizz Air", link: "https://www.wizzair.com" },
-      {
-        type: "Airline",
-        name: "Norwegian Air Shuttle",
-        link: "https://www.norwegian.com",
-      },
-      {
-        type: "Airline",
-        name: "Frontier Airlines",
-        link: "https://www.flyfrontier.com",
-      },
-      {
-        type: "Airport",
-        name: "Heathrow Airport",
-        link: "https://www.heathrow.com",
-      },
-      {
-        type: "Airport",
-        name: "Changi Airport",
-        link: "https://www.changiairport.com",
-      },
-      {
-        type: "Airport",
-        name: "Los Angeles International Airport (LAX)",
-        link: "https://www.flylax.com",
-      },
-      {
-        type: "Airport",
-        name: "Dubai International Airport (DXB)",
-        link: "https://www.dubaiairports.ae",
-      },
-      {
-        type: "Airport",
-        name: "Tokyo Narita Airport",
-        link: "https://www.narita-airport.jp",
-      },
+      { type: "Airline", name: "Norwegian Air Shuttle", link: "https://www.norwegian.com" },
+      { type: "Airline", name: "Frontier Airlines", link: "https://www.flyfrontier.com" },
+      { type: "Airport", name: "Heathrow Airport", link: "https://www.heathrow.com" },
+      { type: "Airport", name: "Changi Airport", link: "https://www.changiairport.com" },
+      { type: "Airport", name: "Los Angeles International Airport (LAX)", link: "https://www.flylax.com" },
+      { type: "Airport", name: "Dubai International Airport (DXB)", link: "https://www.dubaiairports.ae" },
+      { type: "Airport", name: "Tokyo Narita Airport", link: "https://www.narita-airport.jp" },
       { type: "Airline", name: "Scoot", link: "https://www.flyscoot.com" },
       { type: "Airline", name: "Vueling", link: "https://www.vueling.com" },
-      {
-        type: "Airport",
-        name: "Singapore Changi Airport",
-        link: "https://www.changiairport.com",
-      },
-      {
-        type: "Airline",
-        name: "Allegiant Air",
-        link: "https://www.allegiantair.com",
-      },
+      { type: "Airport", name: "Singapore Changi Airport", link: "https://www.changiairport.com" },
+      { type: "Airline", name: "Allegiant Air", link: "https://www.allegiantair.com" },
       { type: "Airline", name: "Tigerair", link: "https://www.tigerair.com" },
-      {
-        type: "Airport",
-        name: "San Francisco International Airport (SFO)",
-        link: "https://www.flysfo.com",
-      },
-      {
-        type: "Airline",
-        name: "Peach Aviation",
-        link: "https://www.flypeach.com",
-      },
-      {
-        type: "Airline",
-        name: "VivaAerobus",
-        link: "https://www.vivaaerobus.com",
-      },
+      { type: "Airport", name: "San Francisco International Airport (SFO)", link: "https://www.flysfo.com" },
+      { type: "Airline", name: "Peach Aviation", link: "https://www.flypeach.com" },
+      { type: "Airline", name: "VivaAerobus", link: "https://www.vivaaerobus.com" },
       { type: "Airline", name: "Flynas", link: "https://www.flynas.com" },
-      {
-        type: "Airport",
-        name: "Sydney Kingsford Smith Airport",
-        link: "https://www.sydneyairport.com.au",
-      },
-      {
-        type: "Airline",
-        name: "Azul Brazilian Airlines",
-        link: "https://www.voeazul.com.br",
-      },
-      {
-        type: "Airline",
-        name: "Cebu Pacific",
-        link: "https://www.cebupacificair.com",
-      },
-      {
-        type: "Airport",
-        name: "Hartsfield-Jackson Atlanta International Airport",
-        link: "https://www.atl.com",
-      },
-      {
-        type: "Airline",
-        name: "Gol Linhas Aéreas",
-        link: "https://www.voegol.com.br",
-      },
-      {
-        type: "Airport",
-        name: "Frankfurt Airport",
-        link: "https://www.frankfurt-airport.com",
-      },
+      { type: "Airport", name: "Sydney Kingsford Smith Airport", link: "https://www.sydneyairport.com.au" },
+      { type: "Airline", name: "Azul Brazilian Airlines", link: "https://www.voeazul.com.br" },
+      { type: "Airline", name: "Cebu Pacific", link: "https://www.cebupacificair.com" },
+      { type: "Airport", name: "Hartsfield-Jackson Atlanta International Airport", link: "https://www.atl.com" },
+      { type: "Airline", name: "Gol Linhas Aéreas", link: "https://www.voegol.com.br" },
+      { type: "Airport", name: "Frankfurt Airport", link: "https://www.frankfurt-airport.com" },
     ],
   };
+
   return (
     <>
       <Subscribe />
       <footer className="bg-white px-24" aria-labelledby="footer-heading">
-        <h2 id="footer-heading text-[300px] bg-red-500" className="sr-only">
+        <h2 id="footer-heading" className="sr-only">
           Footer
         </h2>
-
         <div className="mx-auto max-w-7xl lg:py-10 px-6 pb-8 pt-5 sm:pt-5 lg:px-8 lg:pt-5">
-         <div className="Recomended TabChanges space-y-4">
-            <p className="text-2xl font-semibold text-gray-700 lg:text-3xl ">
+          <div className="Recomended TabChanges space-y-4">
+            <p className="text-2xl font-semibold text-gray-700 lg:text-3xl">
               Recommended by <span className="text-blue-500">Nextgentrip.com</span>
             </p>
 
             <div className="tabSection">
-              <div className="flex overflow-hidden items-center  gap-3 ">
-                <button
-                  onClick={() => setActiveTab(1)}
-                  className={`${
-                    activeTab == 1
-                      ? "bg-slate-700 text-white"
-                      : "bg-slate-100 hover:text-blue-500"
-                  } py-2 px-4   text-nowrap text-sm font-medium text-gray-600 border-b-2 border-transparent  focus:outline-none rounded-sm`}
-                >
-                  Best Cheap Flights
-                </button>
+              <div className="flex overflow-hidden items-center gap-3">              
                 <button
                   onClick={() => setActiveTab(2)}
                   className={`${
-                    activeTab == 2
+                    activeTab === 2
                       ? "bg-slate-700 text-white"
                       : "bg-slate-100 hover:text-blue-500"
-                  }  py-2 px-4   text-sm font-medium text-nowrap  text-gray-600 border-b-2 border-transparent  focus:outline-none rounded-sm`}
+                  } py-2 px-4 text-sm font-medium text-nowrap text-gray-600 border-b-2 border-transparent focus:outline-none rounded-sm`}
                 >
-                  Favourite Airline & Airports
+                  Top Holiday Packages
                 </button>
               </div>
-              {activeTab == 1 ? (
-                <ul className=" w-full overflow-x-auto tab-content px-3 text-xs grid grid-cols-2 lg:grid-cols-5   gap-4 rounded-md py-8">
-                  {tabsContent.bestCheapFlight.map((elm, index) => (
+               {activeTab === 1 ? (
+                <ul className="tab-content text-xs w-full overflow-x-auto grid grid-cols-2 lg:grid-cols-4 gap-4 px-5 py-8 rounded-md">
+                  {tabsContent.FavouriteAirlineAndAirports.map((item, index) => (
                     <li key={index} className="ml-0 text-sm">
-                      <h5>{elm.name}</h5>
+                      <h3>{item.name}</h3>
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <ul className="tab-content text-xs w-full overflow-x-auto   grid grid-cols-2 lg:grid-cols-4 gap-4  px-5 py-8 rounded-md">
-                  {tabsContent.FavouriteAirlineAndAirports.map(
-                    (item, index) => (
-                      <li key={index} className="ml-0 text-sm">
-                        <h3>
-                          {item.name} 
-                        </h3>
-                        
-                      </li>
-                    )
+              )  : ( 
+                <div className="tab-content text-xs w-full overflow-x-auto px-5 py-8 rounded-md">
+                  {loader ? (
+                    <p>Loading packages...</p>
+                  ) : allpackage.length > 0 ? (
+                    <ul className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                      {allpackage.map((pkg, index) => (
+                        <Link href={`/holidayspackage/package/${pkg.slug}`} key={index} className="ml-0 text-sm">
+                          <h3>{pkg.package_name || "Package"}</h3>
+                        </Link>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No packages available.</p>
                   )}
-                </ul>
+                </div>
               )}
             </div>
           </div>
@@ -222,7 +123,7 @@ const Footer = () => {
           <div className="my-10 xl:grid xl:grid-cols-3 xl:gap-8">
             <div className="space-y-4">
               <img
-                className=" block w-auto h-14 md:h-20"
+                className="block w-auto h-14 md:h-20"
                 src="/images/NextGenTrip.png"
                 alt=""
               />
@@ -232,7 +133,7 @@ const Footer = () => {
               </p>
               <div className="flex items-center space-x-6">
                 <Link
-                target="_blank"
+                  target="_blank"
                   href="https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr"
                   className="hover:text-blue-400 text-blue-500"
                 >
@@ -250,9 +151,8 @@ const Footer = () => {
                     />
                   </svg>
                 </Link>
-
                 <Link
-                target="_blank"
+                  target="_blank"
                   href="https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08"
                   className="hover:text-gray-400 text-gray-500"
                 >
@@ -273,7 +173,7 @@ const Footer = () => {
                   className="hover:text-black-400 text-black-500"
                   target="_blank"
                 >
-                  <span className="sr-only">instagram</span>
+                  <span className="sr-only">Instagram</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -286,9 +186,9 @@ const Footer = () => {
                   </svg>
                 </Link>
                 <Link
-                target="_blank"
+                  target="_blank"
                   href="https://www.youtube.com/@NextGenTrip-g5t"
-                  className=" text-red-500  hover:text-red-400  "
+                  className="text-red-500 hover:text-red-400"
                 >
                   <span className="sr-only">YouTube</span>
                   <svg
@@ -368,14 +268,6 @@ const Footer = () => {
                         {t("hotels")}
                       </Link>
                     </li>
-                    {/* <li>
-                      <Link
-                        href="/flight+hotels"
-                        className="text-sm leading-6 text-gray-600 hover:text-gray-900"
-                      >
-                        {t("fhotels")}
-                      </Link>
-                    </li> */}
                     <li>
                       <Link
                         href="/train"
@@ -469,70 +361,26 @@ const Footer = () => {
                         href="/ATI/loyalty-program/"
                         className="text-sm leading-6 text-gray-600 hover:text-gray-900 text-wrap"
                       >
-                       Membership & Loyalty Program
+                        Membership & Loyalty Program
                       </Link>
                     </li>
-                  
                   </ul>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className=" ftnew h  mt-16 border-t border-gray-900/10 hidden sm:block pt-4 sm:mt-20 lg:mt-10">
+          <div className="ftnew h mt-16 border-t border-gray-900/10 hidden sm:block pt-4 sm:mt-20 lg:mt-10">
             <div className="flex justify-between items-center">
               <div className="text-sm leading-6 text-gray-600 hover:text-gray-900 w-full">
                 <p>{t("text1")}</p>
               </div>
-
-              {/* <div className=" ">
-                <div className=" mb-3">
-                  Download Next Gen  App <span className=""></span>
-                </div>
-                <div className="flex">
-                  <div className="apiconh">
-                    <Link href="#" target="_blank" rel="noopener noreferrer">
-                      <img
-                        src="/images/androidft.webp"
-                        alt="Google Play"
-                        width={120}
-                        height={40}
-                      />
-                    </Link>
-                  </div>
-                   <div className="">
-                    <Link href="#" target="_blank" rel="noopener noreferrer">
-                      <img
-                        src="/images/iosnovft.webp"
-                        alt="App Store"
-                        width={120}
-                        height={40}
-                      />
-                    </Link>
-                  </div> 
-                </div>
-              </div> 
-               <div className="">
-                <div className=" mb-3">
-                  Scan QR Code<span className=""></span>
-                </div>
-                <div className="">
-                  <div className="">
-                    <img
-                      src="/images/tripscan.webp"
-                      alt="Scan QR"
-                      width={100}
-                      height={100}
-                    />
-                  </div>
-                </div>
-              </div> */}
             </div>
           </div>
 
-          <div className="belowFooter mt-16 flex justify-between border-t border-gray-900/10 pt-4 sm:mt-20 lg:mt-6 ">
+          <div className="belowFooter mt-16 flex justify-between border-t border-gray-900/10 pt-4 sm:mt-20 lg:mt-6">
             <p className="text-sm leading-5 text-gray-500">
-              © 2025 Next Gen  All Rights Reserved.
+              © 2025 Next Gen All Rights Reserved.
             </p>
             <Link
               href="/condition/privacy-policy"
@@ -546,6 +394,5 @@ const Footer = () => {
     </>
   );
 };
-
 
 export default Footer;

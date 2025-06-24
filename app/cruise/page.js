@@ -397,7 +397,7 @@ if(res.data.success){
       </div>
 
       <div className="px-5 lg:px-20  space-y-16">
-        <CustomSlider />
+        
 
         <div className="space-y-10">
           <div className="text-center">
@@ -462,7 +462,7 @@ if(res.data.success){
             </p>
           </div>
         </div>
-
+<CustomSlider />
         <div className="startHere ">
           <div className="text-center xl:w-[70%] mx-auto space-y-5">
             <h6 className="text-xl font-semibold">

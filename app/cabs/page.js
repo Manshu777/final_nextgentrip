@@ -64,9 +64,42 @@ const page = () => {
     <>
       <CabsComp />
       <MobileHeader />
-      <CustomSlider />
+      
 
-     <div className="bg-gray-100 p-5 md:p-20">
+    
+
+      <main className="flight py-8 lg:py-10 px-0 md:px-10  lg:px-40">
+        <div className="">
+          <div className="relative ">
+            <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2  mb-5 lg:mb-6">
+              Top Cab Routes
+            </div>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {routes.map((route, index) => (
+            <div key={index} className="flex items-center space-x-4  p-4 ">
+              <div className="w-24 h-20 relative">
+                <Image
+                  src={route.img}
+                  alt={`${route.from} to ${route.to}`}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg w-16 h-16"
+                />
+              </div>
+              <div>
+                <div className="font-bold text-xl flex">{route.from} </div>
+                <div className="text-gray-600 text-sm font-semibold">
+                  To- {route.to}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+
+       <div className="bg-gray-100 p-5 md:p-20">
   <div className="container mx-auto px-4 lg:px-0 space-y-8">
     <div className="w-full lg:w-3/5 text-center mx-auto">
       <span className="inline-block px-3 py-1 text-sm font-semibold text-purple-700 bg-purple-100 rounded-full mb-3">
@@ -125,38 +158,7 @@ const page = () => {
   </div>
 </div>
 
-
-      <main className="flight py-8 lg:py-10 px-0 md:px-10  lg:px-40">
-        <div className="">
-          <div className="relative ">
-            <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2  mb-5 lg:mb-6">
-              Top Cab Routes
-            </div>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {routes.map((route, index) => (
-            <div key={index} className="flex items-center space-x-4  p-4 ">
-              <div className="w-24 h-20 relative">
-                <Image
-                  src={route.img}
-                  alt={`${route.from} to ${route.to}`}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-lg w-16 h-16"
-                />
-              </div>
-              <div>
-                <div className="font-bold text-xl flex">{route.from} </div>
-                <div className="text-gray-600 text-sm font-semibold">
-                  To- {route.to}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-
+<CustomSlider />
       <div className="min-h-max bg-gray-100">
         <main className="max-w-7xl mx-auto px-4 py-8">
           <section className="bg-white shadow-md rounded-lg p-6">

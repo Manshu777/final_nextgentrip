@@ -1,19 +1,9 @@
 "use client";
-import React, { useEffect, useState } from "react";
-
-
-
-import "swiper/css";
-import "swiper/css/pagination";
-
-import { useTranslations } from "next-intl";
-import { FaInstagram,FaFacebookSquare,FaYoutube } from "react-icons/fa";
+import React from "react";
+import { FaInstagram, FaFacebookSquare, FaYoutube } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
-import Link from "next/link";
 
-
-export default function page() {
-  const t=useTranslations("atibharat")
+export default function Page() {
   const whyApkaTripDetails = [
     {
       title: "Tailor-Made Experiences for Every Explorer",
@@ -36,7 +26,7 @@ export default function page() {
         "Our highly trained travel experts are passionate about travel - and it shows. Whether seeking advice on the best hiking trails in the Swiss Alps or recommendations for hidden cultural gems in India, our advisors guide you every step of the way with insider expertise.",
     },
   ];
-  
+
   const travelCategories = [
     {
       category: "Adventure Travel",
@@ -69,7 +59,7 @@ export default function page() {
         "Whether a solo backpacking trip or a quiet retreat, NextGen provides empowering solo experiences, letting you explore new destinations at your own pace.",
     },
   ];
-  
+
   const journeySteps = [
     {
       step: "1. Share Your Dream Destination",
@@ -119,126 +109,137 @@ export default function page() {
         "This is where inspiration comes from the power of discovery and the beauty of new places. At NextGen, we connect travelers with hidden treasures and unforgettable adventures from all around the globe. Every journey is made unforgettable, whether it’s a luxury escape or an off-the-beaten-path exploration.",
     },
   ];
-return (
-<>
- <section className="h-screen   ">
-  <div className="flex py-5 flex-col justify-center h-full items-center bg-gradient-to-br from-gray-400 via-slate-800 px-5 space-y-5 text-white">
-    <h5 className="text-2xl text-center lg:text-3xl font-bold">
-      Welcome to NextGen - Your Gateway to Exploring the World
-    </h5>
-    <p className="text-center text-base lg:text-lg text-[#ffebeb] ">
-      Uncover, Roam, and Have Fun Exploring the Wonders of the World with
-      NextGen Are you ready to experience the world in ways you never
-      thought you'd experience? That's what NextGen is committed to:
-      traveling not for getting to any destination but to unveiling the real
-      meaning of cultures, discovering the most hidden gems, and making
-      memories forever. Whether you dream of crossing ancient cities, hiking
-      through luscious forests, or exploring remote islands, we're here to
-      make that happen. Be your trusted travel companion when you explore
-      the world, ensuring unforgettable trips worldwide. The world is vast,
-      and adventure awaits.
-    </p>
-  </div>
-</section>
-<section className="px-5 md:px-16 lg:px-20 py-12 space-y-12">
-{/* Why NextGen Section */}
-<div className="bg-[#F1F5F9] p-8 rounded-lg space-y-8">
-  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
-    Why NextGen?
-  </h2>
-  {whyApkaTripDetails.map((item, index) => (
-    <div key={index} className="space-y-2">
-      <h3 className="text-lg md:text-xl font-semibold text-gray-800">
-        {item.title}
-      </h3>
-      <p className="text-base text-gray-600">{item.description}</p>
-    </div>
-  ))}
-</div>
 
-{/* Travel Categories Section */}
-<div className="bg-[#F1F5F9] rounded-lg p-8  space-y-8">
-  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
-    Discover our Signature Travel Categories
-  </h2>
-  {travelCategories.map((item, index) => (
-    <div key={index} className="space-y-2">
-      <h3 className="text-lg md:text-xl font-semibold text-gray-800">
-        {item.category}
-      </h3>
-      <p className="text-base text-gray-600">{item.description}</p>
-    </div>
-  ))}
-</div>
-<div className="bg-[#F1F5F9] p-8 rounded-lg space-y-8">
-  <h2 className="text-2xl md:text-3xl font-bold text-gray-800 text-center">
-    How It Works: Your Journey with NextGen
-  </h2>
-  {journeySteps.map((item, index) => (
-    <div key={index} className="space-y-2">
-      <h3 className="text-xl  font-semibold text-gray-800">
-        {item.step}
-      </h3>
-      <p className="text-base text-gray-600">{item.description}</p>
-    </div>
-  ))}
-</div>
+  return (
+    <>
+      {/* Hero Section */}
+      <section className="h-[300px] bg-gradient-to-br from-[#10325a] to-[#45a183] flex items-center justify-center px-5 text-white text-center">
+        <div className="max-w-4xl space-y-6">
+          <h1 className="text-3xl lg:text-4xl font-bold">
+            Welcome to NextGen - Your Gateway to Exploring the World
+          </h1>
+          <p className="text-white/90 text-lg">
+            Uncover, roam, and explore the wonders of the world with NextGen.
+            Whether you're dreaming of ancient cities or remote islands, we make
+            it happen with curated travel and unforgettable experiences.
+          </p>
+        </div>
+      </section>
 
-<div className="space-y-5 bg-slate-200 rounded-lg">
-{communityDetails.map((section, index) => (
-  <div key={index} className="bg-[#F1F5F9] p-8 rounded-lg space-y-4">
-    <h2 className="text-lg md:text-xl font-semibold text-gray-800">
-      {section.title}
-    </h2>
-    {section.subtitle && (
-      <h3 className="text-lg font-medium text-gray-700">{section.subtitle}</h3>
-    )}
-    <p className="text-base text-gray-600">{section.description}</p>
-    {section.cta && (
-      <button className="mt-4 text-blue-600 font-semibold hover:underline">
-        {section.cta}
-      </button>
-    )}
-  </div>
-))}
-<div className="bg-[#F1F5F9] p-8 rounded-lg space-y-4">
-  <h2 className="text-xl  font-semibold text-gray-800">
-    Contact
-  </h2>
-   <p className="text-base text-gray-600">
-  {/*Sector 48, 
-    <br />
-    Chandigarh, India
-    <br /> */}
-    +(91) 9877579319
-    <br />
-    info@nextgentrip.com
-  </p>
-</div>
-<div className="bg-[#F1F5F9] p-8 rounded-lg space-y-4">
-  <h2 className="text-xl  font-semibold text-gray-800">
-    Follow Us on Social Media
-  </h2>
-  <p className="text-base text-gray-600">
-    Stay inspired and updated about the latest travel trends, hidden gems, and unique experiences around the world.
-  </p>
-  <div className="flex space-x-4 mt-4 text-2xl">
-           <a  target="_blank"
-                       href="https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr" className=""><FaFacebookSquare /></a>
-           <a  target="_blank"
-                       href="https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08" className=""><FaXTwitter/></a>
-           <a target="_blank"
-                       href="https://www.youtube.com/@NextGenTrip-g5t" className=""><FaYoutube /></a>
-           <a href="https://www.instagram.com/nextgentrip/profilecard/?igsh=MTdyMjlyb293aTB0MA%3D%3D" target="_blank" className=""><FaInstagram /></a>
-         </div>
-    
-</div>
-</div>
-</section>
-</>
-);
+      {/* Main Content */}
+      <section className="px-5 md:px-16 lg:px-20 py-12 space-y-12 text-[#10325a]">
+        {/* Why NextGen */}
+        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
+          <h2 className="text-3xl font-bold text-center">Why NextGen?</h2>
+          {whyApkaTripDetails.map((item, index) => (
+            <div key={index} className="space-y-2">
+              <h3 className="text-xl font-semibold">{item.title}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
 
- 
+        {/* Travel Categories */}
+        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
+          <h2 className="text-3xl font-bold text-center">
+            Discover Our Signature Travel Categories
+          </h2>
+          {travelCategories.map((item, index) => (
+            <div key={index} className="space-y-2">
+              <h3 className="text-xl font-semibold">{item.category}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Journey Steps */}
+        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
+          <h2 className="text-3xl font-bold text-center">
+            How It Works: Your Journey with NextGen
+          </h2>
+          {journeySteps.map((item, index) => (
+            <div key={index} className="space-y-2">
+              <h3 className="text-xl font-semibold">{item.step}</h3>
+              <p>{item.description}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Community Sections */}
+        <div className="space-y-5">
+          {communityDetails.map((section, index) => (
+            <div key={index} className="bg-[#f0f7f5] p-8 rounded-lg space-y-4">
+              <h2 className="text-xl font-semibold">{section.title}</h2>
+              {section.subtitle && (
+                <h3 className="text-lg font-medium text-[#45a183]">
+                  {section.subtitle}
+                </h3>
+              )}
+              <p>{section.description}</p>
+              {section.cta && (
+                <button className="mt-4 text-[#45a183] font-semibold hover:underline">
+                  {section.cta}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Contact Info */}
+        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-4">
+          <h2 className="text-xl font-semibold">Contact</h2>
+          <p className="text-base">
+            <a
+              href="tel:+919877579319"
+              className="text-[#10325a] hover:text-[#45a183]"
+            >
+              +(91) 9877579319
+            </a>
+            <br />
+            <a
+              href="mailto:info@nextgentrip.com"
+              className="text-[#10325a] hover:text-[#45a183]"
+            >
+              info@nextgentrip.com
+            </a>
+          </p>
+        </div>
+
+        {/* Social Media */}
+        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-4">
+          <h2 className="text-xl font-semibold">Follow Us on Social Media</h2>
+          <p>
+            Stay inspired and updated about the latest travel trends, hidden
+            gems, and unique experiences around the world.
+          </p>
+          <div className="flex space-x-4 text-2xl text-[#10325a] mt-4">
+            <a
+              target="_blank"
+              href="https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr"
+            >
+              <FaFacebookSquare />
+            </a>
+            <a
+              target="_blank"
+              href="https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08"
+            >
+              <FaXTwitter />
+            </a>
+            <a
+              target="_blank"
+              href="https://www.youtube.com/@NextGenTrip-g5t"
+            >
+              <FaYoutube />
+            </a>
+            <a
+              target="_blank"
+              href="https://www.instagram.com/nextgentrip/profilecard/?igsh=MTdyMjlyb293aTB0MA%3D%3D"
+            >
+              <FaInstagram />
+            </a>
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }
-
-

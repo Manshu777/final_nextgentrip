@@ -40,7 +40,7 @@ const Page = () => {
     <>
       <BusComp />
       {/* <MobileHeader /> */}
-      <CustomSlider />
+     
 
       
 
@@ -123,7 +123,7 @@ const Page = () => {
         {/* Section 3 */}
         <div className="my-16">
           <h2 className="text-3xl font-bold mb-5 text-center">
-            Why book with us?
+           Why You'll Love Booking Here
           </h2>
           <div className=" flex flex-wrap lg:flex-nowrap justify-center gap-10 mt-8">
             {busFeatures.map((feature, index) => (
@@ -146,7 +146,7 @@ const Page = () => {
         </div>
         </div>
       </div>
-
+ <CustomSlider />
       <div className="pb-3">
         <FAQSection />
       </div>
