@@ -275,12 +275,12 @@ const CabComp = () => {
             <div className="relative">
               <div
                 onClick={() => setSelected("date")}
-                className="flex items-center cursor-pointer gap-2 px-2 py-18px border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center cursor-pointer gap-1 px-1 py-18px border-2 text-black border-slate-200 rounded-md"
               >
-                <FaCalendarAlt className="text-12px" />
+                <FaCalendarAlt className="text-8px" />
                 <div className="text-slate-400">
                   <div className="flex items-baseline text-black">
-                    <span className="text-xl py-1 pr-1 text-black font-bold">
+                    <span className="text-sm py-2 pr-1 text-black font-bold">
                       {transferDate.getDate()}
                     </span>
                     <span className="text-sm font-semibold">

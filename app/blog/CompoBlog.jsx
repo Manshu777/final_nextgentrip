@@ -21,7 +21,7 @@ const CompoBlog = () => {
     
       };
   return (
-    <div className="flex flex-wrap gap-6 justify-center">
+    <div className="flex flex-wrap gap-6 justify-center ">
  
     {blogPosts && blogPosts.slice(0, 4).map((info,index)=>(
         <Link href={`/blogView/${info.slug}`} className="event-box-main flex flex-wrap   items-center justify-center gap-3">

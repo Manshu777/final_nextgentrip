@@ -348,7 +348,8 @@ const page = () => {
       
 
       <div className="content px-5 py-0 lg:px-40 lg:py-8">
-        <h2 className="text-2xl font-semibold text-center mb-6">
+        <h2 className="text-2xl font-semibold text-center mb-6 mt-5 sm:mt-0">
+
           Why Book Train Tickets with Next Gen?
         </h2>
         <ul className="block lg:flex items-center justify-center gap-20">

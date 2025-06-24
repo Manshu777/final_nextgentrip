@@ -95,35 +95,38 @@ route.push(`/holidayspackage/${searchInput}`)
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-10 lg:bottom-16  left-0 right-0 text-center pb-6">
-        <h1 className="text-white text-2xl lg:text-4xl font-bold mt-5">
+      <div className="absolute bottom-10 lg:bottom-16  left-0 right-0 text-center pb-6 ">
+        <h1 className="text-white text-lg sm:text-2xl lg:text-4xl font-bold leading-snug sm:leading-snug mt-4 sm:mt-6 drop-shadow-md ">
           Where Every Experience Counts!
         </h1>
-        <div className="flex justify-between mt-5  items-center border rounded-full   w-full md:w-[600px] bg-white mx-auto ">
-          <div className="relative w-full flex p-2 px-4 items-center">
-            <img
-              src="/images/search.svg"
-              alt="Search Icon"
-              width={24}
-              height={24}
-            />
-            <input
-              type="text"
-              id="txtDesCity"
-              className="ml-2 flex-grow border-none p-2 w-full rounded-lg placeholder-gray-500"
-              placeholder="Enter Your Dream Destination!"
-              value={searchInput}
-              onChange={(e)=>setSearchInput(e.target.value)}
-            />
-          </div>
-          <button
-            className="ml-2 primary-col text-white px-8 py-2 h-14  rounded-full hover:bg-[#ef6414ed]"
-            type="button"
-            onClick={handleSearch}
-          >
-            Search
-          </button>
-        </div>
+       <div className="px-5 sm:px-0">
+  <div className="flex justify-between mt-5 items-center border rounded-full w-full md:w-[600px] bg-white mx-auto">
+    <div className="relative w-full flex p-2 px-4 items-center">
+      <img
+        src="/images/search.svg"
+        alt="Search Icon"
+        width={24}
+        height={24}
+      />
+      <input
+        type="text"
+        id="txtDesCity"
+        className="ml-2 flex-grow border-none p-2 w-full rounded-lg placeholder-gray-500"
+        placeholder="Enter Your Dream Destination!"
+        value={searchInput}
+        onChange={(e) => setSearchInput(e.target.value)}
+      />
+    </div>
+    <button
+      className="ml-2 primary-col text-white px-8 py-2 h-14 rounded-full hover:bg-[#ef6414ed]"
+      type="button"
+      onClick={handleSearch}
+    >
+      Search
+    </button>
+  </div>
+</div>
+
       </div>
 
       <div className="hidden md:flex justify-center">

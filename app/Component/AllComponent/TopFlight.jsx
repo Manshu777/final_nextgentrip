@@ -135,8 +135,9 @@ const TopFlight = () => {
   return (
     <>
       {/* FLIGHT & PACKAGE GRID */}
-      <div className="flight pt-0 lg:pt-10 px-0 md:px-10 lg:px-28">
-        <h2 className="text-center text-3xl font-bold mb-6">{t("mainheading")}</h2>
+      <div className="flight pt-0 lg:pt-10 px-0 md:px-10 lg:px-28 " >
+        <h2 className="text-center text-3xl font-bold mb-6 mt-5 sm:mt-0">
+{t("mainheading")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-5 p-3">
           {/* Flights */}

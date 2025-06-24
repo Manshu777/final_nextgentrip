@@ -61,7 +61,8 @@ dispatch(getAllRegHotels())
 
 </div>
       <div className="px-0 lg:px-20">
-        <h2 className="text-lg text-center lg:text-2xl font-semibold md:mb-5">
+        <h2 className="text-lg text-center lg:text-2xl font-semibold md:mb-5 mt-5 sm:mt-0">
+
           Book Hotels at Popular Destinations
         </h2>
 
