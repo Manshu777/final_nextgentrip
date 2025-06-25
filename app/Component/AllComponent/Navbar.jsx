@@ -51,21 +51,22 @@ const Navbar = () => {
       link: "/hotels",
     },
 
-    {
+   
+
+   
+     {
+      name: t("holidays"),
+      className: "meuicowidth holidaymenuico",
+      class: "holiday-icon",
+      link: "/holidayspackage",
+    },
+
+ {
       name: 'eSIM',
       className: "meuicowidth esimimg",
       class: "esim",
       link: "/e-sim",
     },
-
-    {
-      name: 'Visa',
-      className: "meuicowidth passportimg",
-      class: "eVisa",
-      link: "https://www.visanextgen.com/",
-    },
-
-
 
     // {
     //   name: t("flightHotel"),
@@ -81,10 +82,10 @@ const Navbar = () => {
       link: "/buses",
     },
     {
-      name: t("holidays"),
-      className: "meuicowidth holidaymenuico",
-      class: "holiday-icon",
-      link: "/holidayspackage",
+      name: 'Visa',
+      className: "meuicowidth passportimg",
+      class: "eVisa",
+      link: "https://www.visanextgen.com/",
     },
     // {
     //   name: t("cab"),
@@ -113,6 +114,13 @@ const Navbar = () => {
       class: "Inurance-icon",
       link: "/Insurance",
     },
+     {
+      name: "Join Marriages",
+      className: "meuicowidth marriages-icon",
+      class: "marriages-icon",
+      link: "http://joinmarriages.com",
+      title: "Foreign Guests Join Indian Weddings"
+    },
 
     {
       name: t("cruise"),
@@ -136,13 +144,7 @@ const Navbar = () => {
       link: "/train",
     },
 
-    {
-      name: "Join Marriages",
-      className: "meuicowidth marriages-icon",
-      class: "marriages-icon",
-      link: "http://joinmarriages.com",
-      title: "Foreign Guests Join Indian Weddings"
-    },
+   
     
 
 
