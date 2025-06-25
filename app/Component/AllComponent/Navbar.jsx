@@ -15,7 +15,6 @@ const Navbar = () => {
     typeof window !== "undefined" ? window?.innerWidth < 768 : ""
   );
 
-
   const [activeLink, setActiveLink] = useState("");
 
   useEffect(() => {
@@ -153,17 +152,10 @@ const Navbar = () => {
   return (
     <>
 
-
-
-
       <div className=" md:hidden">
         <CustomSlider />
       </div>
-
-
       <nav className="bg-white py-1 px-0 md:px-5 flex justify-between gap-2 transition-all duration-100 mb-3 md:mb-0">
-
-
         <div
           className={`container relative custom-nav grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
         >
