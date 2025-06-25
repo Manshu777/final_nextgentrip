@@ -1,69 +1,51 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import TravellerDropDownhotels from "../TravellerDropDownhotels";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import AutoSearchcity from "../AutoSearchcity";
 import { Calendar } from "@nextui-org/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import Navbar from "../Navbar";
-import { MdOutlineMeetingRoom } from "react-icons/md";
 import { IoLocationSharp } from "react-icons/io5";
+import { MdOutlineMeetingRoom } from "react-icons/md";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
 import MiniNav from "../MiniNav";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCountries } from "../../Store/slices/citysearchSlice";
+import AutoSearchcity from "../AutoSearchcity";
+import TravellerDropDownhotels from "../TravellerDropDownhotels";
 
 const HotelsComp = () => {
-  const route = useRouter();
+  const router = useRouter();
   const dropdownRef = useRef(null);
   const dispatch = useDispatch();
   const localTimeZone = getLocalTimeZone();
-  const [isVisible, setIsVisible] = useState("");
-  const defalinfo = JSON.parse(localStorage.getItem("hotelItems"));
-  const [isOpen, setIsOpen] = useState(false);
-  const [city, setcity] = useState(
-    (defalinfo && defalinfo.place) || { Name: "delhi", Code: "130443" }
-  );
   const currentDate = today(localTimeZone);
-  // Initialize Check In to today's date in local timezone
-  const [arivitime, setarivitime] = useState(
-    defalinfo && defalinfo.checkIntime
-      ? new Date(defalinfo.checkIntime)
-      : currentDate.toDate(localTimeZone)
-  );
-  // Initialize Check Out to the day after Check In or stored value
-  const [checkOut, setcheckOut] = useState(
-    defalinfo && defalinfo.checkouttime
-      ? new Date(defalinfo.checkouttime)
-      : new Date(currentDate.toDate(localTimeZone).setDate(currentDate.day + 1))
-  );
-  const [adultcount, setadultcount] = useState(
-    (defalinfo && defalinfo.adultcount) || 1
-  );
-  const [childcount, setchildcount] = useState(
-    (defalinfo && defalinfo.childcount) || 0
-  );
-  const [cnCoide, setcnCoide] = useState("IN");
-  const [numberOfRoom, setNumberOfRoom] = useState(
-    (defalinfo && defalinfo.numberOfRoom) || 1
-  );
-  const [childAges, setChildAges] = useState(() => {
-    const storedAges = defalinfo && defalinfo.childAges ? defalinfo.childAges : [];
-    const validAges = storedAges
-      .slice(0, childcount)
-      .filter((age) => age >= 1 && age <= 18);
-    return Array(childcount).fill(1).map((_, i) => validAges[i] || 1);
+
+  // Initialize Check In to current date
+  const [arivitime, setarivitime] = useState(currentDate.toDate(localTimeZone));
+
+  // Initialize Check Out to next day
+  const [checkOut, setcheckOut] = useState(() => {
+    const nextDay = currentDate.toDate(localTimeZone);
+    nextDay.setDate(nextDay.getDate() + 1);
+    return nextDay;
   });
+
+  const [isVisible, setIsVisible] = useState("");
+  const [city, setcity] = useState({ Name: "delhi", Code: "130443" });
+  const [adultcount, setadultcount] = useState(1);
+  const [childcount, setchildcount] = useState(0);
+  const [numberOfRoom, setNumberOfRoom] = useState(1);
+  const [childAges, setChildAges] = useState([]);
+  const [cnCoide, setcnCoide] = useState("IN");
+  const [isOpen, setIsOpen] = useState(false);
+
   const handleCitySelect = (city) => {
-    // Validate city object
     if (!city || !city.Name || !city.Code) {
       console.error("Invalid city object:", city);
       return;
     }
-    console.log("Selected city:", city); // Debug log
-    setcity({ Name: city.Name, Code: city.Code }); // Ensure only Name and Code are set
+    setcity({ Name: city.Name, Code: city.Code });
     setIsVisible("");
   };
 
@@ -75,19 +57,26 @@ const HotelsComp = () => {
     setIsVisible(option);
   };
 
+  // Update Check In date
   const handelreturn = (newRange) => {
     const date = new Date(newRange.year, newRange.month - 1, newRange.day);
-    const nextdate = new Date(newRange.year, newRange.month - 1, newRange.day + 1);
+    const nextDate = new Date(date);
+    nextDate.setDate(date.getDate() + 1);
     setarivitime(date);
-    setcheckOut(nextdate);
+    setcheckOut(nextDate); // Ensure Check Out is at least one day after Check In
     setIsVisible("");
-    console.log("City after date change:", city); // Debug log
   };
-  // const handelreturn2 = (newRange) => {
-  //   const date = new Date(newRange.year, newRange.month - 1, newRange.day);
-  //   setcheckOut(date);
-  //   setIsVisible("");
-  // };
+
+  // Update Check Out date
+  const handelreturn2 = (newRange) => {
+    const date = new Date(newRange.year, newRange.month - 1, newRange.day);
+    if (date <= arivitime) {
+      alert("Check Out date must be after Check In date.");
+      return;
+    }
+    setcheckOut(date);
+    setIsVisible("");
+  };
 
   useEffect(() => {
     dispatch(getAllCountries());
@@ -103,7 +92,6 @@ const HotelsComp = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Function to format date to YYYY-MM-DD in local timezone
   const formatDateToLocal = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -111,59 +99,7 @@ const HotelsComp = () => {
     return `${year}-${month}-${day}`;
   };
 
-  // const handlehotelSearch = () => {
-  //   const validChildAges = childAges.filter(
-  //     (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
-  //   );
-
-  //   console.log('city.Code ',city.Code)
-  //   if (validChildAges.length !== childcount) {
-  //     alert("Please provide valid ages (1–18) for all children.");
-  //     return;
-  //   }
-
-  //   localStorage.setItem(
-  //     "hotelItems",
-  //     JSON.stringify({
-  //       place: { Name: city.Name, code: city.Code },
-  //       checkIntime: arivitime,
-  //       checkouttime: checkOut,
-  //       adultcount,
-  //       childcount,
-  //       childAges: validChildAges,
-  //       numberOfRoom,
-  //     })
-  //   );
-
-
-
-   
-  //   // Use local timezone date formatting
-  //   const checkInDate = formatDateToLocal(arivitime);
-  //   const checkOutDate = formatDateToLocal(checkOut);
-
-  //   const childAgesQuery =
-  //     validChildAges.length > 0
-  //       ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
-  //       : "";
-
-  //   route.push(
-  //     `/hotels/cityName=${encodeURIComponent(
-  //       city.Name
-  //     )}&citycode=${city.Code}&checkin=${checkInDate}&checkout=${checkOutDate}&adult=${adultcount}&child=${childcount}${childAgesQuery}&roomes=${numberOfRoom}&page=0&star=0`
-  //   );
-  // };
-
-
-  const handelreturn2 = (newRange) => {
-    const date = new Date(newRange.year, newRange.month - 1, newRange.day);
-    setcheckOut(date);
-    setIsVisible("");
-    console.log("City after checkout date change:", city); // Debug log
-  };
-
   const handlehotelSearch = () => {
-    console.log("City in search:", city); // Debug log
     if (!city.Code) {
       alert("Please select a valid city.");
       return;
@@ -199,7 +135,7 @@ const HotelsComp = () => {
         ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
         : "";
 
-    route.push(
+    router.push(
       `/hotels/cityName=${encodeURIComponent(
         city.Name
       )}&citycode=${city.Code}&checkin=${checkInDate}&checkout=${checkOutDate}&adult=${adultcount}&child=${childcount}${childAgesQuery}&roomes=${numberOfRoom}&page=0&star=0`
@@ -209,29 +145,10 @@ const HotelsComp = () => {
   const maxAdultsPerRoom = 8;
   const maxChildrenPerRoom = 4;
 
-  const [search, setSearch] = useState("");
-  const { countries = [], isLoading = false, isError = false, error = null } =
-    useSelector((state) => state.citysearch || {});
-
-  const filteredCountries = countries.filter((country) =>
-    country.Name.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handleSelect = (country) => {
-    setSearch(country.Name);
-    setcnCoide(country.Code);
-    setIsOpen(false);
-  };
-
   return (
     <div className="header relative md:px-5 lg:px-12 xl:px-24">
       <div className="bg-[#002043] h-[12rem] absolute inset-0 -z-10" />
       <MiniNav />
-      <h5 className="text-white font-bold text-xl lg:text-2xl py-2 px-2 text-center md:text-start mt-4 lg:mt-6"></h5>
       <TypeWriterHeaderEffect />
       <div className="flex flex-col bg-white lg:block rounded-lg text-white">
         <div className="bg-gray-200 rounded-sm shadow">
@@ -239,14 +156,13 @@ const HotelsComp = () => {
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
-          
+            {/* City Selection */}
             <div className="relative w-full lg:w-[50%]">
               <div
                 onClick={() => handleClick("city")}
                 className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
               >
                 <IoLocationSharp className="text-xl" />
-                <button className="absolute rounded-full text-white bg-gray-400 right-0 -top-[2px]"></button>
                 <div className="flex flex-col">
                   <span className="text-[12px] md:text-xl text-black font-bold capitalize">
                     {city.Name}
@@ -254,17 +170,16 @@ const HotelsComp = () => {
                 </div>
               </div>
               {isVisible === "city" && (
-                <div>
-                  <AutoSearchcity
-                    value="From"
-                    handleClosed={handleVisibilityChange}
-                    onSelect={handleCitySelect}
-                    visible={setIsVisible}
-                    countercode={cnCoide}
-                  />
-                </div>
+                <AutoSearchcity
+                  value="From"
+                  handleClosed={handleVisibilityChange}
+                  onSelect={handleCitySelect}
+                  visible={setIsVisible}
+                  countercode={cnCoide}
+                />
               )}
             </div>
+            {/* Check In Date */}
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("date")}
@@ -295,14 +210,15 @@ const HotelsComp = () => {
                   onMouseLeave={() => setIsVisible("")}
                 >
                   <Calendar
-                    aria-label="Select a date"
-                    value=""
+                    aria-label="Select check-in date"
+                    value={currentDate}
                     onChange={handelreturn}
                     minValue={currentDate}
                   />
                 </div>
               )}
             </div>
+            {/* Check Out Date */}
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("checkout")}
@@ -330,14 +246,15 @@ const HotelsComp = () => {
               {isVisible === "checkout" && (
                 <div className="bg-white text-black p-5 shadow-2xl absolute top-full left-0 mt-2 z-10">
                   <Calendar
-                    aria-label="Select a date"
-                    value=""
+                    aria-label="Select check-out date"
+                    value={currentDate.add({ days: 1 })}
                     onChange={handelreturn2}
-                    minValue={currentDate}
+                    minValue={currentDate.add({ days: 1 })}
                   />
                 </div>
               )}
             </div>
+            {/* Travellers and Rooms */}
             <div className="relative w-full lg:w-[15%]">
               <div
                 onClick={() => setIsVisible("roomcheck")}

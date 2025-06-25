@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getbuses } from '../../Component/Store/slices/busslices';
 import { getBusSeatLayout } from '../../Component/Store/slices/busSeatlayout';
@@ -11,6 +11,13 @@ import { FaChevronDown, FaFilter, FaTimes } from 'react-icons/fa';
 import Link from 'next/link';
 import { TbBus } from 'react-icons/tb';
 import { useRouter } from 'next/navigation';
+
+const timeSlots = [
+  { label: "Before 6 AM", range: [0, 6] },
+  { label: "6 AM - 12 PM", range: [6, 12] },
+  { label: "12 PM - 6 PM", range: [12, 18] },
+  { label: "After 6 PM", range: [18, 24] },
+];
 
 const BusCompo = ({ slug }) => {
   const router = useRouter();
@@ -49,7 +56,7 @@ const BusCompo = ({ slug }) => {
     ],
   };
 
-  const [busData, setBusData] = useState();
+const [busData, setBusData] = useState();
 
   useEffect(() => {
     setBusData(
@@ -75,12 +82,90 @@ const BusCompo = ({ slug }) => {
     );
   };
 
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [filters, setFilters] = useState({
+    acType: null,
+    seatType: null,
+    boardingPoints: [],
+    droppingPoints: [],
+  });
+
+const filteredBusData = useMemo(() => {
+  return busData?.filter((bus) => {
+    // AC Type filter
+    if (filters?.acType) {
+      const isAC = bus?.BusType?.toLowerCase().includes("a/c");
+      if (filters?.acType === "ac" && !isAC) return false;
+      if (filters?.acType === "nonac" && isAC) return false;
+    }
+
+    // Seat Type filter
+    if (filters?.seatType) {
+      const isSleeper = bus.BusType.toLowerCase().includes("sleeper");
+      const isSeater = bus.BusType.toLowerCase().includes("seater");
+      if (filters?.seatType === "sleeper" && !isSleeper) return false;
+      if (filters?.seatType === "seater" && !isSeater) return false;
+    }
+
+    // Bus Operators filter
+    if (filters?.busOperators?.length > 0) {
+      if (!filters?.busOperators.includes(bus.TravelName)) return false;
+    }
+
+    // Price Range filter
+    if (filters?.priceRange?.min && bus.BusPrice?.OfferedPrice < filters?.priceRange?.min) return false;
+    if (filters?.priceRange?.max && bus.BusPrice?.OfferedPrice > filters?.priceRange?.max) return false;
+
+    // Departure Time Slots filter
+    if (filters?.departureTimeSlots?.length > 0) {
+      const hour = new Date(bus.DepartureTime).getHours();
+      const slotLabels = filters?.departureTimeSlots;
+      const matchesSlot = slotLabels.some((label) => {
+        const slot = timeSlots?.find((s) => s.label === label);
+        return hour >= slot?.range[0] && hour < slot?.range[1];
+      });
+      if (!matchesSlot) return false;
+    }
+
+    // Minimum Available Seats filter
+    if (filters?.minSeats && bus.AvailableSeats < filters?.minSeats) return false;
+
+    // Mobile Ticket filter
+    if (filters?.mTicket && !bus.MTicketEnabled) return false;
+
+    // Live Tracking filter
+    if (filters?.liveTracking && !bus.LiveTrackingAvailable) return false;
+
+    // Boarding Points filter
+    if (filters?.boardingPoints.length > 0) {
+      const hasBoardingPoint = bus.BoardingPointsDetails.some((point) =>
+        filters?.boardingPoints.includes(point.CityPointName)
+      );
+      if (!hasBoardingPoint) return false;
+    }
+
+    // Dropping Points filter
+    if (filters?.droppingPoints.length > 0) {
+      const hasDroppingPoint = bus.DroppingPointsDetails.some((point) =>
+        filters?.droppingPoints.includes(point.CityPointName)
+      );
+      if (!hasDroppingPoint) return false;
+    }
+
+    return true;
+  });
+}, [busData, filters]);
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+  };
+
   return (
     <>
       <BusComp />
       <div className="block md:flex px-0 lg:px-28 items-start gap-3 my-5">
         <div className="hidden md:block w-1/4 sticky top-24">
-          <BusFilter />
+        <BusFilter busData={busData} onFilterChange={handleFilterChange} />
         </div>
 
         <div className="w-full md:w-3/4">
@@ -100,8 +185,8 @@ const BusCompo = ({ slug }) => {
               </div>
             )}
 
-            {busData && busData.length > 0 ? (
-              busData.map((bus) => (
+            {busData && filteredBusData.length > 0 ? (
+              filteredBusData.map((bus) => (
                 <div
                   key={bus.id}
                   className="bg-white hover:shadow-lg hover:border-blue-600 transition-all duration-300 p-5 my-5 border rounded-2xl"

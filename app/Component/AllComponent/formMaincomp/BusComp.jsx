@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useEffect, useRef, useState,useCallback } from "react";
 
@@ -87,20 +85,6 @@ const BusComp = () => {
 
     setselected("date"), setsearchparam("")
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const TravellerDropdown = ({ adultCount, setAdultCount, childCount, setChildCount, infantCount, setInfantCount }) => {
     return (
@@ -268,8 +252,6 @@ const BusComp = () => {
 
 
 
-
-
               <div className="flex justify-center items-center">
                 <button
                   onClick={handelSearch}
@@ -279,27 +261,12 @@ const BusComp = () => {
                 </button>
               </div>
 
-
-
             </div>
-
-
           </div>
-
-
-
-
         </div>
 
 
       </div>
-
-
-
-
-
-
-
 
 
     </>

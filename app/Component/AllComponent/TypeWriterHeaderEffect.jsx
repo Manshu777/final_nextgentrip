@@ -17,7 +17,8 @@ const TypeWriterHeaderEffect = () => {
   }, []);
 
   return (
-    <div className="text-white flex items-center gap-2 font-bold py-3 md:text-2xl">
+   <div className="text-white flex items-center gap-2 font-bold py-3 md:text-2xl ml-[10px] md:ml-0">
+
       {/* First Typewriter for "Book affordable" */}
       <h2>
         <Typewriter
