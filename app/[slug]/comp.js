@@ -1048,7 +1048,7 @@ const togglePopup = async (id, ResultIndex) => {
               </div>
             )}
 
-          <div className="myshadow w-full md:flex bg-white gap-1 px-4 overflow-hidden">
+          <div className="">
             {!state2 ? (
               // Show skeleton loader while data is being fetched
               <SkeletonLoader />
@@ -1057,7 +1057,6 @@ const togglePopup = async (id, ResultIndex) => {
                 return (
                   <div className="w-full">
                     {flightinfo
-                      ?.filter((flight) => flight.IsLCC === true)
                       ?.map((flight, index) => {
                         return (
                           <>
@@ -1147,7 +1146,7 @@ const togglePopup = async (id, ResultIndex) => {
                                   <div className="text-right ">
                                     <div className="text-black text-lg font-bold whitespace-nowrap ">
                                       <span className="text-md font-bold">
-                                        {defaultcurrency.symble}
+                                        {/* {defaultcurrency.symble} */}
                                         {(() => {
                                           const offeredFare =
                                             flight.Fare?.OfferedFare || 0;

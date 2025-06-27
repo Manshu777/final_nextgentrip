@@ -1,7 +1,7 @@
 "use client";
 import HotelsComp from "../../Component/AllComponent/formMaincomp/HotelsComp";
 import { getAllhotelsapi } from "../../Component/Store/slices/hotelsSlices";
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaShareAlt, FaStar } from "react-icons/fa";
 import { MdOutlineCancel, MdFilterList } from "react-icons/md";
@@ -20,7 +20,7 @@ const Comp = ({ slug }) => {
     code: "INR",
     country: "India",
   };
-  const cuntryprice = currencylist?.info?.rates?.[defaultcurrency.code];
+  const cuntryprice = currencylist?.info?.rates?.[defaultcurrency.code] || 1;
 
   // Parse URL parameters
   const decodedSlug = decodeURIComponent(slug);
@@ -38,20 +38,18 @@ const Comp = ({ slug }) => {
       ? childAgesString.split(",").map((age) => Number(age.trim()))
       : [];
   }, [childAgesString]);
-  const page = params.get("page");
+  const page = Number(params.get("page")) || 1; // Backend uses 1-based indexing
 
   // State management
-  const [allhotel, setAllHotels] = useState([]);
   const [filteredHotels, setFilteredHotels] = useState([]);
-  const [hotalbackup, setHotalBackup] = useState(null);
   const [showImg, setShowImg] = useState(null);
-  const [seepagination, setPagination] = useState(true);
   const [selectedStars, setSelectedStars] = useState(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [sortOption, setSortOption] = useState(null);
+  const [isFiltered, setIsFiltered] = useState(false);
 
   // Render star ratings
-  const renderStars = (rating) => {
+  const renderStars = useCallback((rating) => {
     const starCount = Math.round(Number(rating));
     return (
       <div className="flex gap-1">
@@ -60,14 +58,16 @@ const Comp = ({ slug }) => {
         ))}
       </div>
     );
-  };
+  }, []);
+
+
 
   // Get images with fallback
-  const getImages = (hotelDetails) => {
+  const getImages = useCallback((hotelDetails) => {
     return hotelDetails?.HotelDetails?.[0]?.Images || hotelDetails?.HotelDetails?.[0]?.images || [];
-  };
+  }, []);
 
-  // Fetch hotels on mount
+  // Fetch hotels on mount or when parameters change
   useEffect(() => {
     dispatch(
       getAllhotelsapi({
@@ -75,40 +75,33 @@ const Comp = ({ slug }) => {
         checkIn,
         checkOut,
         adults,
-        childAges,
         children,
+        childAges,
+        guestNationality: defaultcurrency.country === "India" ? "IN" : "US", // Adjust based on currency
         page,
+        per_page: 10, // Match backend default
       })
     );
-  }, [dispatch, cityCode, checkIn, checkOut, adults, children, page, childAgesString]);
-
-  // Update hotel data when Redux state changes
-  useEffect(() => {
-    if (allhoteldata.info?.totalHotels && !allhoteldata.isLoading) {
-      setAllHotels(allhoteldata.info.totalHotels);
-      setFilteredHotels(allhoteldata.info.totalHotels);
-      setHotalBackup(allhoteldata);
-    }
-  }, [allhoteldata]);
+  }, [dispatch, cityCode, checkIn, checkOut, adults, children, childAges, page, defaultcurrency.country]);
 
   // Filter and sort hotels
-  const applyFilters = () => {
-    let filtered = [...allhotel];
+  const applyFilters = useCallback(() => {
+    let filtered = [...(allhoteldata.info?.totalHotels || [])];
 
-    // Filter by star rating
+    // Apply star rating filter
     if (selectedStars) {
       const starValue = parseInt(selectedStars.replace("star", ""));
       filtered = filtered.filter(
-        (hotel) => hotel.hotelDetails.HotelDetails[0].HotelRating === starValue
+        (hotel) => hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating === starValue
       );
     }
 
-    // Filter by price range
+    // Apply price range filter
     if (selectedPriceRange) {
       filtered = filtered.filter((hotel) => {
         const minPrice = Math.min(
-          ...hotel.searchResults.Rooms.map((room) => room.TotalFare)
-        );
+          ...(hotel?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
+        ) * cuntryprice;
         switch (selectedPriceRange) {
           case "price1":
             return minPrice >= 0 && minPrice <= 1500;
@@ -128,29 +121,29 @@ const Comp = ({ slug }) => {
       });
     }
 
-    // Sort hotels
+    // Apply sorting
     if (sortOption) {
       filtered.sort((a, b) => {
         const aPrice = Math.min(
-          ...a.searchResults.Rooms.map((room) => room.TotalFare)
-        );
+          ...(a?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
+        ) * cuntryprice;
         const bPrice = Math.min(
-          ...b.searchResults.Rooms.map((room) => room.TotalFare)
-        );
+          ...(b?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
+        ) * cuntryprice;
         switch (sortOption) {
           case "L-H":
             return aPrice - bPrice;
           case "H-L":
             return bPrice - aPrice;
-          case "bestRating":
+          case "ベスト評価":
             return (
-              b.hotelDetails.HotelDetails[0].HotelRating -
-              a.hotelDetails.HotelDetails[0].HotelRating
+              (b?.hotelDetails?.HotelDetails?.[0]?.HotelRating || 0) -
+              (a?.hotelDetails?.HotelDetails?.[0]?.HotelRating || 0)
             );
           case "newest":
             return (
-              parseInt(b.searchResults.HotelCode) -
-              parseInt(a.searchResults.HotelCode)
+              parseInt(b?.searchResults?.HotelCode || 0) -
+              parseInt(a?.searchResults?.HotelCode || 0)
             );
           default:
             return 0;
@@ -159,65 +152,90 @@ const Comp = ({ slug }) => {
     }
 
     setFilteredHotels(filtered);
-    setPagination(false);
-  };
+    setIsFiltered(!!selectedStars || !!selectedPriceRange || !!sortOption);
+  }, [allhoteldata.info?.totalHotels, selectedStars, selectedPriceRange, sortOption, cuntryprice]);
 
-  // Apply filters when state changes
+  // Apply filters when data or filter options change
   useEffect(() => {
     applyFilters();
-  }, [selectedStars, selectedPriceRange, sortOption, allhotel]);
+  }, [applyFilters]);
 
   // Reset filters
-  const resetFilters = () => {
+  const resetFilters = useCallback(() => {
     setSelectedStars(null);
     setSelectedPriceRange(null);
     setSortOption(null);
-    setFilteredHotels(allhotel);
-    setPagination(true);
-  };
+    setIsFiltered(false);
+  }, []);
+
+  const handlePageChange = useCallback((pageNum) => {
+    resetFilters();
+    router.push(
+      `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
+      }&page=${pageNum}`
+    );
+  }, [router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
 
   // Handle filter changes
-  const handleStarChange = (e) => {
+  const handleStarChange = useCallback((e) => {
     setSelectedStars(e.target.value);
-  };
+  }, []);
 
-  const handlePriceChange = (e) => {
+  const handlePriceChange = useCallback((e) => {
     setSelectedPriceRange(e.target.value);
-  };
+  }, []);
 
-  const handleSortChange = (e) => {
+  const handleSortChange = useCallback((e) => {
     setSortOption(e.target.value);
-  };
+  }, []);
+
+  // Retry on error
+  const handleRetry = useCallback(() => {
+    dispatch(
+      getAllhotelsapi({
+        cityCode,
+        checkIn,
+        checkOut,
+        adults,
+        children,
+        childAges,
+        guestNationality: defaultcurrency.country === "India" ? "IN" : "US",
+        page,
+        per_page: 10,
+      })
+    );
+  }, [dispatch, cityCode, checkIn, checkOut, adults, children, childAges, page, defaultcurrency.country]);
 
   // Pagination handlers
-  const handleNextPage = () => {
-    if (hotalbackup?.info?.len && page < hotalbackup.info.len - 1) {
+  const handleNextPage = useCallback(() => {
+    const totalPages = allhoteldata.info?.pagination?.total_pages || 1;
+    if (page < totalPages) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${Number(page) + 1
-        }`
+        `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""}&page=${page + 1}`
       );
     }
-  };
+  }, [page, allhoteldata.info?.pagination?.total_pages, router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
 
-  const handlePrevPage = () => {
-    if (page > 0) {
+  const handlePrevPage = useCallback(() => {
+    if (page > 1) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${cityName}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&page=${Number(page) - 1
-        }`
+        `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""}&page=${page - 1}`
       );
     }
-  };
+  }, [page, router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
 
   return (
     <>
       <HotelsComp />
 
       {allhoteldata.isLoading ? (
-        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+        <div className="space-y-6">
+                <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
           <div className="loader"></div>
-          <p className="ml-4 text-lg font-semibold text-gray-700">Loading</p>
+          <p className="ml-4 text-lg font-semibold text-gray-700">Loading hotels...</p>
+        </div>
         </div>
       ) : null}
 
@@ -256,15 +274,15 @@ const Comp = ({ slug }) => {
 
           {/* Price Range Filter */}
           <div className="mb-6">
-            <p className="font-semibold text-gray-800 mb-2">Price per Night</p>
+            <p className="font-semibold text-gray-800 mb-2">Price per Night ({defaultcurrency.symbol})</p>
             <div className="flex flex-col gap-2 pl-4">
               {[
-                { id: "price1", range: "₹0 - ₹1500" },
-                { id: "price2", range: "₹1500 - ₹3500" },
-                { id: "price3", range: "₹3500 - ₹7500" },
-                { id: "price4", range: "₹7500 - ₹11500" },
-                { id: "price5", range: "₹11500 - ₹15000" },
-                { id: "price6", range: "₹15000+" },
+                { id: "price1", range: `${defaultcurrency.symbol}0 - ${defaultcurrency.symbol}1500` },
+                { id: "price2", range: `${defaultcurrency.symbol}1500 - ${defaultcurrency.symbol}3500` },
+                { id: "price3", range: `${defaultcurrency.symbol}3500 - ${defaultcurrency.symbol}7500` },
+                { id: "price4", range: `${defaultcurrency.symbol}7500 - ${defaultcurrency.symbol}11500` },
+                { id: "price5", range: `${defaultcurrency.symbol}11500 - ${defaultcurrency.symbol}15000` },
+                { id: "price6", range: `${defaultcurrency.symbol}15000+` },
               ].map((price) => (
                 <label key={price.id} className="flex items-center gap-2 cursor-pointer">
                   <input
@@ -326,6 +344,12 @@ const Comp = ({ slug }) => {
           ) : allhoteldata.error ? (
             <div className="p-5 text-center text-red-500">
               Failed to load hotels: {allhoteldata.error.message || "Unknown error"}
+              <button
+                onClick={handleRetry}
+                className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Retry
+              </button>
             </div>
           ) : filteredHotels.length > 0 ? (
             filteredHotels.map((hotel, index_num) => (
@@ -353,9 +377,11 @@ const Comp = ({ slug }) => {
                 <div className="block md:flex relative p-5">
                   <div className="relative">
                     <div className="relative">
-                      <img
+                      <Image
                         src={getImages(hotel?.hotelDetails)[0] || "/images/not_found_img.png"}
                         alt="hotelImg"
+                        width={350}
+                        height={150}
                         className="object-cover w-full h-[10rem] lg:w-[35rem] lg:h-[15rem] rounded-md"
                       />
                       <div className="absolute bottom-2 right-2">
@@ -372,9 +398,11 @@ const Comp = ({ slug }) => {
                         .slice(1, 5)
                         .map((image, index) => (
                           <div key={index} className="relative rounded-sm">
-                            <img
+                            <Image
                               src={image}
                               alt={`hotel_image_${index + 1}`}
+                              width={80}
+                              height={48}
                               className="object-cover rounded-sm h-[3rem] w-[5rem]"
                             />
                             {index === 3 && (
@@ -393,42 +421,46 @@ const Comp = ({ slug }) => {
                   <div className="flex-1 pl-0 md:pl-5">
                     <div className="my-5 md:my-0 flex justify-between items-center">
                       <p className="text-base md:text-2xl font-black">
-                        {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelName}
+                        {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelName || "Unknown Hotel"}
                       </p>
                       <div>
                         <div className="flex items-center">
                           <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
-                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating}
+                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || "N/A"}
                           </span>
                           <span className="ml-2 text-blue-600">
-                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating}
+                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || "N/A"}
                           </span>
                         </div>
                         <div className="hidden md:flex items-center justify-center mt-2">
-                          {renderStars(hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating)}
+                          {renderStars(hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || 0)}
                         </div>
                       </div>
                     </div>
 
                     <div className="text-gray-500">
                       <span className="text-blue-600">
-                        {hotel?.hotelDetails?.HotelDetails?.[0]?.Address}
+                        {hotel?.hotelDetails?.HotelDetails?.[0]?.Address || "No address available"}
                       </span>
                     </div>
                     {hotel?.searchResults?.Status?.Code === 200 &&
                       hotel?.searchResults?.Rooms?.length > 0 ? (
                       <div>
-                        {console.log('hotel.searchResults.Rooms[0]', hotel.searchResults.Rooms[0])}
                         <div key={0}>
                           <div className="flex items-end justify-between">
                             <div className="mt-4">
                               <p className="text-xl font-black">
                                 {defaultcurrency.symbol}
-                                {Math.floor(hotel.searchResults.Rooms[0].TotalFare - hotel.searchResults.Rooms[0].TotalTax)}
+                                {Math.floor(
+                                  (hotel.searchResults.Rooms[0].TotalFare -
+                                    hotel.searchResults.Rooms[0].TotalTax) *
+                                  cuntryprice
+                                )}
                               </p>
                               <p className="text-gray-500">
                                 + {defaultcurrency.symbol}
-                                {hotel.searchResults.Rooms[0].TotalTax} taxes & fees
+                                {Math.floor(hotel.searchResults.Rooms[0].TotalTax * cuntryprice)}{" "}
+                                taxes & fees
                               </p>
                               <p className="text-sm text-gray-500 mt-2">Per Night</p>
                             </div>
@@ -444,7 +476,8 @@ const Comp = ({ slug }) => {
                           </div>
                           <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
                             <span className="text-gray-700">
-                              Exclusive offer on Canara Bank Credit Cards. Get {defaultcurrency.symbol}241 off
+                              Exclusive offer on Canara Bank Credit Cards. Get {defaultcurrency.symbol}
+                              {Math.floor(241 * cuntryprice)} off
                             </span>
                           </div>
                         </div>
@@ -461,31 +494,89 @@ const Comp = ({ slug }) => {
           )}
 
           {/* Pagination */}
-          {seepagination && hotalbackup?.info?.len > 1 && (
-            <div className="flex justify-center gap-4 mt-6">
-              <button
-                onClick={handlePrevPage}
-                disabled={page <= 0}
-                className={`px-4 py-2 rounded-lg font-semibold ${page <= 0 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
-                  }`}
-              >
-                Previous
-              </button>
-              <span className="flex items-center text-gray-700">
-                Page {Number(page) + 1} of {hotalbackup?.info?.len}
-              </span>
-              <button
-                onClick={handleNextPage}
-                disabled={page >= hotalbackup?.info?.len - 1}
-                className={`px-4 py-2 rounded-lg font-semibold ${page >= hotalbackup?.info?.len - 1
-                  ? "bg-gray-300 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
-                  }`}
-              >
-                Next
-              </button>
-            </div>
-          )}
+          {allhoteldata.info?.pagination?.total_pages > 1 && (
+  <div className="flex flex-wrap justify-center gap-4 mt-6 items-center">
+    {/* Previous Button */}
+    <button
+      onClick={handlePrevPage}
+      disabled={page <= 1}
+      className={`px-4 py-2 rounded-lg font-semibold ${
+        page <= 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
+      }`}
+    >
+      Previous
+    </button>
+
+    {/* Simplified Page Numbers */}
+    <div className="flex gap-2">
+      {[page - 1, page, page + 1].map((pageNumber) => {
+        if (
+          pageNumber < 1 ||
+          pageNumber > (allhoteldata.info?.pagination?.total_pages || 1)
+        )
+          return null;
+        return (
+          <button
+            key={pageNumber}
+            onClick={() => handlePageChange(pageNumber)}
+            className={`px-3 py-1 rounded-lg font-semibold ${
+              page === pageNumber
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white"
+            }`}
+          >
+            {pageNumber}
+          </button>
+        );
+      })}
+    </div>
+
+    {/* Jump to page input */}
+    <div className="flex items-center gap-2">
+      <label htmlFor="jumpPage" className="text-gray-700 text-sm">
+        Go to page:
+      </label>
+      <input
+        id="jumpPage"
+        type="number"
+        min={1}
+        max={allhoteldata.info?.pagination?.total_pages}
+        className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            const value = parseInt(e.target.value);
+            if (
+              value >= 1 &&
+              value <= (allhoteldata.info?.pagination?.total_pages || 1)
+            ) {
+              handlePageChange(value);
+            }
+          }
+        }}
+        placeholder="Pg"
+      />
+    </div>
+
+    {/* Page Info */}
+    <span className="text-gray-700 text-sm">
+      Page {page} of {allhoteldata.info?.pagination?.total_pages}
+    </span>
+
+    {/* Next Button */}
+    <button
+      onClick={handleNextPage}
+      disabled={page >= (allhoteldata.info?.pagination?.total_pages || 1)}
+      className={`px-4 py-2 rounded-lg font-semibold ${
+        page >= (allhoteldata.info?.pagination?.total_pages || 1)
+          ? "bg-gray-300 cursor-not-allowed"
+          : "bg-blue-600 text-white hover:bg-blue-700"
+      }`}
+    >
+      Next
+    </button>
+  </div>
+)}
+
         </div>
       </div>
     </>

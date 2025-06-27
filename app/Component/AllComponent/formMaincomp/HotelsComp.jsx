@@ -45,8 +45,34 @@ const HotelsComp = () => {
       console.error("Invalid city object:", city);
       return;
     }
+    
+    // Update the selected city state
     setcity({ Name: city.Name, Code: city.Code });
     setIsVisible("");
+  
+    // Save to Top Cities in localStorage
+    try {
+      // Get existing Top Cities from localStorage
+      const topCities = JSON.parse(localStorage.getItem("TopCities")) || [];
+      
+      // Remove the city if it already exists to avoid duplicates
+      const updatedTopCities = topCities.filter(
+        (item) => item.Code !== city.Code
+      );
+      
+      // Add the new city to the start of the array
+      updatedTopCities.unshift({ Name: city.Name, Code: city.Code });
+      
+      // Limit to top 5 cities (or adjust as needed)
+      if (updatedTopCities.length > 5) {
+        updatedTopCities.pop();
+      }
+      
+      // Save back to localStorage
+      localStorage.setItem("TopCities", JSON.stringify(updatedTopCities));
+    } catch (error) {
+      console.error("Error saving to TopCities in localStorage:", error);
+    }
   };
 
   const handleVisibilityChange = (value) => {
@@ -81,6 +107,14 @@ const HotelsComp = () => {
   useEffect(() => {
     dispatch(getAllCountries());
   }, [dispatch]);
+
+  useEffect(() => {
+    const topCities = JSON.parse(localStorage.getItem("TopCities")) || [];
+    if (topCities.length > 0) {
+      setcity(topCities[0]);
+    }
+  }, []);
+  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -156,7 +190,7 @@ const HotelsComp = () => {
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
-            {/* City Selection */}
+
             <div className="relative w-full lg:w-[50%]">
               <div
                 onClick={() => handleClick("city")}

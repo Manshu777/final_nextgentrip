@@ -280,28 +280,28 @@ useEffect(()=>{sethotalbackup(allhoteldata)
           <div>
             <div className="flex items-center">
               <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
-                {hotel.hotelDetails.HotelDetails[0].HotelRating} 
+                {hotel?.hotelDetails?.HotelDetails[0]?.HotelRating} 
               </span>
               <span className=" ml-2 text-blue-600">
-                {hotel.hotelDetails.HotelDetails[0].HotelRating}
+                {hotel?.hotelDetails?.HotelDetails[0]?.HotelRating}
               </span>
             </div>
             <div className="hidden md:flex items-center justify-center mt-2">
-              {renderStars(hotel.hotelDetails.HotelDetails[0].HotelRating)}
+              {renderStars(hotel?.hotelDetails?.HotelDetails[0]?.HotelRating)}
             </div>
           </div>
         </div>
 
         <div className="text-gray-500">
-          <span className="text-blue-600">{hotel.hotelDetails.HotelDetails[0].Address}</span> |{" "}
-          {hotel.hotelDetails.HotelDetails[0].distance}
+          <span className="text-blue-600">{hotel?.hotelDetails?.HotelDetails[0]?.Address}</span> |{" "}
+          {hotel?.hotelDetails?.HotelDetails[0]?.distance}
         </div>
 
         <div className="mt-2 hidden md:flex space-x-4 text-gray-500">
         
         </div>
        
-       {    hotel.searchResults.Status.Code==200 ? hotel.searchResults.HotelResult[0].Rooms.map((items_price)=>{
+       {    hotel?.searchResults?.Status?.Code==200 ? hotel?.searchResults?.HotelResult[0]?.Rooms?.map((items_price)=>{
        
   return(
     <>
@@ -313,7 +313,7 @@ useEffect(()=>{sethotalbackup(allhoteldata)
           </p>
           <p className="text-sm text-gray-500 mt-2">Per Night</p>
         </div>
-        <Link href={`/hotelSearchCheckin/cityName=${cityName}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelResult[0].HotelCode}`} className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center">
+              <Link href={`/hotelSearchCheckin/cityName=${cityName}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelResult[0].HotelCode}`} className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center">
                 <span className="text-xs flex items-center gap-2">
                   View Room
                 </span>

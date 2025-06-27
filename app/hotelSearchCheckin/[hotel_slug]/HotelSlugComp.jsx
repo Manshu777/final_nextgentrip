@@ -11,7 +11,7 @@ import 'swiper/css/pagination';
 import { Navigation, Pagination, Mousewheel, Keyboard } from 'swiper/modules';
 import {
   MdDinnerDining, MdRoomService, MdOutlineBreakfastDining, MdOutlineLocalLaundryService, MdPool, MdFitnessCenter,
-  MdOutlineHealthAndSafety, MdCancel
+  MdOutlineHealthAndSafety, MdCancel, MdOutlineCancel
 } from "react-icons/md";
 import { TbAirConditioning } from "react-icons/tb";
 import { GiElevator, GiCoffeeCup } from "react-icons/gi";
@@ -50,6 +50,7 @@ const HotelSlugComp = ({ slugs }) => {
   const [viewmore, setViewmore] = useState(false);
   const [loading, setLoading] = useState(false);
 
+
   useEffect(() => {
     dispatch(getSingleHotel({ HotelCode, checkIn, checkOut, adults, children, roomes }));
   }, []);
@@ -64,8 +65,8 @@ const HotelSlugComp = ({ slugs }) => {
     try {
       // Dispatch the API call
       await dispatch(gethotelPreBookingApi({ BookingCode }));
-  
-      // Check if preBookinghotelState and its nested properties exist
+
+   
       if (
         preBookinghotelState &&
         preBookinghotelState?.info &&
@@ -79,9 +80,9 @@ const HotelSlugComp = ({ slugs }) => {
         // Save cancellation policies to localStorage
         const cancellationPolicies = preBookinghotelState?.info?.HotelResult[0]?.Rooms[0]?.CancelPolicies;
         const validationPolicies = preBookinghotelState?.info?.ValidationInfo;
-  
+
         console.log('Validation Policies:', validationPolicies);
-  
+
         localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
         localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
         setIsOpen(true);
@@ -93,10 +94,10 @@ const HotelSlugComp = ({ slugs }) => {
       console.error("Error during pre-booking:", error);
       // Optionally, show an error message to the user
     } finally {
-      setLoading(false);
+    
     }
   };
-  
+
   useEffect(() => {
     sethotel(preBookinghotelState && preBookinghotelState?.info && preBookinghotelState?.info?.HotelResult && preBookinghotelState?.info?.HotelResult[0]);
   }, [preBookinghotelState]);
@@ -112,6 +113,8 @@ const HotelSlugComp = ({ slugs }) => {
     router.push('/hotels/checkout');
   };
 
+
+  console.log('hotelinfo.info', hotelinfo?.info)
   return (
     <>
       {isOpen && hotel && (
@@ -204,8 +207,8 @@ const HotelSlugComp = ({ slugs }) => {
                 <div className="lg:flex gap-5 mb-5">
                   <div className="w-full lg:w-[600px] h-[200px] lg:h-[340px] mb-4 bg-gray-200"></div>
                   <div>
-                    <div className="w-full lg:w-[280px] h-40 mb-4 bg-gray-200 rounded-2xl"></div>
-                    <div className="w-full lg:w-[280px] h-40 bg-gray-200 rounded-2xl"></div>
+                    <div className="w-full lg:w-[302px] h-40 mb-4 bg-gray-200 rounded-2xl"></div>
+                    <div className="w-full lg:w-[302px] h-40 bg-gray-200 rounded-2xl"></div>
                   </div>
                 </div>
                 <div className="mb-5">
@@ -277,58 +280,74 @@ const HotelSlugComp = ({ slugs }) => {
                 <div className="p-6 bg-white rounded-3xl flex justify-between myshadow">
                   <div className="lg:w-2/3 relative">
                     <div className="flex items-center justify-between mb-5" id="WBTH">
-                      <h1 className="text-2xl font-bold flex items-center gap-4">
+
+                      <h2 className="text-2xl font-bold flex items-center gap-4">
                         {hotelinfo.info.hoteldetail1[0].HotelName}
                         <span className="flex text-base gap-1">
                           {imgToggle && (
-                            <div className='fixed top-[20px] left-0 h-screen w-screen flex justify-center items-center p-10 z-50 bg-[#000000bc]'>
-                              <div className='absolute top-[10%] right-6 z-[999]'>
-                                <MdCancel className='cursor-pointer text-4xl text-[#c1c1c1]' onClick={() => setimgToggle(false)} />
+                            <div className="fixed top-0 left-0 h-screen w-screen flex justify-center items-center p-4 z-50 bg-[#000000bc]">
+                              <div className="absolute top-20 right-4 z-[999]">
+                                <MdOutlineCancel
+                                  className="cursor-pointer text-4xl text-[#c1c1c1] hover:text-white transition-colors"
+                                  onClick={() => setimgToggle(false)}
+                                />
                               </div>
-                              <Swiper
-                                cssMode={true}
-                                navigation={true}
-                                pagination={true}
-                                mousewheel={true}
-                                keyboard={true}
-                                modules={[Navigation, Pagination, Mousewheel, Keyboard]}
-                                className="mySwiper"
-                              >
-                                {hotelinfo.info.hoteldetail1[0].images.map((img) => (
-                                  <SwiperSlide key={img}><img src={img} alt="" className='h-full w-full z-40' /></SwiperSlide>
-                                ))}
-                              </Swiper>
+                              <div className="w-full max-w-4xl h-[80vh] overflow-y-auto bg-white rounded-lg p-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                  {hotelinfo.info.hoteldetail1[0].Images.slice(0, 3).map((img, index) => (
+                                    <img
+                                      key={index}
+                                      src={img}
+                                      alt={`Hotel image ${index + 1}`}
+                                      className="w-full h-48 object-cover rounded-md"
+                                    />
+                                  ))}
+                                </div>
+                                {hotelinfo.info.hoteldetail1[0].Images.length > 3 && (
+                                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                    {hotelinfo.info.hoteldetail1[0].Images.slice(3).map((img, index) => (
+                                      <img
+                                        key={index}
+                                        src={img}
+                                        alt={`Hotel image ${index + 4}`}
+                                        className="w-full h-48 object-cover rounded-md"
+                                      />
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           )}
                           {Array.from({ length: hotelinfo.info.hoteldetail1[0].HotelRating }, (_, index) => (
-                            <FaStar key={index} />
+                            <FaStar key={index} className="text-yellow-400" />
                           ))}
                         </span>
-                      </h1>
+                      </h2>
+
                     </div>
 
 
                     <div className="lg:flex gap-5 mb-5">
                       <div>
-                        <div className="relative w-full lg:w-[450px] h-[200px] lg:h-[340px] mb-4">
+                        <div className="relative w-full  lg:w-[480px] h-[200px] lg:h-[340px] mb-4">
                           <img
-                            src={hotelinfo.info?.hoteldetail1[0]?.images?.[0] || '/images/not_found_img.png'}
+                            src={hotelinfo.info?.hoteldetail1[0]?.Images?.[0] || '/Images/not_found_img.png'}
                             alt="hotel image"
-                            className="lg:w-[450px] h-[200px] lg:h-[340px]"
+                            className="w-full lg:w-[480px] h-[200px] lg:h-[340px]"
                             layout="fill"
                             objectFit="cover"
                           />
                           <div onClick={() => setimgToggle(true)} className="cursor-pointer absolute bottom-0 left-0 w-full p-2 rounded-b-lg bg-opacity-75 bg-gray-800 text-white text-center">
-                            +{hotelinfo.info.hoteldetail1[0]?.images?.length} property photos
+                            +{hotelinfo.info.hoteldetail1[0]?.Images?.length} property photos
                           </div>
                         </div>
                         {isOpenSecond && (
                           <div className="fixed top-24 left-0 w-screen h-screen overflow-x-auto bg-white flex items-center justify-center z-40">
                             <div className="grid grid-cols-4 gap-4 h-full p-4">
-                              {hotelinfo.info.hoteldetail1[0].images.map((image, index) => (
+                              {hotelinfo.info.hoteldetail1[0].Images.map((image, index) => (
                                 <div key={index} className="relative w-full h-full">
                                   <img
-                                    src={image || '/images/not_found_img.png'}
+                                    src={image || '/Images/not_found_img.png'}
                                     alt={`Image ${index + 1}`}
                                     className="h-[20rem] w-full lg:w-[600px] lg:h-[340px]"
                                   />
@@ -339,25 +358,25 @@ const HotelSlugComp = ({ slugs }) => {
                         )}
                       </div>
                       <div>
-                        <div className="relative w-full lg:w-[280px] h-40 mb-4 rounded-2xl">
+                        <div className="relative w-full lg:w-[302px] h-40 mb-4 rounded-2xl">
                           <img
-                            src={hotelinfo.info.hoteldetail1[0]?.images?.[1] || '/images/not_found_img.png'}
+                            src={hotelinfo.info.hoteldetail1[0]?.Images?.[1] || '/Images/not_found_img.png'}
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
-                            className="w-full lg:w-[280px] h-40"
+                            className="w-full lg:w-[302px] h-40"
                           />
                           <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
                             Room photos
                           </div>
                         </div>
-                        <div className="relative w-full lg:w-[280px] h-40">
+                        <div className="relative w-full lg:w-[302px] h-40">
                           <img
-                            src={hotelinfo.info.hoteldetail1[0]?.images?.[2] || '/images/not_found_img.png'}
+                            src={hotelinfo.info.hoteldetail1[0]?.Images?.[2] || '/Images/not_found_img.png'}
                             alt="hotel image"
                             layout="fill"
                             objectFit="cover"
-                            className="w-full lg:w-[280px] h-40"
+                            className="w-full lg:w-[302px] h-40"
                           />
                         </div>
                       </div>
@@ -365,7 +384,7 @@ const HotelSlugComp = ({ slugs }) => {
                     <div className="mb-5">
                       <p>
                         <div
-                          className={` ${description ? "h-full" : "h-[9.1rem]"} overflow-hidden w-full lg:w-5/6`}
+                          className={` ${description ? "h-full" : "h-[9.1rem]"} overflow-hidden w-full `}
                           dangerouslySetInnerHTML={{ __html: hotelinfo.info.hoteldetail1[0].Description }}
                         ></div>
                         <button onClick={() => setDescription(!description)} className="font-bold text-blue-600">
@@ -429,7 +448,7 @@ const HotelSlugComp = ({ slugs }) => {
 
 
 
-                  <div className="lg:w-[28%] hidden lg:block lg:sticky lg:top-24 h-full">
+                  <div className="lg:w-[32%] hidden lg:block lg:sticky lg:top-24 h-full">
 
                     <div className="mb-5 border-2 rounded-2xl p-3">
 
@@ -490,7 +509,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <hr className="my-5 border-gray-300" />
                       <div className="flex gap-3 items-center">
-                        <img src="/images/google-maps.webp" alt="Candolim" className="mr-2 lg:w-10 h-full" />
+                        <img src="/Images/google-maps.webp" alt="Candolim" className="mr-2 lg:w-10 h-full" />
                         <div>
                           <p className="font-bold">Candolim</p>
                           <p className="text-gray-600 text-sm">5 minutes walk to Candolim Beach</p>
@@ -620,7 +639,7 @@ const HotelSlugComp = ({ slugs }) => {
                     <div className="lg:w-2/6">
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("contact")}>
-                          <img src="/images/location2.webp" alt="CategoryIcon" width={22} height={32} />
+                          <img src="/Images/location2.webp" alt="CategoryIcon" width={22} height={32} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Contacts</span>
                             {showingsection === "contact" ? <FaChevronDown /> : <FaChevronRight />}
@@ -651,7 +670,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("attractions")}>
-                          <img src="/images/cameraonr.webp" alt="CategoryIcon" width={22} height={39} />
+                          <img src="/Images/cameraonr.webp" alt="CategoryIcon" width={22} height={39} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Attractions</span>
                             {showingsection === "attractions" ? <FaChevronDown /> : <FaChevronRight />}
@@ -669,7 +688,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div>
                         <div className="selected flex w-full items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("transport")}>
-                          <img src="/images/flight_train.webp" alt="CategoryIcon" width={22} height={40} />
+                          <img src="/Images/flight_train.webp" alt="CategoryIcon" width={22} height={40} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Transport</span>
                           </p>
@@ -677,7 +696,7 @@ const HotelSlugComp = ({ slugs }) => {
                       </div>
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("restaurants")}>
-                          <img src="/images/restaurant.webp" alt="CategoryIcon" width={22} height={40} />
+                          <img src="/Images/restaurant.webp" alt="CategoryIcon" width={22} height={40} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Restaurants</span>
                           </p>

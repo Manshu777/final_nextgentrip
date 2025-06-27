@@ -372,6 +372,7 @@ const page = () => {
                       <div className="text-right flex-1">
                         <div className="text-black text-lg font-bold whitespace-nowrap ">
                           <span className="text-sm md:text-lg font-bold">
+                            {console.log( "flight.Fare.OfferedFare",flight.Fare.OfferedFare)}
                             {flight.Fare.OfferedFare.toLocaleString("en-US", {
                               style: "currency",
                               currency: flight.Fare.Currency,
