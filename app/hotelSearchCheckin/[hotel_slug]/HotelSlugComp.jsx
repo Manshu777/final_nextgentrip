@@ -59,48 +59,29 @@ const HotelSlugComp = ({ slugs }) => {
     sethotelinfo(state);
   }, [state]);
 
+const handlePreBooking = async (BookingCode) => {
+  setLoading(true);
+  await dispatch(gethotelPreBookingApi({ BookingCode }));
+  // Don't access preBookinghotelState immediately here!
+};
 
-  const handlePreBooking = async (BookingCode) => {
-    setLoading(true);
-    try {
-      // Dispatch the API call
-      await dispatch(gethotelPreBookingApi({ BookingCode }));
+useEffect(() => {
+  if (
+    preBookinghotelState?.info?.HotelResult &&
+    preBookinghotelState.info.HotelResult.length > 0
+  ) {
+    const hotelData = preBookinghotelState.info.HotelResult[0];
+    const cancellationPolicies = hotelData.Rooms?.[0]?.CancelPolicies;
+    const validationPolicies = preBookinghotelState.info?.ValidationInfo;
 
-   
-      if (
-        preBookinghotelState &&
-        preBookinghotelState?.info &&
-        preBookinghotelState?.info?.HotelResult &&
-        Array.isArray(preBookinghotelState?.info?.HotelResult) &&
-        preBookinghotelState?.info?.HotelResult?.length > 0 &&
-        preBookinghotelState?.info?.HotelResult[0]?.Rooms &&
-        Array.isArray(preBookinghotelState?.info?.HotelResult[0]?.Rooms) &&
-        preBookinghotelState?.info?.HotelResult[0]?.Rooms?.length > 0
-      ) {
-        // Save cancellation policies to localStorage
-        const cancellationPolicies = preBookinghotelState?.info?.HotelResult[0]?.Rooms[0]?.CancelPolicies;
-        const validationPolicies = preBookinghotelState?.info?.ValidationInfo;
+    localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
+    localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
+    sethotel(hotelData);
+    setIsOpen(true);
+    setLoading(false);
+  }
+}, [preBookinghotelState]);
 
-        console.log('Validation Policies:', validationPolicies);
-
-        localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
-        localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
-        setIsOpen(true);
-      } else {
-        console.error("Required data is missing in preBookinghotelState");
-        // Optionally, show an error message to the user
-      }
-    } catch (error) {
-      console.error("Error during pre-booking:", error);
-      // Optionally, show an error message to the user
-    } finally {
-    
-    }
-  };
-
-  useEffect(() => {
-    sethotel(preBookinghotelState && preBookinghotelState?.info && preBookinghotelState?.info?.HotelResult && preBookinghotelState?.info?.HotelResult[0]);
-  }, [preBookinghotelState]);
 
 
 

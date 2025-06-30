@@ -32,7 +32,8 @@ const HotelsComp = () => {
   });
 
   const [isVisible, setIsVisible] = useState("");
-  const [city, setcity] = useState({ Name: "delhi", Code: "130443" });
+  // Updated state to differentiate between city and hotel
+  const [city, setCity] = useState({ Name: "delhi", Code: "130443", isHotel: false });
   const [adultcount, setadultcount] = useState(1);
   const [childcount, setchildcount] = useState(0);
   const [numberOfRoom, setNumberOfRoom] = useState(1);
@@ -40,38 +41,65 @@ const HotelsComp = () => {
   const [cnCoide, setcnCoide] = useState("IN");
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCitySelect = (city) => {
-    if (!city || !city.Name || !city.Code) {
-      console.error("Invalid city object:", city);
+  const handleCitySelect = (selectedItem) => {
+    if (typeof selectedItem !== "object" || !selectedItem) {
+      console.error("Invalid selection:", selectedItem);
+      alert("Please select a valid city or hotel.");
       return;
     }
-    
-    // Update the selected city state
-    setcity({ Name: city.Name, Code: city.Code });
-    setIsVisible("");
-  
-    // Save to Top Cities in localStorage
+
+    // Check if the selection is a hotel
+    if (selectedItem.hotel_name && selectedItem.hotel_code) {
+      console.log("Selected hotel:", selectedItem);
+      setCity({
+        Name: selectedItem.hotel_name,
+        Code: selectedItem.hotel_code,
+        cityCode: selectedItem.city_code, // Store city_code for reference
+        cityName: selectedItem.city_name,
+        isHotel: true,
+      });
+
+      // Save to Top Hotels
+      saveToLocalStorage("TopHotels", {
+        hotelName: selectedItem.hotel_name,
+        hotelCode: selectedItem.hotel_code,
+        cityCode: selectedItem.city_code,
+        cityName: selectedItem.city_name,
+      });
+    } else if (selectedItem.city_name && selectedItem.city_code) {
+      console.log("Selected city:", selectedItem);
+      setCity({
+        Name: selectedItem.city_name,
+        Code: selectedItem.city_code,
+        isHotel: false,
+      });
+
+      // Save to Top Cities
+      saveToLocalStorage("TopCities", {
+        Name: selectedItem.city_name,
+        Code: selectedItem.city_code,
+      });
+    } else {
+      console.error("Invalid selection:", selectedItem);
+      alert("Please select a valid city or hotel.");
+      return;
+    }
+
+    setIsVisible(false);
+  };
+
+  const saveToLocalStorage = (key, newItem, maxItems = 5) => {
     try {
-      // Get existing Top Cities from localStorage
-      const topCities = JSON.parse(localStorage.getItem("TopCities")) || [];
-      
-      // Remove the city if it already exists to avoid duplicates
-      const updatedTopCities = topCities.filter(
-        (item) => item.Code !== city.Code
+      const items = JSON.parse(localStorage.getItem(key)) || [];
+      const updatedItems = items.filter(
+        (item) => item.Code !== newItem.Code && item.hotelCode !== newItem.hotelCode
       );
-      
-      // Add the new city to the start of the array
-      updatedTopCities.unshift({ Name: city.Name, Code: city.Code });
-      
-      // Limit to top 5 cities (or adjust as needed)
-      if (updatedTopCities.length > 5) {
-        updatedTopCities.pop();
-      }
-      
-      // Save back to localStorage
-      localStorage.setItem("TopCities", JSON.stringify(updatedTopCities));
+      updatedItems.unshift(newItem);
+      if (updatedItems.length > maxItems) updatedItems.pop();
+      localStorage.setItem(key, JSON.stringify(updatedItems));
     } catch (error) {
-      console.error("Error saving to TopCities in localStorage:", error);
+      console.error(`Error saving to ${key}:`, error);
+      alert(`Failed to save ${key}. Please try again.`);
     }
   };
 
@@ -89,7 +117,7 @@ const HotelsComp = () => {
     const nextDate = new Date(date);
     nextDate.setDate(date.getDate() + 1);
     setarivitime(date);
-    setcheckOut(nextDate); // Ensure Check Out is at least one day after Check In
+    setcheckOut(nextDate);
     setIsVisible("");
   };
 
@@ -111,10 +139,9 @@ const HotelsComp = () => {
   useEffect(() => {
     const topCities = JSON.parse(localStorage.getItem("TopCities")) || [];
     if (topCities.length > 0) {
-      setcity(topCities[0]);
+      setCity({ ...topCities[0], isHotel: false });
     }
   }, []);
-  
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -134,48 +161,65 @@ const HotelsComp = () => {
   };
 
   const handlehotelSearch = () => {
-    if (!city.Code) {
-      alert("Please select a valid city.");
-      return;
-    }
+  if (!city.Code || !city.Name) {
+    alert("Please select a valid city or hotel.");
+    return;
+  }
 
-    const validChildAges = childAges.filter(
-      (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
-    );
+  if (!arivitime || !checkOut || isNaN(new Date(arivitime)) || isNaN(new Date(checkOut))) {
+    alert("Please provide valid check-in and check-out dates.");
+    return;
+  }
 
-    if (validChildAges.length !== childcount) {
-      alert("Please provide valid ages (1–18) for all children.");
-      return;
-    }
+  const validChildAges = childAges.filter(
+    (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
+  );
 
-    localStorage.setItem(
-      "hotelItems",
-      JSON.stringify({
-        place: { Name: city.Name, Code: city.Code },
-        checkIntime: arivitime,
-        checkouttime: checkOut,
-        adultcount,
-        childcount,
-        childAges: validChildAges,
-        numberOfRoom,
-      })
-    );
+  if (validChildAges.length !== childcount) {
+    alert("Please provide valid ages (1–18) for all children.");
+    return;
+  }
 
-    const checkInDate = formatDateToLocal(arivitime);
-    const checkOutDate = formatDateToLocal(checkOut);
+  localStorage.setItem(
+    "hotelItems",
+    JSON.stringify({
+      place: { Name: city.Name, Code: city.Code, isHotel: city.isHotel, cityCode: city.cityCode },
+      checkIntime: arivitime,
+      checkouttime: checkOut,
+      adultcount,
+      childcount,
+      childAges: validChildAges,
+      numberOfRoom,
+    })
+  );
 
-    const childAgesQuery =
-      validChildAges.length > 0
-        ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
-        : "";
+  const checkInDate = formatDateToLocal(arivitime);
+  const checkOutDate = formatDateToLocal(checkOut);
 
-    router.push(
-      `/hotels/cityName=${encodeURIComponent(
-        city.Name
-      )}&citycode=${city.Code}&checkin=${checkInDate}&checkout=${checkOutDate}&adult=${adultcount}&child=${childcount}${childAgesQuery}&roomes=${numberOfRoom}&page=0&star=0`
-    );
-  };
+  const childAgesQuery =
+    validChildAges.length > 0
+      ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
+      : "";
 
+  // Determine if it's a hotel or city search
+  const isHotel = city.isHotel;
+  const nameKey = isHotel ? "hotelName" : "cityName";
+  const nameValue = encodeURIComponent(city.Name);
+  // Always use cityCode, whether it's a hotel or city
+  const codeValue = encodeURIComponent(city.isHotel ? city.cityCode : city.Code);
+
+  console.log("Selected Name:", city.Name, "Is Hotel:", isHotel, "City Code:", codeValue);
+
+  router.push(
+    `/hotels/${nameKey}=${nameValue}&citycode=${codeValue}&checkin=${encodeURIComponent(
+      checkInDate
+    )}&checkout=${encodeURIComponent(checkOutDate)}&adult=${encodeURIComponent(
+      adultcount
+    )}&child=${encodeURIComponent(childcount)}${childAgesQuery}&rooms=${encodeURIComponent(
+      numberOfRoom
+    )}&page=0&star=0`
+  );
+};
   const maxAdultsPerRoom = 8;
   const maxChildrenPerRoom = 4;
 
@@ -433,7 +477,7 @@ const HotelsComp = () => {
                         ))}
                       </div>
                     )}
-                    {/* Room Count */}
+
                     <div className="flex gap-3 justify-between">
                       <p className="text-nowrap text-gray-700">Room Count</p>
                       <div className="flex items-center gap-3">

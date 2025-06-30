@@ -5,16 +5,17 @@ import { apilink } from "../../common";
 
 export const getAllhotelsapi = createAsyncThunk(
   "/hotels",
-  async ({ cityCode, checkIn, checkOut, adults, children, guestNationality = "IN", childAges, page = 1 }) => {
+  async ({ cityCode, checkIn, checkOut, adults, children, hotelName,guestNationality = "IN", childAges, page = 1 }) => {
     const res = await axios.post(`${apilink}/hotels/search`, {
       cityCode,
       checkIn,
       checkOut,
       adults,
       children,
-      childAges, // Add childAges
+      childAges,
       guestNationality,
       page,
+      hotelName
     });
     return res.data;
   }

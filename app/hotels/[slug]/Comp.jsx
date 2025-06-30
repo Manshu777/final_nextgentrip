@@ -32,6 +32,9 @@ const Comp = ({ slug }) => {
   const adults = Number(params.get("adult"));
   const children = Number(params.get("child"));
   const roomes = params.get("roomes");
+  const hotelName = params.get("hotelName");
+
+  console.log(hotelName, "hotelName");
   const childAgesString = params.get("childAges");
   const childAges = useMemo(() => {
     return childAgesString
@@ -77,12 +80,13 @@ const Comp = ({ slug }) => {
         adults,
         children,
         childAges,
+        hotelName,
         guestNationality: defaultcurrency.country === "India" ? "IN" : "US", // Adjust based on currency
         page,
         per_page: 10, // Match backend default
       })
     );
-  }, [dispatch, cityCode, checkIn, checkOut, adults, children, childAges, page, defaultcurrency.country]);
+  }, [dispatch, cityCode, checkIn, checkOut, adults, hotelName,children, childAges, page, defaultcurrency.country]);
 
   // Filter and sort hotels
   const applyFilters = useCallback(() => {
