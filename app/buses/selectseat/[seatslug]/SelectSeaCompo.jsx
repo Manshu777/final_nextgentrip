@@ -1,115 +1,183 @@
-"use client"
-import React, { useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { getBusSeatLayout } from '../../../Component/Store/slices/busSeatlayout';
-import { FaChair } from "react-icons/fa";
-import { FaMapMarkerAlt, FaClock, FaPhoneAlt } from "react-icons/fa";
+"use client";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getBusSeatLayout } from "../../../Component/Store/slices/busSeatlayout";
+import { FaChair, FaMapMarkerAlt, FaClock, FaPhoneAlt } from "react-icons/fa";
 import { TiTick } from "react-icons/ti";
-import { FaUser, FaEnvelope, FaPhone, FaIdCard } from "react-icons/fa";
-import { ImCancelCircle } from "react-icons/im";
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import { apilink } from '../../../Component/common';
+import { toast } from "react-toastify";
+import axios from "axios";
+import { apilink } from "../../../Component/common";
 import { useRouter } from "next/navigation";
+
 const SelectSeaCompo = ({ slug }) => {
   const router = useRouter();
-  const decodeslug = decodeURIComponent(slug);
-  const params = new URLSearchParams(decodeslug)
-
-  const resultindex = params.get("resultindex")
-
-  const index = params.get("index")
   const dispatch = useDispatch();
-  const state = useSelector(state => state.busSeatSlice)
-  const url = "http://localhost:8000/api/v1"
+  const state = useSelector((state) => state.busSeatSlice);
+  const currencylist = useSelector((state) => state.currencySlice);
+  const defaultcurrency = JSON.parse(localStorage.getItem("usercurrency")) || {
+    symble: "₹",
+    code: "INR",
+    country: "India",
+  };
+  const cuntryprice = currencylist?.info?.rates?.[defaultcurrency.code];
 
-  const [busSeatInfo, setBusSeatInfo] = useState();
-  const [busBoarding, setBusBoarding] = useState();
-  const [bookseatdeatle, setBookseatdeatle] = useState()
-  const [bookinginfopage, setbookinginfopage] = useState(false)
-  const currencylist = useSelector(state => state.currencySlice);
-  const defaultcurrency = JSON.parse(localStorage.getItem("usercurrency")) || { symble: "₹", code: "INR", country: "India", }
-  const cuntryprice = currencylist?.info?.rates?.[`${defaultcurrency.code}`]
-  useEffect(() => {
+  const decodeslug = decodeURIComponent(slug);
+  const params = new URLSearchParams(decodeslug);
+  const resultindex = params.get("resultindex");
+  const index = params.get("index");
 
-    dispatch(getBusSeatLayout({ TraceId: index, ResultIndex: resultindex }))
-  }, [])
+  const [busSeatInfo, setBusSeatInfo] = useState(null);
+  const [busBoarding, setBusBoarding] = useState(null);
+  const [selectedSeats, setSelectedSeats] = useState([]);
 
-
-
-  useEffect(() => {
-    setBusSeatInfo(state && state.info && state.info?.buslayout?.GetBusSeatLayOutResult);
-    console.log(state?.info?.busbording)
-    setBusBoarding(state?.info?.busbording?.GetBusRouteDetailResult)
-  }, [state])
-
-  const handelseetbook = (seat) => {
-    setBookseatdeatle({ seat });
-
-  }
-
-  const [passenger, setpassenger] = useState({
-    LeadPassenger: true,
-    PassengerId: 0,
-    Title: "Mr.",
-    Address: "delhi",
-    Age: null,
-    Email: "akshit@travelboutiqueonline.com",
-    FirstName: "akshit",
-    Gender: 1,
-    IdNumber: null,
-    IdType: null,
-    LastName: "dhameja",
-    Phoneno: "01234567890",
-  })
-
-  const [bookingdata, setbookingdata] = useState({ TraceId: index, ResultIndex: resultindex });
-
-const booknow=async()=>{
-  const res=await axios.post(`${apilink}/bus/book`,bookingdata)
-  console.log(res.data)
-}
-
-  const handleBooking = async () => {
-
-    const updatedData = {
-      ...bookingdata,
-      BoardingPointId: busBoarding?.BoardingPointsDetails[0]?.CityPointIndex,
-      DropingPointId: busBoarding?.DroppingPointsDetails[0]?.CityPointIndex,
-    };
-
-    if (!updatedData || typeof updatedData !== 'object') {
-      console.error('Invalid updatedData:', updatedData);
-      return;
+  const [adultCount, setAdultCount] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.travellers?.adultCount || 1;
     }
-    if (!busBoarding || !busBoarding.BoardingPointsDetails || !busBoarding.DroppingPointsDetails) {
-      console.error('Invalid busBoarding:', busBoarding);
+    return 1;
+  });
+
+  useEffect(() => {
+    dispatch(getBusSeatLayout({ TraceId: index, ResultIndex: resultindex }));
+  }, [dispatch, index, resultindex]);
+
+  useEffect(() => {
+    setBusSeatInfo(state?.info?.buslayout?.GetBusSeatLayOutResult);
+    setBusBoarding(state?.info?.busbording?.GetBusRouteDetailResult);
+  }, [state]);
+
+  const handleSeatSelect = (seat) => {
+    if (!seat.SeatStatus) {
+      toast.error("This seat is already booked!");
       return;
     }
 
-    try {
-      setbookingdata(updatedData);
-      localStorage.setItem('busBookingData', JSON.stringify(updatedData));
-      localStorage.setItem('busBoardingData', JSON.stringify(busBoarding));
-      console.log('Stored in localStorage - busBookingData:', updatedData);
-      console.log('Stored in localStorage - busBoardingData:', busBoarding);
+    setSelectedSeats((prev) => {
+      let updatedSeats;
+      if (prev.some((s) => s.SeatIndex === seat.SeatIndex)) {
+        // Deselect seat
+        updatedSeats = prev.filter((s) => s.SeatIndex !== seat.SeatIndex);
+      } else if (prev.length < adultCount) {
+        // Select seat if under adultCount limit
+        updatedSeats = [...prev, seat];
+      } else {
+        toast.warning(`You can only select ${adultCount} seats!`);
+        return prev;
+      }
 
-      const query = encodeURIComponent(JSON.stringify(updatedData));
-      const url = `/buses/checkout/data=${query}`;
-      console.log('Navigating to:', url);
-      router.push(url);
-    } catch (error) {
-      console.error('Error in handleBooking:', error);
-    }
-
-
+      // Save updated seats to localStorage
+      const seatDetails = updatedSeats.map((s) => ({
+        SeatIndex: s.SeatIndex,
+        SeatName: s.SeatName,
+        SeatFare: s.SeatFare,
+        SeatType: s.SeatType,
+        IsLadiesSeat: s.IsLadiesSeat,
+        IsMalesSeat: s.IsMalesSeat,
+        IsUpper: s.IsUpper,
+        RowNo: s.RowNo,
+        ColumnNo: s.ColumnNo,
+        Price: {
+          CurrencyCode: s.Price.CurrencyCode,
+          BasePrice: s.Price.BasePrice,
+          Tax: s.Price.Tax,
+          OtherCharges: s.Price.OtherCharges,
+          Discount: s.Price.Discount,
+          PublishedPrice: s.Price.PublishedPrice,
+          PublishedPriceRoundedOff: s.Price.PublishedPriceRoundedOff,
+          OfferedPrice: s.Price.OfferedPrice,
+          OfferedPriceRoundedOff: s.Price.OfferedPriceRoundedOff,
+          AgentCommission: s.Price.AgentCommission,
+          AgentMarkUp: s.Price.AgentMarkUp,
+          TDS: s.Price.TDS,
+          GST: {
+            CGSTAmount: s.Price.GST.CGSTAmount,
+            CGSTRate: s.Price.GST.CGSTRate,
+            CessAmount: s.Price.GST.CessAmount,
+            CessRate: s.Price.GST.CessRate,
+            IGSTAmount: s.Price.GST.IGSTAmount,
+            IGSTRate: s.Price.GST.IGSTRate,
+            SGSTAmount: s.Price.GST.SGSTAmount,
+            SGSTRate: s.Price.GST.SGSTRate,
+            TaxableAmount: s.Price.GST.TaxableAmount,
+          },
+        },
+      }));
+      localStorage.setItem("selectedSeatDetails", JSON.stringify(seatDetails));
+      return updatedSeats;
+    });
   };
 
+  const handleBooking = async () => {
+    if (selectedSeats.length !== adultCount) {
+      toast.error(`Please select exactly ${adultCount} seats!`);
+      return;
+    }
 
+    const updatedData = {
+      TraceId: index,
+      ResultIndex: resultindex,
+      BoardingPointId: busBoarding?.BoardingPointsDetails[0]?.CityPointIndex,
+      DropingPointId: busBoarding?.DroppingPointsDetails[0]?.CityPointIndex,
+      Seats: selectedSeats.map((seat) => ({
+        SeatIndex: seat.SeatIndex,
+        SeatName: seat.SeatName,
+        SeatFare: seat.SeatFare,
+        SeatType: seat.SeatType,
+        IsLadiesSeat: seat.IsLadiesSeat,
+        IsMalesSeat: seat.IsMalesSeat,
+        IsUpper: seat.IsUpper,
+        RowNo: seat.RowNo,
+        ColumnNo: seat.ColumnNo,
+        Price: {
+          CurrencyCode: seat.Price.CurrencyCode,
+          BasePrice: seat.Price.BasePrice,
+          Tax: seat.Price.Tax,
+          OtherCharges: seat.Price.OtherCharges,
+          Discount: seat.Price.Discount,
+          PublishedPrice: seat.Price.PublishedPrice,
+          PublishedPriceRoundedOff: seat.Price.PublishedPriceRoundedOff,
+          OfferedPrice: seat.Price.OfferedPrice,
+          OfferedPriceRoundedOff: seat.Price.OfferedPriceRoundedOff,
+          AgentCommission: seat.Price.AgentCommission,
+          AgentMarkUp: seat.Price.AgentMarkUp,
+          TDS: seat.Price.TDS,
+          GST: {
+            CGSTAmount: seat.Price.GST.CGSTAmount,
+            CGSTRate: seat.Price.GST.CGSTRate,
+            CessAmount: seat.Price.GST.CessAmount,
+            CessRate: seat.Price.GST.CessRate,
+            IGSTAmount: seat.Price.GST.IGSTAmount,
+            IGSTRate: seat.Price.GST.IGSTRate,
+            SGSTAmount: seat.Price.GST.SGSTAmount,
+            SGSTRate: seat.Price.GST.SGSTRate,
+            TaxableAmount: seat.Price.GST.TaxableAmount,
+          },
+        },
+      })),
+    };
 
+    try {
+      localStorage.setItem("busBookingData", JSON.stringify(updatedData));
+      localStorage.setItem("busBoardingData", JSON.stringify(busBoarding));
+      const query = encodeURIComponent(JSON.stringify(updatedData));
+      router.push(`/buses/checkout/data=${query}`);
+    } catch (error) {
+      console.error("Error in handleBooking:", error);
+      toast.error("Failed to proceed with booking!");
+    }
+  };
+
+  const formatPrice = (price) => {
+    const offeredPrice = Number(price || 0);
+    const priceString = offeredPrice.toFixed(2);
+    const [integerPart, decimalPart] = priceString.split(".");
+    return `${defaultcurrency.symble} ${integerPart},${decimalPart || "00"}`;
+  };
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       {state.isLoading && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 backdrop-blur-sm z-50">
           <div className="text-center">
@@ -117,343 +185,132 @@ const booknow=async()=>{
             <h4 className="mt-4 text-white text-lg font-semibold">Loading...</h4>
           </div>
         </div>
-
       )}
 
-
-
-      {busSeatInfo && <div className='flex  flex-col lg:flex-row gap-10  lg:justify-between' >
-
-       
-        <div className='overflow-auto'>
-
-          <p className="text-3xl font-bold text-center mb-6">Bus Seat Layout</p>
-          {busSeatInfo?.SeatLayoutDetails?.SeatLayout?.SeatDetails?.map((setRow, rowindex) => {
-            return (
-              <div Key={rowindex} className='flex  gap-2 px-10  w-full'>
-                {setRow.map((seat, index) => {
-                  return (
+      <div className="max-w-7xl mx-auto">
+        {busSeatInfo && (
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-center text-gray-800 slelect your seat mb-8">
+              Select Your Seats
+            </h2>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+              <div className="flex justify-between items-center mb-4">
+                <p className="text-lg font-semibold text-gray-700">
+                  Select {adultCount} Seat{adultCount > 1 ? "s" : ""} (Selected: {selectedSeats.length})
+                </p>
+                <div className="flex gap-4">
+                  <div className="flex items-center gap-2">
+                    <FaChair className="text-green-500 text-lg" />
+                    <span className="text-sm text-gray-600">Available</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaChair className="text-red-500 text-lg" />
+                    <span className="text-sm text-gray-600">Booked</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <FaChair className="text-blue-500 text-lg" />
+                    <span className="text-sm text-gray-600">Selected</span>
+                  </div>
+                </div>
+              </div>
+              <div className="grid graind cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+                {busSeatInfo?.SeatLayoutDetails?.SeatLayout?.SeatDetails?.map((setRow, rowIndex) =>
+                  setRow.map((seat, index) => (
                     <div
-                      key={index}
-                      className={`flex flex-col items-center p-4  mx-6 my-3 border rounded-lg shadow-md relative transition-all duration-300 ${!seat.SeatStatus
-                          ? "bg-red-100 border-red-400" 
-                          : "bg-green-100 border-green-400"
-                        } cursor-pointer`}
-                      onClick={() => (handelseetbook(seat.SeatStatus ? seat : null), setpassenger({ ...passenger, Seat: seat }))}
-
-
+                      key={`${rowIndex}-${index}`}
+                      className={`relative flex flex-col items-center p-4 rounded-lg shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105
+                        ${!seat.SeatStatus ? "bg-red-50 border-red-300 opacity-70" : "bg-green-50 border-green-300 hover:bg-green-100"}
+                        ${selectedSeats.some((s) => s.SeatIndex === seat.SeatIndex) ? "bg-blue-100 border-blue-400" : ""}`}
+                      onClick={() => handleSeatSelect(seat)}
                     >
-                      {bookseatdeatle?.seat?.SeatIndex == seat?.SeatIndex && seat.SeatStatus &&
-                        <TiTick className='absolute top-1 text-2xl right-2' />
-                      }
+                      {selectedSeats.some((s) => s.SeatIndex === seat.SeatIndex) && (
+                        <TiTick className="absolute top-2 right-2 text-blue-600 text-xl" />
+                      )}
                       <FaChair
-                        className={`text-2xl ${!seat.SeatStatus ? "text-red-600" : "text-green-600"
-                          }`}
+                        className={`text-3xl ${!seat.SeatStatus ? "text-red-600" : selectedSeats.some((s) => s.SeatIndex === seat.SeatIndex) ? "text-blue-600" : "text-green-600"}`}
                       />
-
-
-                      <span className="mt-2 text-lg font-semibold text-nowrap text-gray-800">
-                        Seat {seat.SeatName}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {defaultcurrency.symble}   {(() => {
-                          const offeredPrice = Number(seat.Price?.PublishedPriceRoundedOff || 0);
-                          const priceString = offeredPrice.toFixed(2);
-                          const [integerPart, decimalPart] = priceString.split(".");
-                          return `${integerPart},${(decimalPart || "00").slice(0, 2)}`;
-                        })()}
-                      </span>
-
-
+                      <span className="mt-2 text-sm font-semibold text-gray-800">{seat.SeatName}</span>
+                      <span className="text-xs text-gray-500">{formatPrice(seat.Price?.PublishedPriceRoundedOff)}</span>
                       <span
-                        className={`text-xs mt-1 uppercase font-bold ${!seat.SeatStatus ? "text-red-500" : "text-green-500"
-                          }`}
+                        className={`text-xs font-bold uppercase mt-1 ${!seat.SeatStatus ? "text-red-500" : selectedSeats.some((s) => s.SeatIndex === seat.SeatIndex) ? "text-blue-500" : "text-green-500"}`}
                       >
-                        {!seat.SeatStatus ? "Booked" : "Available"}
+                        {!seat.SeatStatus ? "Booked" : selectedSeats.some((s) => s.SeatIndex === seat.SeatIndex) ? "Selected" : "Available"}
                       </span>
                     </div>
-                  )
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
-
-                })}
+        {busBoarding && (
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="text-3xl font-bold text-center text-blue-600 mb-8">Bus Route Details</h2>
+            <div className="flex flex-col lg:flex-row lg:justify-around gap-6">
+              <div className="lg:w-1/3 w-full">
+                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Boarding Points</h3>
+                {busBoarding?.BoardingPointsDetails?.map((point, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-4 border-b border-gray-200 hover:bg-blue-50 rounded-lg transition-all"
+                  >
+                    <FaMapMarkerAlt className="text-blue-600 text-2xl mt-1" />
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800">{point.CityPointName}</h4>
+                      <p className="text-gray-600 text-sm">
+                        <FaClock className="inline-block mr-1 text-gray-500" />
+                        Time: {new Date(point.CityPointTime).toLocaleString()}
+                      </p>
+                      <p className="text-gray-600 text-sm">
+                        <FaPhoneAlt className="inline-block mr-1 text-gray-500" />
+                        Contact: {point.CityPointContactNumber}
+                      </p>
+                      <p className="text-gray-600 text-sm">Landmark: {point.CityPointLandmark}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-
-            )
-
-
-
-
-          })}
-        </div>
-      </div>}
-
-
-
-      <div className='flex justify-center md:px-11 lg:px-24'>
-
-        {/* <div className="  rounded-lg p-8 ">
-          <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center mt-2">
-            Nextgentrip.com
-          </h1>
-          <form className="space-y-6">
-  
-            <div className='flex gap-5'>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Title</label>
-                <select
-                  className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:outline-none transition duration-200"
-                  required
-                  value={passenger.Title}
-                  onChange={(e) => setpassenger({ ...passenger, Title: e.target.value })}
+              <div className="flex justify-center items-center lg:items-start">
+                <button
+                  onClick={handleBooking}
+                  disabled={selectedSeats.length !== adultCount}
+                  className={`flex flex-col gap-[1px] rounded-lg group ${selectedSeats.length !== adultCount ? "opacity-50 cursor-not-allowed" : "hover:scale-105 transition-transform"}`}
                 >
-                  <option value="">Select</option>
-                  <option value="Mr">Mr</option>
-                  <option value="Mrs">Mrs</option>
-                </select>
+                  <div className="h-1 bg-orange-500 w-full group-hover:w-[0px] duration-300 rounded-t-full"></div>
+                  <div className="bg-orange-500 text-white font-semibold p-2 px-5 rounded-md text-center">
+                    Book Now
+                  </div>
+                  <div className="h-1 bg-orange-500 w-full group-hover:w-[0px] duration-300 rounded-b-full"></div>
+                </button>
               </div>
 
-     
-              <div>
-                <label className="block text-sm font-medium text-gray-700">First Name</label>
-                <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                  <FaUser className="text-gray-400 mx-3" />
-                  <input
-                    type="text"
-                    className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                    placeholder="Enter your first name"
-                    required
-                    value={passenger.FirstName}
-                    onChange={(e) => setpassenger({ ...passenger, FirstName: e.target.value })}
-                  />
-                </div>
+              <div className="lg:w-1/3 w-full">
+                <h3 className="text-2xl font-semibold text-gray-700 mb-4">Dropping Points</h3>
+                {busBoarding?.DroppingPointsDetails?.map((point, index) => (
+                  <div
+                    key={index}
+                    className="flex items-start gap-4 p-4 border-b border-gray-200 hover:bg-green-50 rounded-lg transition-all"
+                  >
+                    <FaMapMarkerAlt className="text-green-600 text-2xl mt-1" />
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800">{point.CityPointName}</h4>
+                      <p className="text-gray-600 text-sm">
+                        <FaClock className="inline-block mr-1 text-gray-500" />
+                        Time: {new Date(point.CityPointTime).toLocaleString()}
+                      </p>
+                      <p className="text-gray-600 text-sm">Location: {point.CityPointLocation}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">First Name</label>
-                <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                  <FaUser className="text-gray-400 mx-3" />
-                  <input
-                    type="text"
-                    className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                    placeholder="Enter your Last name"
-                    required
-                    value={passenger.LastName}
-                    onChange={(e) => setpassenger({ ...passenger, LastName: e.target.value })}
-                  />
-                </div>
-              </div>
-
-
-            </div>
-    
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                <FaEnvelope className="text-gray-400 mx-3" />
-                <input
-                  type="email"
-                  className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                  placeholder="Enter your email"
-                  required
-                  value={passenger.Email}
-                  onChange={(e) => setpassenger({ ...passenger, Email: e.target.value })}
-                />
-              </div>
-            </div>
-
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-              <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                <FaPhone className="text-gray-400 mx-3" />
-                <input
-                  type="tel"
-                  className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                  placeholder="Enter your phone number"
-                  required
-                  value={passenger.Phoneno}
-                  onChange={(e) => setpassenger({ ...passenger, Phoneno: e.target.value })}
-                />
-              </div>
-            </div>
-
-
-            <div className='flex gap-2'>
-              <div className='w-full'>
-                <label className="block text-sm font-medium text-gray-700">Gender</label>
-                <select
-                  className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:outline-none transition duration-200 bg-gray-50"
-                  required
-                  value={passenger.Gender}
-                  onChange={(e) => setpassenger({ ...passenger, Gender: e.target.value })}
-                >
-                  <option value="">Select</option>
-                  <option value="1">Male</option>
-                  <option value="2">Female</option>
-
-                </select>
-              </div>
-
-              <div className='w-full'>
-                <label className="block text-sm font-medium text-gray-700">Age</label>
-                <input
-                  type="number"
-                  className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:outline-none transition duration-200 bg-gray-50"
-                  placeholder="Enter your age"
-                  required
-                  value={passenger.Age}
-                  onChange={(e) => setpassenger({ ...passenger, Age: e.target.value })}
-                />
-              </div>
-            </div>
-
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">ID Type</label>
-              <select
-                className="w-full mt-1 p-3 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:outline-none transition duration-200 bg-gray-50"
-                required
-                value={passenger.IdType}
-                onChange={(e) => setpassenger({ ...passenger, IdType: e.target.value })}
-              >
-                <option value="">Select</option>
-                <option value="Aadhaar card">Aadhaar card</option>
-                <option value="PAN card">PAN card</option>
-                <option value="Passport">Passport</option>
-                <option value="Driving License">Driving License</option>
-                <option value="Voter ID">Voter ID</option>
-              </select>
-            </div>
-
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">ID Number</label>
-              <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                <FaIdCard className="text-gray-400 mx-3" />
-                <input
-                  type="text"
-                  className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                  placeholder="Enter your ID number"
-                  required
-                  value={passenger.IdNumber}
-                  onChange={(e) => setpassenger({ ...passenger, IdNumber: e.target.value })}
-                />
-              </div>
-            </div>
-
-            
-
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Address</label>
-              <div className="flex items-center border border-gray-300 rounded-lg mt-1 bg-gray-50 focus-within:ring focus-within:ring-indigo-300 transition">
-                <FaMapMarkerAlt className="text-gray-400 mx-3" />
-                <input
-                  type="text"
-                  className="w-full p-3 bg-transparent outline-none placeholder-gray-400"
-                  placeholder="Enter your address"
-                  required
-                  value={passenger.Address}
-                  onChange={(e) => setpassenger({ ...passenger, Address: e.target.value })}
-
-                />
-              </div>
-            </div>
-
-
-
-          
-
-
-          </form>
-        </div> */}
-
-
-    {    console.log('busBoarding',busBoarding)}
-
-{busBoarding && (
-  <div className="mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg max-w-screen-xl">
-    <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">
-      Bus Route Details
-    </h1>
-
-    {/* Responsive Flexbox */}
-    <div className="flex flex-col lg:flex-row lg:justify-around gap-6">
-      
-      {/* Boarding Points */}
-      <div className="lg:w-1/3 w-full">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-700">
-          Boarding Points
-        </h2>
-        {busBoarding?.BoardingPointsDetails?.map((point, index) => (
-          <div
-            key={index}
-            className="flex items-start gap-4 p-4 border-b border-gray-200 hover:bg-blue-50 rounded-lg transition"
-          >
-            <FaMapMarkerAlt className="text-blue-600 text-2xl mt-1" />
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">{point.CityPointName}</h3>
-              <p className="text-gray-600 text-sm">
-                <FaClock className="inline-block mr-1 text-gray-500" />
-                Time: {new Date(point.CityPointTime).toLocaleString()}
-              </p>
-              <p className="text-gray-600 text-sm">
-                <FaPhoneAlt className="inline-block mr-1 text-gray-500" />
-                Contact: {point.CityPointContactNumber}
-              </p>
-              <p className="text-gray-600 text-sm">Landmark: {point.CityPointLandmark}</p>
             </div>
           </div>
-        ))}
-      </div>
-
-      {/* Book Now Button */}
-      <div className="flex justify-center items-center lg:items-start">
-        <div className="flex flex-col gap-[1px] rounded-lg group" onClick={() => handleBooking()}>
-          <div className="h-1 bg-orange-500 w-full group-hover:w-[0px] duration-300 rounded-t-full"></div>
-          <div className="bg-orange-500 text-white font-semibold p-2 px-5 rounded-md cursor-pointer text-center">
-            Book Now
-          </div>
-          <div className="h-1 bg-orange-500 w-full group-hover:w-[0px] duration-300 rounded-b-full"></div>
-        </div>
-      </div>
-
-      {/* Dropping Points */}
-      <div className="lg:w-1/3 w-full">
-        <h2 className="text-2xl font-semibold mb-3 text-gray-700">
-          Dropping Points
-        </h2>
-        {busBoarding?.DroppingPointsDetails?.map((point, index) => (
-          <div
-            key={index}
-            className="flex items-start gap-4 p-4 border-b border-gray-200 hover:bg-green-50 rounded-lg transition"
-          >
-            <FaMapMarkerAlt className="text-green-600 text-2xl mt-1" />
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800">{point.CityPointName}</h3>
-              <p className="text-gray-600 text-sm">
-                <FaClock className="inline-block mr-1 text-gray-500" />
-                Time: {new Date(point.CityPointTime).toLocaleString()}
-              </p>
-              <p className="text-gray-600 text-sm">Location: {point.CityPointLocation}</p>
-            </div>
-          </div>
-        ))}
+        )}
       </div>
     </div>
-  </div>
-)}
+  );
+};
 
-
-      </div>
-
-
-
-
-
-
-    </div>
-  )
-}
-
-export default SelectSeaCompo
+export default SelectSeaCompo;

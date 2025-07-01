@@ -1,103 +1,162 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import { getBuscityapi } from "../../Store/slices/busSearchSlice";
 import { Calendar } from "@nextui-org/react";
-import { today, getLocalTimeZone } from "@internationalized/date";
-import { getbuses } from "../../Store/slices/busslices";
-import { useRouter } from "next/navigation";
-import Navbar from "../Navbar";
-import { MdOutlineMeetingRoom } from "react-icons/md";
-import { FaCalendarWeek, FaChevronDown, FaCalendarAlt, FaUserLarge } from "react-icons/fa";
+import { today, getLocalTimeZone, parseDate } from "@internationalized/date";
 import { IoLocationSharp } from "react-icons/io5";
-import { RxCross2 } from "react-icons/rx";
+import { FaCalendarAlt } from "react-icons/fa";
+import Navbar from "../Navbar";
 import TypeWriterHeaderEffect from "../TypeWriterHeaderEffect";
-import MiniNav from "../MiniNav";
-import { debounce } from 'lodash';
 
 const BusComp = () => {
-  const [selected, setselected] = useState("");
-  const [loading, setloading] = useState(true);
-  const [isVisible, setIsVisible] = useState(false);
-  const [adultCount, setAdultCount] = useState(1);
-  const [childCount, setChildCount] = useState(0);
-  const [infantCount, setInfantCount] = useState(0);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [fromCity, setFromCity] = useState({
-    CityId: 7485,
-    CityName: "Hyderabad",
-  });
-  const [toCity, setToCity] = useState({
-    CityId: 6395,
-    CityName: "Bangalore",
-  });
-  const localTimeZone = getLocalTimeZone();
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const localTimeZone = "Asia/Kolkata"; // Force IST timezone
   const currentDate = today(localTimeZone);
 
-  // Initialize pickupdate to current date
-  const [pickupdate, setpickdate] = useState(currentDate.toDate(localTimeZone));
+  // Initialize state from localStorage, URL, or defaults
+  const [fromCity, setFromCity] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.fromCity || { CityId: 7485, CityName: "Hyderabad" };
+    }
+    const params = new URLSearchParams(window.location.search);
+    return params.get("OriginId")
+      ? { CityId: parseInt(params.get("OriginId")), CityName: "Hyderabad" }
+      : { CityId: 7485, CityName: "Hyderabad" };
+  });
 
-  const route = useRouter();
+  const [toCity, setToCity] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.toCity || { CityId: 6395, CityName: "Bangalore" };
+    }
+    const params = new URLSearchParams(window.location.search);
+    return params.get("DestinationId")
+      ? { CityId: parseInt(params.get("DestinationId")), CityName: "Bangalore" }
+      : { CityId: 6395, CityName: "Bangalore" };
+  });
+
+  const [pickupdate, setpickdate] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.pickupdate ? new Date(parsed.pickupdate) : currentDate.toDate(localTimeZone);
+    }
+    const params = new URLSearchParams(window.location.search);
+    const dateFromUrl = params.get("DateOfJourney");
+    return dateFromUrl ? new Date(dateFromUrl) : currentDate.toDate(localTimeZone);
+  });
+
+  const [calendarValue, setCalendarValue] = useState(() => {
+    const dateStr = pickupdate.toISOString().split("T")[0];
+    return parseDate(dateStr);
+  });
+
+  const [adultCount, setAdultCount] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.travellers?.adultCount || 1;
+    }
+    const params = new URLSearchParams(window.location.search);
+    return parseInt(params.get("adult")) || 1;
+  });
+
+  const [childCount, setChildCount] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.travellers?.childCount || 0;
+    }
+    return 0;
+  });
+
+  const [infantCount, setInfantCount] = useState(() => {
+    const saved = localStorage.getItem("busSearch");
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      return parsed.travellers?.infantCount || 0;
+    }
+    return 0;
+  });
+
+  const [selected, setselected] = useState("");
+  const [isTravellerDropdownVisible, setIsTravellerDropdownVisible] = useState(false);
+
+  useEffect(() => {
+    dispatch(getBuscityapi());
+    // Sync calendarValue with pickupdate
+    setCalendarValue(parseDate(pickupdate.toISOString().split("T")[0]));
+  }, [dispatch, pickupdate]);
 
   const handleRangeChange = (newRange) => {
     const date = new Date(newRange.year, newRange.month - 1, newRange.day);
     setpickdate(date);
+    setCalendarValue(newRange);
     setselected("");
   };
 
-  const [searchparam, setsearchparam] = useState("");
-
   const handelSearch = () => {
-    localStorage.setItem("busSearch", JSON.stringify({ fromCity, toCity, pickupdate }));
-    const newdate = pickupdate.toISOString().split('T')[0];
-    route.push(`/buses/DateOfJourney=${newdate}&OriginId=${fromCity.CityId}&DestinationId=${toCity.CityId}&adult=${adultCount}`);
-  };
+    // Format date as YYYY-MM-DD in local timezone
+    const year = pickupdate.getFullYear();
+    const month = String(pickupdate.getMonth() + 1).padStart(2, "0");
+    const day = String(pickupdate.getDate()).padStart(2, "0");
+    const newdate = `${year}-${month}-${day}`;
 
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(getBuscityapi());
-  }, [dispatch]);
+    // Save to localStorage
+    localStorage.setItem(
+      "busSearch",
+      JSON.stringify({
+        fromCity,
+        toCity,
+        pickupdate: newdate,
+        travellers: { adultCount },
+      })
+    );
+
+    // Navigate to search results
+    router.push(
+      `/buses/DateOfJourney=${newdate}&OriginId=${fromCity.CityId}&DestinationId=${toCity.CityId}&adult=${adultCount}`
+    );
+  };
 
   const handelfromcity = (data) => {
     setFromCity(data);
     setselected("to");
-    setsearchparam("");
   };
 
   const handeltocity = (data) => {
     setToCity(data);
     setselected("date");
-    setsearchparam("");
   };
 
   const TravellerDropdown = ({ adultCount, setAdultCount, childCount, setChildCount, infantCount, setInfantCount }) => {
     return (
-      <div className="bg-white p-4 shadow-lg rounded-lg">
+      <div className="bg-white p-4 shadow-lg rounded-lg absolute top-[80%] min-w-full left-1 md:-left-10 z-10">
         <div className="flex justify-between items-center mb-4">
-          <span>Adults</span>
+          <span className="text-black">Adults</span>
           <div className="flex items-center gap-2">
-            <button onClick={() => setAdultCount(Math.max(1, adultCount - 1))}>-</button>
-            <span>{adultCount}</span>
-            <button onClick={() => setAdultCount(adultCount + 1)}>+</button>
+            <button
+              className="px-2 border text-black"
+              onClick={() => setAdultCount(Math.max(1, adultCount - 1))}
+            >
+              -
+            </button>
+            <span className="px-2 border text-black">{adultCount}</span>
+            <button
+              className="px-2 border text-black"
+              onClick={() => setAdultCount(adultCount + 1)}
+            >
+              +
+            </button>
           </div>
         </div>
-        <div className="flex justify-between items-center mb-4">
-          <span>Children</span>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setChildCount(Math.max(0, childCount - 1))}>-</button>
-            <span>{childCount}</span>
-            <button onClick={() => setChildCount(childCount + 1)}>+</button>
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <span>Infants</span>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setInfantCount(Math.max(0, infantCount - 1))}>-</button>
-            <span>{infantCount}</span>
-            <button onClick={() => setInfantCount(infantCount + 1)}>+</button>
-          </div>
-        </div>
+       
       </div>
     );
   };
@@ -156,10 +215,10 @@ const BusComp = () => {
                 <div className="text-slate-400">
                   <div className="flex items-baseline text-black">
                     <span className="text-xl py-1 pr-1 text-black font-bold">
-                      {pickupdate.getDate()} {/* Fixed: Removed -1 */}
+                      {pickupdate.getDate()}
                     </span>
                     <span className="text-sm font-semibold">
-                      {pickupdate.toLocaleString('en-US', { month: 'short' })}
+                      {pickupdate.toLocaleString("en-US", { month: "short" })}
                     </span>
                     <span className="text-sm font-semibold">
                       {pickupdate.getFullYear()}
@@ -171,7 +230,7 @@ const BusComp = () => {
                 <div className="bg-white text-black p-5 shadow-2xl absolute top-full left-0 mt-2 z-10">
                   <Calendar
                     aria-label="Select a date"
-                    value={currentDate}
+                    value={calendarValue}
                     onChange={handleRangeChange}
                     minValue={currentDate}
                   />
@@ -179,25 +238,29 @@ const BusComp = () => {
               )}
             </div>
             {/* Travellers */}
-            <div className="flex items-start gap-2 px-3 py-1 justify-between md:justify-start text-black border-[1px] border-slate-400 rounded-md relative" onMouseLeave={() => setIsVisible(false)}>
+            <div
+              className="flex items-start gap-2 px-3 py-1 justify-between md:justify-start text-black border-[1px] border-slate-400 rounded-md relative"
+              onMouseLeave={() => setIsTravellerDropdownVisible(false)}
+            >
               <div className="text-slate-400">
                 <h5 className="font-bold text-lg text-black">{adultCount + childCount + infantCount}</h5>
                 <p className="text-slate-400 text-xs">Traveller(s)</p>
               </div>
-              <button onClick={() => { setIsVisible(true); setSelectedOption("count"); }}>Edit</button>
-              {isVisible && selectedOption === "count" && (
-                <div className="absolute top-[80%] min-w-full min-h-[10rem] left-1 md:-left-10 z-10">
-                  <div className="shadow-2xl rounded-md bg-white mt-[10%] flex flex-col gap-4 p-4">
-                    <div className="flex gap-3 justify-between">
-                      <p className="text-nowrap">Adult Count</p>
-                      <div className="flex items-center gap-3">
-                        <button className="px-2 border" onClick={() => { adultCount > 1 ? setAdultCount(adultCount - 1) : null }}>-</button>
-                        <p className="px-2 border">{adultCount}</p>
-                        <button className="px-2 border" onClick={() => setAdultCount(adultCount + 1)}>+</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <button
+                onClick={() => setIsTravellerDropdownVisible(!isTravellerDropdownVisible)}
+                className="text-black"
+              >
+                Edit
+              </button>
+              {isTravellerDropdownVisible && (
+                <TravellerDropdown
+                  adultCount={adultCount}
+                  setAdultCount={setAdultCount}
+                  childCount={childCount}
+                  setChildCount={setChildCount}
+                  infantCount={infantCount}
+                  setInfantCount={setInfantCount}
+                />
               )}
             </div>
             {/* Search Button */}
@@ -219,7 +282,7 @@ const BusComp = () => {
 export default BusComp;
 
 const SearchCompnents = ({ handelcity }) => {
-  const [searchparam, setsearchparam] = useState('');
+  const [searchparam, setsearchparam] = useState("");
   const dispatch = useDispatch();
   const { info, isLoading } = useSelector((state) => state.busCityslice);
 
