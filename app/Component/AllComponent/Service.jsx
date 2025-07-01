@@ -3,21 +3,23 @@
 import React from "react";
 import { useTranslations } from "next-intl";
 
-const ServiceItem = ({ img, titleKey, descKey }) => {
+const ServiceRow = ({ icon, titleKey, descKey }) => {
   const t = useTranslations("Popular");
 
   return (
-    <li className="flex flex-col lg:flex-row items-center gap-4">
-      <img
-        src={`/images/${img}.webp`}
-        className="w-16 h-16 object-cover"
-        alt={t(titleKey)}
-      />
-      <div>
-        <h5 className="text-lg font-semibold">{t(titleKey)}</h5>
-        <p className="mt-2">{t(descKey)}</p>
+    <div className="flex items-start">
+      <div className="text-xl sm:text-2xl text-[#10325a] pt-0.5 w-6 sm:w-8 text-center">
+        {icon}
       </div>
-    </li>
+      <div className="pl-3 sm:pl-4">
+        <h5 className="text-sm sm:text-base font-semibold text-[#10325a] leading-tight">
+          {t(titleKey)}
+        </h5>
+        <p className="text-[13px] text-gray-600 mt-0.5 leading-snug">
+          {t(descKey)}
+        </p>
+      </div>
+    </div>
   );
 };
 
@@ -25,32 +27,33 @@ const Service = () => {
   const t = useTranslations("Popular");
 
   const services = [
-    { img: "blog2", titleKey: "moreabout", descKey: "moreaboutans" },
-    { img: "shield", titleKey: "serviceprovider", descKey: "serviceproviderans" },
-    { img: "general", titleKey: "happyservice", descKey: "happyserviceans" },
+    { icon: "✈️", titleKey: "flight", descKey: "flightans" },
+    { icon: "🏨", titleKey: "hotel", descKey: "hotelans" },
+    { icon: "🚐", titleKey: "transport", descKey: "transportans" },
+    { icon: "🛡️", titleKey: "insurance", descKey: "insuranceans" },
+    { icon: "🌍", titleKey: "visa", descKey: "visaans" },
+    { icon: "💱", titleKey: "forex", descKey: "forexans" },
+    { icon: "📶", titleKey: "esim", descKey: "esimans" },
+    { icon: "💍", titleKey: "marriage", descKey: "marriageans" },
+    { icon: "🎓", titleKey: "internship", descKey: "internshipans" },
+    { icon: "🚢", titleKey: "cruise", descKey: "cruiseans" },
+    { icon: "🌴", titleKey: "holiday", descKey: "holidayans" },
   ];
 
   return (
-    <div className="bg-gray-100 p-1 lg:p-20 mt-12">
-      <div className="flex flex-col-reverse lg:flex-row justify-between items-center gap-5">
-        <div className="p-4">
-          <h3 className="text-4xl font-semibold">{t("service")}</h3>
-          <p className="mt-4 mb-6">{t("serviceans")}</p>
-          <ul className="space-y-6">
-            {services.map((service, i) => (
-              <ServiceItem key={i} {...service} />
-            ))}
-          </ul>
-        </div>
-        <div className="p-4">
-          <img
-            src="/images/online-booking.webp"
-            alt={t("service")}
-            className="rounded-lg"
-          />
+    <section className="bg-white py-6 px-4 sm:px-6 lg:px-12 xl:px-20">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold text-black mb-6 text-center sm:text-left">
+          {t("service")}
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">
+          {services.map((item, index) => (
+            <ServiceRow key={index} {...item} />
+          ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

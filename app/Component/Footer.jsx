@@ -75,7 +75,7 @@ const Footer = () => {
     {/* Recommended Section */}
     <div className="space-y-4">
       <p className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-700">
-        Recommended by <span className="text-blue-500">Nextgentrip.com</span>
+        Recommended by <span className="text-[#10325a]">Nextgentrip.com</span>
       </p>
 
       <div className="tabSection">

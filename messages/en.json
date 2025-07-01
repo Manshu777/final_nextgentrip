@@ -1,6 +1,6 @@
 {
   "HomePage": {
-    "title": "Why book with us!",
+    "title": "Our Special Offers",
     "description": "This is a sample page for your multilingual website."
   },
   "Navbar": {
@@ -53,17 +53,35 @@
     "desb3": "Seamless Internet Connectivity Onboard",
     "desb4": "Advanced Safety and Security",
     "desb5": "Tailored to Your Preferences",
-    "service": " What service do you need?",
-    "serviceans": "  Tell us more about your requirements so that we can connect you to the right service provider.",
-    "moreabout": "Tell us more about your requirements",
-    "moreaboutans": "  HI Imagine you have made your presence online through a local online directory, but your competitors have..",
-    "serviceprovider": " We connect with right service provider",
-    "serviceproviderans": "Advertising your business to area specific has many advantages. For local businessmen, it is an opportunity..",
-    "happyservice": "Happy with our service",
-    "happyserviceans": "Your local business too needs brand management and image making. As you know the local market.."
+    "service": "  Services We Provide",
+    "serviceans": "  We are the only OTA that offers a bundle of unique services to ensure an excellent and unforgettable travel experience.",
+    
+     "flight": " Flight Bookings",
+"flightans": "Hassle-free domestic and international flight reservations at competitive rates.",
+"hotel": " Hotel Bookings",
+"hotelans": "Access over 2 million accommodation options globally — from budget stays to premium hotels.",
+"transport": " Ground Transport",
+"transportans": "Reliable airport transfers, car rentals, and intercity travel solutions across destinations.",
+"insurance": " Travel Insurance",
+"insuranceans": "Secure your travel with comprehensive insurance plans for a worry-free experience.",
+"visa": " Visa Assistance",
+"visaans": "Expert support for eVisa processing and embassy documentation worldwide.",
+"forex": " Forex Exchange",
+"forexans": "Fast and safe currency exchange services with the best market rates.",
+"esim": " eSIM Connectivity",
+"esimans": "Stay connected in any country with seamless eSIM plans — no physical SIM required.",
+"marriage": " Join Marriages",
+"marriageans": "Experience vibrant Indian culture by joining destination weddings and traditional ceremonies.",
+"internship": " International Internship Programs",
+"internshipans": "Global internship placement assistance for students seeking exposure and career growth abroad.",
+"cruise": " Cruise & Charter Services",
+"cruiseans": "Discover luxury at sea with our curated cruise packages and private charter bookings.",
+"holiday": " Holiday Packages",
+"holidayans": "Customizable domestic and international holiday packages for families, couples, groups, and corporates."
+
   },
   "Bookwithus": {
-    "bookwith": "Why book with us?",
+    "bookwith": "Our Special Offers",
     "title1": "Easy Booking",
     "des1": "Our user-friendly platform simplifies the process of reserving flights, hotels, bus tickets, and holiday packages. ",
     "title2": "Lowest Price",

@@ -487,7 +487,8 @@ const Topbar = () => {
         {!showIcons && (
         <Link
           href="/property-listing"
-          className="hidden md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-gradient-to-r from-blue-500 via-indigo-600 to-purple-700 text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+         className="hidden md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-[#10325a] text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+
         >
           <FaHotel />
           List Your Property
@@ -773,7 +774,8 @@ const Topbar = () => {
               )}
               {!userlogin && (
                 <Link className="relative" href={"/user/login"}>
-                  <div className="bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 text-white px-3  lg:px-6 py-2 font-semibold rounded-full text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-blue-300 cursor-pointer">
+                  <div className="bg-[#10325a] text-white px-3 lg:px-6 py-2 font-semibold rounded-full text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-[#10325a]/50 cursor-pointer">
+
                   <span className="inline lg:hidden">Login</span>  <span className="hidden md:inline"> Signup</span>
                   </div>
                   {/* 

@@ -168,10 +168,10 @@ setloader(true)
             </div>
           </div>
 
-          <div className="text-blue-700 text-end w-full">Forgot password?</div>
+          <div className="text-[#10325a] text-end w-full">Forgot password?</div>
           <div>
             <button
-              className="text-white bg-blue-600 px-4 py-1 rounded-lg font-semibold text-xl"
+              className="text-white bg-[#10325a] px-4 py-1 rounded-lg font-semibold text-xl"
               onClick={handelLogin}
               disabled={loader}
             >

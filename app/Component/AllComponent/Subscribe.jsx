@@ -5,7 +5,7 @@ const Subscribe = () => {
   const t=useTranslations("footer")
   return (
     <>
-      <section className="mb-15 py-10 px-5 lg:px-20 animate__animated animate__fadeIn custom-color">
+      <section className="mb-15 py-10 px-5 lg:px-20 animate__animated animate__fadeIn bg-[#10325a]">
         <div className="block md:flex   items-center justify-center gap-10">
           <div className="w-full lg:w-1/3">
             <h2 className="text-[21px] lg:text-2xl  text-white font-bold mb-5">
@@ -20,7 +20,7 @@ const Subscribe = () => {
               />
               <button
                 type="submit"
-                className="bg-[#011F48] text-white px-10 py-3 lg:py-5 rounded-r-md hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand"
+                className="bg-[#45a183] text-white px-10 py-3 lg:py-5 rounded-r-md hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand"
               >
                 Subscribe
               </button>

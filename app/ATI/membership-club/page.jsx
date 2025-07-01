@@ -305,7 +305,7 @@ const page = () => {
             <h4 className="text-lg font-semibold text-green-700">
               Headquarters
             </h4>
-            <p className="text-gray-700">Sector 48,</p>
+            <p className="text-gray-700">Sector 34a,</p>
             <p className="text-gray-700">Chandigarh, India</p>
             <p className="text-gray-700">Phone: +(91) 9877579319</p>
             <p className="text-gray-700">Email: NextGenindia@gmail.com</p>
