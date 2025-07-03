@@ -6,10 +6,10 @@ const page = () => {
   const t=useTranslations("FreshTravel")
   return (
     <>
-      <section className="bg-gray-100 py-10 ">
+      <section className="bg-gray-100 py-5 ">
         <div className="w-full ">
           <div className="text-center mb-0 lg:mb-6">
-            <h2 className="text-2xl font-bold text-black _hdrtxt py-0 lg:py-5">
+            <h2 className="text-2xl font-bold text-black _hdrtxt py-0 ">
              {t("travelblogs")}
             </h2>
           </div>

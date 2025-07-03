@@ -41,7 +41,7 @@ const MineHolidayPkgComp = () => {
     }, []);
 
     return (
-       <div className="max-w-7xl mx-auto my-5 lg:my-10 px-4 py-8">
+       <div className="max-w-7xl mx-auto my-5 lg:my-4 px-4 ">
     <div className="relative">
         {/* Heading Section */}
         <div className="mb-6 px-4 sm:px-12 lg:px-28">

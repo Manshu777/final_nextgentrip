@@ -38,9 +38,9 @@ const Book = () => {
   ];
   return (
     <>
-      <div className="py-5 lg:py-12 bg-white mt-5">
+      <div className="py-2 lg:py-6 bg-white mt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2 mb-10">
+          <div className="relative text-lg md:text-xl lg:text-3xl font-bold text-gray-900 flex justify-center items-center gap-2 mb-5">
          {t("bookwith")}
            
           </div>
@@ -61,7 +61,7 @@ const Book = () => {
         </div>
       </div>
 
-   <section className="relative py-28  px-6 md:px-16 lg:px-32 bg-gradient-to-r from-[#10325a] to-[#45a183] text-white overflow-hidden">
+   <section className="relative py-7  px-6 md:px-16 lg:px-32 bg-gradient-to-r from-[#10325a] to-[#45a183] text-white overflow-hidden">
   {/* Decorative Elements */}
   <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
     <div className="absolute w-96 h-96 bg-white opacity-10 rounded-full top-[-100px] left-[-100px] blur-3xl animate-spin-slow"></div>

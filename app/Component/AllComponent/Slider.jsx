@@ -145,9 +145,9 @@ const CustomSlider = ({ isLoading, children }) => {
 
   return (
     <>
-      <div className=" md:my-6">
+      <div className=" md:my-6 lg:my-0">
 
-        <div className=" hidden  relative  pt-0 lg:pt-10 text-lg md:text-xl lg:text-3xl font-bold text-gray-900 md:flex justify-center items-center gap-2 my-5">
+        <div className=" hidden  relative  pt-0 lg:pt-2 text-lg md:text-xl lg:text-3xl font-bold text-gray-900 md:flex justify-center items-center gap-2 my-3">
           {t('title')}
         </div>
 

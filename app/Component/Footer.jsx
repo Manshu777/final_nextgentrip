@@ -159,7 +159,7 @@ const Footer = () => {
         <h2 id="footer-heading" className="sr-only">
           Footer
         </h2>
-        <div className="mx-auto max-w-7xl py-6 sm:py-8 lg:py-10">
+        <div className="mx-auto max-w-7xl py-3 sm:py-4 lg:py-5">
           {/* Recommended Section */}
           <div className="space-y-4">
             <p className="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-700">
@@ -191,7 +191,7 @@ const Footer = () => {
                   )}
                 </ul>
               ) : (
-                <div className="tab-content text-xs sm:text-sm px-4 sm:px-5 py-6 sm:py-8 rounded-md">
+                <div className="tab-content text-xs sm:text-sm px-4 sm:px-5 py-3 sm:py-4 rounded-md">
                   {loader ? (
                     <p>Loading packages...</p>
                   ) : allpackage.length > 0 ? (
@@ -215,7 +215,7 @@ const Footer = () => {
           </div>
 
           {/* Main Footer Content */}
-          <div className="my-8 sm:my-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="my-3 sm:my-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             <div className="space-y-4">
               <img
                 className="w-auto h-12 sm:h-14 lg:h-16"
@@ -482,7 +482,7 @@ const Footer = () => {
           </div>
 
           {/* Footer Note */}
-          <div className="mt-8 sm:mt-10 lg:mt-12 border-t border-gray-900/10 pt-4 hidden sm:block">
+          <div className="mt-3 sm:mt-4 lg:mt-5 border-t border-gray-900/10 pt-4 hidden sm:block">
             <div className="flex justify-between items-center">
               <div className="text-xs sm:text-sm leading-6 text-gray-600 hover:text-gray-900">
                 <p>{t("text1")}</p>
@@ -491,7 +491,7 @@ const Footer = () => {
           </div>
 
           {/* Bottom Footer */}
-          <div className="mt-6 sm:mt-8 lg:mt-10 border-t border-gray-900/10 pt-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="mt-2 sm:mt-8 lg:mt-5 border-t border-gray-900/10 pt-2 flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="text-xs sm:text-sm leading-5 text-gray-500">
               © 2025 Next Gen All Rights Reserved.
             </p>

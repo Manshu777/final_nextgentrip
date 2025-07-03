@@ -37,11 +37,12 @@ const Service = () => {
     { icon: "💍", titleKey: "marriage", descKey: "marriageans" },
     { icon: "🎓", titleKey: "internship", descKey: "internshipans" },
     { icon: "🚢", titleKey: "cruise", descKey: "cruiseans" },
+    { icon: "⛵", titleKey: "charter", descKey: "charterans" },
     { icon: "🌴", titleKey: "holiday", descKey: "holidayans" },
-  ];
+];
 
   return (
-    <section className="bg-white py-6 px-4 sm:px-6 lg:px-12 xl:px-20">
+    <section className="bg-white py-3 px-4 sm:px-6 lg:px-12 xl:px-20">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-2xl sm:text-3xl font-bold text-black mb-6 text-center sm:text-left">
           {t("service")}

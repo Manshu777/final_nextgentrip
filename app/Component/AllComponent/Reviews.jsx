@@ -98,14 +98,14 @@ const Testimonial = () => {
   ];
 
   return (
-    <div className="overflow-hidden bg-gray-100 py-12 px-5 lg:px-28" id="reviews" data-aos="fade-up">
+    <div className="overflow-hidden bg-gray-100 py-5 px-5 lg:px-28" id="reviews" data-aos="fade-up">
       <div className="max-w-4xl mx-auto text-center">
         {/* <h2 className="text-sm font-semibold text-gray-600 uppercase">LEARNER REVIEWS FROM THE WORLD OVER</h2> */}
         <p className="text-3xl font-bold text-gray-900 mt-3">REVIEWS FROM THE WORLD OVER</p>
       </div>
 
 
-      <div className="container mx-auto mt-8" data-aos="fade-up-right">
+      <div className="container mx-auto mt-4" data-aos="fade-up-right">
         <Swiper
           spaceBetween={20}
           breakpoints={{

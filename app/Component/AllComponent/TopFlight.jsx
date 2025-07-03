@@ -135,8 +135,8 @@ const TopFlight = () => {
   return (
     <>
       {/* FLIGHT & PACKAGE GRID */}
-      <div className="flight pt-0 lg:pt-10 px-0 md:px-10 lg:px-28 " >
-        <h2 className="text-center text-3xl font-bold mb-6 mt-5 sm:mt-0">
+      <div className="flight pt-0 lg:pt-1 px-0 md:px-10 lg:px-28 " >
+        <h2 className="text-center text-3xl font-bold mb-3 sm:mt-0">
 {t("mainheading")}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-5 p-3">
@@ -187,7 +187,7 @@ const TopFlight = () => {
       <InfoSection />
 
       {/* Hotel Slider Section */}
-      <div className="px-2 my-8">
+      <div className="px-2 my-4">
         <h3 className="text-center text-3xl font-bold my-4">Our Packages</h3>
         <HotelSliderCompo />
       </div>
@@ -219,8 +219,8 @@ const TopFlight = () => {
       </div> */}
 
       {/* Tourist Love Section */}
-      <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt-0 lg:pt-12">
-        <h2 className="text-center text-4xl font-bold text-[#10325a] mb-12">Tourist <span className="text-[#45a183]">Love</span></h2>
+      <div className="w-full mx-auto px-6 md:px-10 lg:px-28 pt-0 lg:pt-6">
+        <h2 className="text-center text-4xl font-bold text-[#10325a] mb-6">Tourist <span className="text-[#45a183]">Love</span></h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {(viewAll ? attractions.slice(0, 7) : attractions).map((attraction, index) => (
             <Link href={attraction.link} key={index} className="border-b-4 border-b-[#009dff] shadow-md rounded-lg p-4 bg-white">
