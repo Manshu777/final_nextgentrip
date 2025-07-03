@@ -258,7 +258,7 @@ useEffect(() => {
             </ul>
             {hotelinfo && !hotelinfo.isLoading && hotelinfo.info && hotelinfo.info.hoteldetail1 && (
               <>
-                <div className="p-6 bg-white rounded-3xl flex justify-between myshadow">
+                <div className="p-6 bg-white rounded-3xl flex flex-col lg:flex-row w-full justify-between myshadow">
                   <div className="lg:w-2/3 relative">
                     <div className="flex items-center justify-between mb-5" id="WBTH">
 
@@ -310,7 +310,7 @@ useEffect(() => {
 
                     <div className="lg:flex gap-5 mb-5">
                       <div>
-                        <div className="relative w-full  lg:w-[480px] h-[200px] lg:h-[340px] mb-4">
+                        <div className="relative w-full  lg:w-[400px] h-[200px] lg:h-[340px] mb-4">
                           <img
                             src={hotelinfo.info?.hoteldetail1[0]?.Images?.[0] || '/Images/not_found_img.png'}
                             alt="hotel image"
@@ -347,9 +347,9 @@ useEffect(() => {
                             objectFit="cover"
                             className="w-full lg:w-[302px] h-40"
                           />
-                          <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
+                          {/* <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
                             Room photos
-                          </div>
+                          </div> */}
                         </div>
                         <div className="relative w-full lg:w-[302px] h-40">
                           <img
@@ -429,7 +429,7 @@ useEffect(() => {
 
 
 
-                  <div className="lg:w-[32%] hidden lg:block lg:sticky lg:top-24 h-full">
+                  <div className="lg:w-[30%] hidden lg:block lg:sticky lg:top-24 h-full">
 
                     <div className="mb-5 border-2 rounded-2xl p-3">
 

@@ -1,300 +1,122 @@
-import React from 'react'
-import Link from 'next/link';
-const page = () => {
-  const loyaltyProgramDetails = [
-    {
-      title: "Get Rewards for Each Booking",
-      description:
-        "With every trip, you are getting closer to terrific rewards with NextGen. With flight reservations, accommodation bookings, vacation packages, and exclusive experiences—everything earns you points. The more you travel, the more you will earn.",
-    },
-    {
-      title: "Exclusive Member Benefits",
-      description:
-        "As a member of our loyalty program, you’ll unlock a range of premium benefits that elevate your travel experience. Enjoy priority customer support, special discounts, exclusive access to private tours and experiences, and even complimentary upgrades at select hotels.",
-    },
-    {
-      title: "Targeted Promotions and Personalized Recommendations",
-      description:
-        "Your loyalty matters to us, and that's the reason we take that little extra step to make your experience with NextGen as personal and rewarding as possible. Once you become a loyalty member, offers and suggestions tailored to your preferences will be available, making each trip unique and more enjoyable.",
-    },
-    {
-      title: "Redeem Your Points for Awesome Prizes",
-      description:
-        "Under our Loyalty Program, your points can be worth as much as your journey. Use them to purchase future travel, exclusive upgrades, access to VIP lounges, special experiences like private yacht rentals, or even gift cards for your favorite brands. The possibilities are boundless.",
-    },
-    {
-      title: "VIP Customer Care",
-      description:
-        "You will be assigned a personal travel concierge to ensure your travel plans are easy, stress-free, and perfectly suited to your needs. Our team is available for special requests, last-minute changes, or any other arrangements you need, 24/7.",
-    },
-    {
-      title: "Exclusives and Debits Offer",
-      description:
-        "As a member, you'll have access to special promotions, limited-time offers, and seasonal discounts available only to loyal members. From discounted rates on holiday packages to exclusive flight deals, members get early access to offers not available to the public.",
-    },
-  ];
+import React from "react";
+import { FaCrown, FaMedal, FaStar, FaUserPlus, FaSuitcase, FaGift } from "react-icons/fa";
 
-  const howItWorksSteps = [
+export default function RewardsPage() {
+  const tiers = [
     {
-      title: "Registration and End Earned",
-      description:
-        "Join our NextGen Loyalty Program, which is absolutely free and easy to join. Register on our website and start earning points at every trip. Be it flight bookings, hotel stays, or any package travel, the points will keep accumulating.",
-    },
-    {
-      title: "Book Your Next Holiday",
-      description:
-        "Enjoy a variety of exceptional offers and promotions, exclusive to loyalty members, with your membership. Book your next adventure with us, and your points will grow.",
-    },
-    {
-      title: "Collect and Track Points",
-      description:
-        "Points are converted once you book, and you can track them quite easily from your account on NextGen. So keep a closer eye on your balance—you’ll know when you’ve managed to accrue enough for another reward!",
-    },
-    {
-      title: "Redeem and Enjoy Your Rewards",
-      description:
-        "Just earning miles will bring cash back for you. Award of additional nights in a stunning hotel, first-class upgrade, or VIP access to privileged events—everything comes true from your miles. The more you travel, the more you can!",
-    },
-  ];
-
-  const loyaltyBenefits = [
-    {
-      title: "Unlocks an entire world of rewards with NextGen Loyalty",
-      description:
-        "Double points for unique experience. Be a loyalty member and get double points on specific activities and experiences - exclusive tours, dining experiences, adventure packages - so that every time you travel, your travel is always rewarded.",
-    },
-    {
-      title: "Privilege lounge access",
-      description:
-        "With free, complimentary premium access to worldwide airport lounges, you can start your journey from anywhere in comfort.",
-    },
-    {
-      title: "Free room upgrade",
-      description:
-        "Stay in style with a room upgrade at the finest hotels participating, from 5-star resorts to boutique hotels. Whatever the style of accommodation, enjoy a more enjoyable stay amidst this luxury and fantastic views.",
-    },
-    {
-      title: "Early Inroads to Sales and Promotions",
-      description:
-        "It puts loyalty members at its top priority so they never miss any exclusive sales - either time-limited promotions or last-minute deals.",
-    },
-    {
-      title: "Special Deals for Friends and Family",
-      description:
-        "Share the love - transfer your loyalty points to family or friends or bring them along for exclusive travel offers. Make each trip more enjoyable by sharing the experience.",
-    },
-  ];
-
-  const membershipLevels = [
-    {
-      title: "Explorer Level",
-      pointsPerDollar: "1 point for every dollar spent",
+      tier: "Silver Explorer",
+      icon: <FaStar className="text-[#45a183] text-4xl mb-3" />,
+      criteria: "Sign up & complete your first booking",
       benefits: [
-        "Access to core advantages such as discounts, member-only offers, and infrequent promotions.",
-        "A welcome gift during the first booking.",
+        "5% discount on select hotels",
+        "Early-bird deals & seasonal offers",
+        "Basic travel support access",
       ],
     },
     {
-      title: "Adventurer Level",
-      pointsPerDollar: "1.5 points for every dollar spent",
+      tier: "Gold Voyager",
+      icon: <FaMedal className="text-yellow-500 text-4xl mb-3" />,
+      criteria: "Book 5+ trips in a year",
       benefits: [
-        "Priority customer support and special promotions.",
-        "Free entry to airport lounge for one person accompanying each journey.",
-        "Free space upgrade on specific reservations.",
+        "10% discount + curated travel packages",
+        "One-time free flight reschedule",
+        "Special pricing on travel insurance",
       ],
     },
     {
-      title: "Globetrotter Level",
-      pointsPerDollar: "2 points for every dollar spent",
+      tier: "Platinum Globetrotter",
+      icon: <FaCrown className="text-[#10325a] text-4xl mb-3" />,
+      criteria: "Spend ₹5L+ or partner via MoU",
       benefits: [
-        "Special tours and experiences have priority booking.",
-        "Free lounge access for two.",
-        "Bonus points for specific adventures, upgrades, and premium services.",
-        "Exclusive deals and personalized travel concierge.",
+        "15% discount + elite travel upgrades",
+        "Personal trip concierge",
+        "Co-branded promotional benefits",
       ],
     },
   ];
 
-  const apkaTripInfo = {
-    loyaltyProgramCTA: "Join the NextGen Loyalty Program today",
-    introduction: "Join the NextGen fidelity Program  moment  Are you ready to turn your passion for  trip into fantastic  prices? Whether you are an  avaricious  rubberneck or just starting out, the fidelity Program from NextGen offers you  unstoppable value and unmatched benefits.   About NextGen  NextGen is one of the world's most trusted  trip agencies, believing every trip should be memorable, smooth, and  satisfying. Our fidelity Program is our  bid to make your  trip experience as unique as possible with exclusive  prices and  substantiated services that help you find and explore the world and enjoy great benefits along the way.",
-    ctaButtons: [
-      { text: "Start Earning, Start Exploring", link: "#" },
-      { text: "Sign up now", link: "#" },
-      { text: "Learn more about Rewards", link: "#" },
-      { text: "Contact us", link: "#" }
-    ],
-    aboutTitle: "About NextGen",
-    aboutText: "NextGen is one of the world's most trusted travel agencies, believing every trip should be memorable, smooth, and rewarding. Our Loyalty Program is our endeavour to make your travel experience as unique as possible with exclusive rewards and personalized services that help you find and explore the world and enjoy great benefits along the way.",
-    companyDetails: {
-      // address: "Sector 48",
-      // city: "Chandigarh, India",
-      telephone: "+(91) 9877579319",
-  email: "info@nextgentrip.com"
+  const steps = [
+    {
+      icon: <FaUserPlus className="text-[#45a183] text-4xl mb-4" />,
+      title: "Become a Member",
+      desc: "Create your free NextGenTrip account in seconds",
     },
-    socialLinks: [
-      { platform: "Instagram", link: "https://www.instagram.com/nextgentrip/profilecard/?igsh=MTdyMjlyb293aTB0MA%3D%3D" },
-      { platform: "Facebook", link: "https://www.facebook.com/share/1AA9dPezvA/?mibextid=wwXIfr" },
-      { platform: "Twitter", link: "https://x.com/NextGenTrip?t=d4oQeyJHEQldf9lsP2EgnQ&s=08" },
-      { platform: "youtube", link: "https://www.youtube.com/@NextGenTrip-g5t" }
-    ]
-  };
-  
+    {
+      icon: <FaSuitcase className="text-[#10325a] text-4xl mb-4" />,
+      title: "Book & Earn",
+      desc: "Every confirmed trip brings you closer to new rewards",
+    },
+    {
+      icon: <FaGift className="text-yellow-500 text-4xl mb-4" />,
+      title: "Enjoy Exclusive Perks",
+      desc: "Unlock discounts, priority support, and VIP privileges",
+    },
+  ];
+
   return (
-    <>
+    <main>
+      {/* Hero Section */}
+      <section className="bg-[#10325a] text-white py-16 px-6 text-center">
+        <h1 className="text-5xl font-extrabold mb-3">NextGen Rewards</h1>
+        <p className="text-lg max-w-2xl mx-auto">
+          Welcome to the travel club that pays you back! Earn points, unlock exclusive discounts,
+          and elevate your travel experience with NextGenTrip.
+        </p>
+        {/* <button className="mt-8 bg-white text-[#10325a] px-8 py-3 font-bold rounded-full hover:scale-105 hover:bg-gray-200 transition-all duration-300">
+          Join Now for Free
+        </button> */}
+      </section>
 
-      <head>
-    <title>
-
-    NextGenTrip Loyalty – Travel More, Earn More Rewards
-    </title>
-
-    <meta name="description" content="NextGenTrip’s Loyalty Program rewards you for every journey. Travel more, earn more points, and unlock premium perks, upgrades, discounts, and VIP deals." />
-    </head>
-
-
-
-
-
-     <section className="bg-gradient-to-tr py-5 lg:py-10 from-[#1c265e] via-[#062c61] to-[#031932] relative bg-no-repeat bg-cover min-h-[70vh] space-y-5 lg:space-y-20 flex flex-col justify-center items-center px-5 text-white">
-  <h5 className="text-2xl pt-5 md:text-3xl lg:text-4xl text-white text-center font-bold">
-    Welcome to Exclusive{" "}
-    <span className="text-green-600 lg:border-b-4 lg:border-green-800 border-dotted lg:pb-2">
-      Loyalty{" "}
-    </span>{" "}
-    Program of NextGen.
-  </h5>
-
-  <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-10 px-5 md:px-16 lg:px-20 space-y-5 md:space-y-0">
-    <div className="space-y-5 lg:w-[50%] text-center md:text-left">
-      <h5 className="text-xl lg:text-3xl font-bold tracking-wide">
-        Travel More Earn More <br /> and Enjoy Superior Rewards
-      </h5>
-      <p className="text-base lg:text-lg text-justify text-[#bbbbbb] ">
-       That is to say, loyalty must be rewarded. As a seasoned traveler or an inaugural one who is exploring this wonderful world, our Loyalty Program is designed to improve and enrich your journeys every step with NextGen. Stay with us and experience a world of privilege with special rewards and individualized services to make every journey more unforgettable. Join NextGen Loyalty Program today and begin earning all those points, benefits, and advantages that will turn your travel fantasies into reality.
-      </p>
-    </div>
-
-    <div className="md:w-[50%] hidden lg:block">
-      <img
-        src="/images/page2/Loyalty1.jpg"
-        alt="Loyalty Program"
-        className="rounded-lg w-full object-cover h-full"
-      />
-    </div>
-  </div>
-</section>
-
-      <div className="space-y-8 lg:space-y-12 mt-10">
-        <section className="px-5 md:px-16 lg:px-20  ">
-          <div className="bg-[#F1F5F9] px-5 py-6 rounded-lg md:px-10 md:py-12 space-y-6">
-            <h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-              Why Join the NextGen Loyalty Program?
-            </h6>
-            {loyaltyProgramDetails.map((benefit, index) => (
-              <div key={index} className="space-y-4">
-                <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-                  {benefit.title}
-                </h5>
-                <p className="text-base text-gray-600">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="px-5 md:px-16 lg:px-20  ">
-          <div className="bg-[#F1F5F9] px-5 py-6 md:px-10 md:py-12 space-y-6 rounded-lg">
-            <h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-              How It Works: Simple, Transparent, and Rewarding
-            </h6>
-            {howItWorksSteps.map((step, index) => (
-              <div key={index} className="space-y-4">
-                <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-                  {step.title}
-                </h5>
-                <p className="text-base text-gray-600">{step.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section className="px-5 md:px-16 lg:px-20  ">
-          <div className="bg-[#F1F5F9] px-5 py-6 md:px-10 md:py-12 space-y-6 rounded-lg">
-            <h6 className="text-lg md:text-2xl font-semibold text-gray-700">
-              Exclusive Loyalty Program Benefits
-            </h6>
-            {loyaltyBenefits.map((benefit, index) => (
-              <div key={index} className="space-y-4">
-                <h5 className="text-lg md:text-xl font-semibold text-gray-800">
-                  {benefit.title}
-                </h5>
-                <p className="text-base text-gray-600">{benefit.description}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-
-        <section className="px-5 md:px-16 lg:px-20 ">
-  <div className="bg-[#F1F5F9] px-5 py-8 md:px-10 md:py-12 space-y-6 rounded-lg">
-    <h6 className="text-lg md:text-2xl font-semibold text-gray-700">Levels of Membership: The More You Travel, the More You Benefit</h6>
-    
-    {membershipLevels.map((level, index) => (
-      <div key={index} className="space-y-4">
-        <h5 className="text-lg md:text-xl font-semibold text-gray-800">{level.title}</h5>
-        <p className="text-base text-gray-600">{level.pointsPerDollar}</p>
-        <ul className="list-disc pl-5 space-y-2 text-gray-600">
-          {level.benefits.map((benefit, idx) => (
-            <li key={idx}>{benefit}</li>
+      {/* Tiers Section */}
+      <section className="py-14 px-6 bg-gray-100">
+        <h2 className="text-4xl text-center font-bold text-[#10325a] mb-10">
+          Level Up Your Travel Game
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {tiers.map(({ tier, icon, criteria, benefits }, i) => (
+            <div key={i} className="bg-white rounded-3xl shadow-xl p-8 text-center hover:shadow-[#45a183] transition-all">
+              <div className="flex justify-center">{icon}</div>
+              <h3 className="text-2xl font-extrabold text-[#10325a] mb-1">{tier}</h3>
+              <p className="text-sm text-gray-500 mb-5 italic">{criteria}</p>
+              <ul className="text-left text-sm list-disc list-inside text-gray-700 space-y-2">
+                {benefits.map((b, i) => (
+                  <li key={i}>{b}</li>
+                ))}
+              </ul>
+            </div>
           ))}
-        </ul>
-      </div>
-    ))}
-  </div>
-</section>
+        </div>
+      </section>
 
+      {/* How It Works Section */}
+      <section className="py-14 px-6">
+        <h2 className="text-4xl font-bold text-center text-[#10325a] mb-12">
+          How It Works
+        </h2>
+        <div className="flex flex-col md:flex-row justify-center gap-8 max-w-5xl mx-auto text-center">
+          {steps.map(({ icon, title, desc }, i) => (
+            <div
+              key={i}
+              className="bg-white rounded-2xl p-8 shadow-lg w-full md:w-1/3 hover:shadow-[#45a183] transition-all"
+            >
+              <div className="flex justify-center">{icon}</div>
+              <h4 className="text-xl font-semibold text-[#10325a]">{title}</h4>
+              <p className="text-sm text-gray-600 mt-3">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
 
-<section className="px-5 md:px-16 lg:px-20 py-10">
-  <div className="bg-[#F1F5F9] px-5 py-6 md:px-10 md:py-12 space-y-8 rounded-lg">
-    {/* Loyalty Program CTA */}
-    <div className="space-y-4">
-      <h6 className="text-lg md:text-2xl font-semibold">{apkaTripInfo.loyaltyProgramCTA}</h6>
-      <p>{apkaTripInfo.introduction}</p>
-      {/* <div className="md:space-x-4 space-y-5  ">
-        {apkaTripInfo.ctaButtons.map((button, index) => (
-          <Link key={index} href={button.link} className="inline-block w-full md:w-auto px-6 py-2 text-white bg-blue-600 rounded-md">{button.text}</Link>
-        ))}
-      </div> */}
-    </div>
-
-    {/* About NextGen */}
-    <div className="space-y-4">
-      <h6 className="text-lg md:text-2xl font-semibold">{apkaTripInfo.aboutTitle}</h6>
-      <p>{apkaTripInfo.aboutText}</p>
-    </div>
-
-    {/* Company Details */}
-    <div className="space-y-3">
-      <p className="font-semibold">Contect:</p>
-      <p>{apkaTripInfo.companyDetails.address}</p>
-      <p>{apkaTripInfo.companyDetails.city}</p>
-      <p>{apkaTripInfo.companyDetails.telephone}</p>
-      <p>{apkaTripInfo.companyDetails.email}</p>
-    </div>
-
-    {/* Social Media Links */}
-    <div className="space-x-4">
-      {apkaTripInfo.socialLinks.map((social, index) => (
-        <a key={index} href={social.link} className="text-blue-600 hover:underline">{social.platform}</a>
-      ))}
-    </div>
-  </div>
-</section>
-
-
-      </div>
-    </>
+      {/* Call to Action Section */}
+      <section className="bg-[#45a183] text-white py-12 px-6 text-center">
+        <h2 className="text-3xl font-bold mb-2">Travel Smarter. Travel Rewarded.</h2>
+        <p className="text-sm mb-6">
+          Join thousands of travelers already earning with NextGen Rewards. The world is waiting—get rewarded while exploring it.
+        </p>
+        {/* <button className="bg-white text-[#45a183] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all">
+          Start Earning Today
+        </button> */}
+      </section>
+    </main>
   );
 }
-
-export default page
