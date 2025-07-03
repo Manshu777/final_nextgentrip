@@ -213,8 +213,8 @@ const PlansPage = () => {
   return (
     <>
     <EsimComp />
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-8 text-center text-gray-800">Discover eSIM Plans</h2>
+    <div className="container mx-auto px-4 py-4">
+      <h2 className="text-3xl font-bold  text-center text-gray-800">Discover eSIM Plans</h2>
 
       <div className="w-full max-w-md mx-auto p-4">
           <div className="relative">
@@ -278,7 +278,7 @@ const PlansPage = () => {
 
 
       <div
-        className="relative bg-cover bg-center py-12"
+        className="relative bg-cover bg-center"
        
       >
         {error && !isLoading && (
@@ -297,7 +297,7 @@ const PlansPage = () => {
             No eSIM plans available for {country || selectedCountry || 'the selected country'}.
           </p>
         ) : (
-          <div className="grid grid-cols-1 px-[4%]  lg:my-[61px] lg:px-[5%] md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 px-[4%]  lg:my-[px] lg:px-[5%] md:grid-cols-2 lg:grid-cols-3 gap-4">
             {plans.map((plan) =>
               plan.id && plan.planName && plan.totalPrice ? (
                 <div

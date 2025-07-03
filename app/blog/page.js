@@ -32,7 +32,7 @@ export default function page() {
 
 
 
-      <section className="relative blog-bg w-full mt-5 bg-no-repeat bg-cover text-white py-20">
+      <section className="relative blog-bg w-full  bg-no-repeat bg-cover text-white py-16">
         <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
 
         <div className="container mx-auto px-6 text-center relative z-10">
@@ -45,7 +45,7 @@ export default function page() {
         </div>
       </section>
       <div className="min-h-screen bg-gray-100 p-6">
-        <header className="text-center mb-12 max-w-4xl mt-5 mx-auto">
+        <header className="text-center mb-4 max-w-4xl mt-5 mx-auto">
           <h1 className="text-xl md:text-4xl font-bold mb-4">Welcome to NextGenTrip</h1>
           <p className="text-justify text-lg text-gray-700">
             Your ultimate resource for travel inspiration, tips, and stories. Whether you're looking for destination guides, practical advice, or real-life travel experiences, our blog has something for every traveller.

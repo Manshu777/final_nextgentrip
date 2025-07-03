@@ -135,7 +135,7 @@ dispatch(getAllRegHotels())
 
 
 
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           <button
             onClick={handleViewAll}
             className="bg-[#2196F3] text-white py-2 px-4 rounded-full"

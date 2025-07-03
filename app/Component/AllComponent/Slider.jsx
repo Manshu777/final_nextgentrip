@@ -147,7 +147,7 @@ const CustomSlider = ({ isLoading, children }) => {
     <>
       <div className=" md:my-6 lg:my-0">
 
-        <div className=" hidden  relative  pt-0 lg:pt-2 text-lg md:text-xl lg:text-3xl font-bold text-gray-900 md:flex justify-center items-center gap-2 my-3">
+        <div className=" hidden  relative  pt-0 lg:pt-2 text-lg md:text-xl lg:text-3xl font-bold text-gray-900 md:flex justify-center items-center gap-2">
           {t('title')}
         </div>
 
@@ -168,7 +168,7 @@ const CustomSlider = ({ isLoading, children }) => {
         {
           // false &&
           !sliderdata.isLoading &&
-          <div className=" flex  flex-col lg:flex-row md:px-4 lg:px-28 justify-end md:gap-4 w-full ">
+          <div className=" flex  flex-col lg:flex-row md:px-4 lg:px-28 justify-end md:gap-4 w-full mt-3 ">
             <Swiper
               className=" w-full  lg:w-3/6 h-[200px] lg:h-[300px] "
 

@@ -205,7 +205,7 @@ const page = () => {
         </div>
       </div>
 
-      <div className=" bg-[#f2f2f2] px-5 md:px-24 py-10">
+      <div className=" bg-[#f2f2f2] px-5 md:px-24 py-5">
        
        {showLoader? <div className="bg-slate-100 px-3 py-10 lg:px-36 space-y-4 ">
           {isLoading ? (

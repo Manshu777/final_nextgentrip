@@ -57,7 +57,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="bg-[#f0f7f5] min-h-[70vh] flex justify-center items-center py-6 md:py-10 px-5">
+      <div className="bg-[#f0f7f5] min-h-[50vh] flex justify-center items-center  md:py-5 px-5">
         <div className="text-center max-w-4xl space-y-5">
           <h2 className="text-3xl font-semibold text-[#10325a] md:text-4xl">
             NextGen is Your Reliable Traveling Service
@@ -71,7 +71,7 @@ const Page = () => {
         </div>
       </div>
 
-      <div className="space-y-5 px-5 md:px-16 lg:px-20 mt-20">
+      <div className="space-y-5 px-5 md:px-16 lg:px-20 mt-5">
         {/* Why Partner Section */}
         <div className="bg-white p-8 rounded-lg space-y-8 shadow">
           <h2 className="text-2xl font-semibold text-[#10325a]">Why Partner with NextGen?</h2>

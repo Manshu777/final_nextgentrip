@@ -75,7 +75,8 @@ route.push(`/holidayspackage/${searchInput}`)
 
 
   return (
-    <div className="relative overflow-hidden lg:overflow-visible pt-6 lg:pt-0 h-80 mb-20">
+    <div className="relative overflow-hidden lg:overflow-visible  lg:pt-0 h-15 mb-5">
+    
       <Slider {...settings} className="relative">
         {slides.map((slide, index) => (
           <div key={index} className="relative">
@@ -85,9 +86,10 @@ route.push(`/holidayspackage/${searchInput}`)
                 alt={slide.title}
                 layout="fill"
                 objectFit="cover"
-                className="w-full h-80"
+                className="w-full h-60"
               />
-              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center p-4 text-white bg-black bg-opacity-20 z-10"></div>
+                
+              <div className="absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center  text-white bg-black bg-opacity-20 z-10"></div>
               <h2 className="absolute left-0 right-0  flex items-center justify-center mx-auto z-10  text-white text-2xl top-20 lg:top-16 font-bold">
                 {slide.title}
               </h2>
@@ -95,7 +97,8 @@ route.push(`/holidayspackage/${searchInput}`)
           </div>
         ))}
       </Slider>
-      <div className="absolute bottom-10 lg:bottom-16  left-0 right-0 text-center pb-6 ">
+      <h2 className="text-center mt-3 text-3xl font-bold">Top Holiday Packages</h2>
+      <div className="absolute bottom-10 lg:bottom-16  left-0 right-0 text-center">
         <h1 className="text-white text-lg sm:text-2xl lg:text-4xl font-bold leading-snug sm:leading-snug mt-4 sm:mt-6 drop-shadow-md ">
           Where Every Experience Counts!
         </h1>

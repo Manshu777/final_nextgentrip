@@ -396,7 +396,7 @@ if(res.data.success){
         </div>
       </div>
 
-      <div className="px-5 lg:px-20  space-y-16">
+      <div className="px-5 lg:px-20  space-y-4">
         
 
         <div className="space-y-10">
@@ -443,7 +443,7 @@ if(res.data.success){
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 p-4 md:p-8">
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-10 p-2 md:p-2">
           {/* Image Section */}
           <div className="w-full">
             <img src="/images/WhyCruise.webp" alt="Why Cruise" className=" " />
@@ -464,9 +464,9 @@ if(res.data.success){
         </div>
 <CustomSlider />
         <div className="startHere ">
-          <div className="text-center xl:w-[70%] mx-auto space-y-5">
+          <div className="text-center xl:w-[70%] mx-auto space-y-2">
             <h6 className="text-xl font-semibold">
-              Start Your Next Cruise Exploration Heree
+              Start Your Next Cruise Exploration Here
             </h6>
             <p>
               Plan your next cruise with our expert guide to affordable trips
@@ -502,7 +502,7 @@ if(res.data.success){
           </div>
         </div>
 
-        <section className="details space-y-5 py-10 ">
+        <section className="details  py-4 ">
           <div className="text-center">
             <h2 className="text-2xl  font-extrabold leading-tight ">
               Cruise Adventures for Every Explorer

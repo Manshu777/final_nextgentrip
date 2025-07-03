@@ -396,7 +396,7 @@ if(res.data.success){
        </div>
      </div>
 
-     <div className="px-5 lg:px-20  space-y-16">
+     <div className="px-5 lg:px-20  space-y-4">
      
 
        <div className="space-y-10">

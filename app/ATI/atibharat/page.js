@@ -129,7 +129,7 @@ export default function Page() {
       {/* Main Content */}
       <section className="px-5 md:px-16 lg:px-20 py-12 space-y-12 text-[#10325a]">
         {/* Why NextGen */}
-        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
+        <div className="bg-[#f0f7f5] p-4 rounded-lg space-y-2">
           <h2 className="text-3xl font-bold text-center">Why NextGen?</h2>
           {whyApkaTripDetails.map((item, index) => (
             <div key={index} className="space-y-2">

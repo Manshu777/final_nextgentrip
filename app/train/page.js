@@ -347,8 +347,8 @@ const page = () => {
       <MobileHeader />
       
 
-      <div className="content px-5 py-0 lg:px-40 lg:py-8">
-        <h2 className="text-2xl font-semibold text-center mb-6 mt-5 sm:mt-0">
+      <div className="content px-5 py-0 lg:px-40 lg:py-4">
+        <h2 className="text-2xl font-semibold text-center mb-2 mt-5 sm:mt-0">
 
           Why Book Train Tickets with Next Gen?
         </h2>
@@ -483,7 +483,7 @@ const page = () => {
         </div>
       </div> */}
 
-      <div className=" px-5 md:px-20 py-10">
+      <div className=" px-5 md:px-20 py-4">
         <h2 className="text-2xl font-bold mb-4 text-center">
           Trusted Partners
         </h2>
@@ -507,8 +507,8 @@ const page = () => {
         </div>
       </div>
   <CustomSlider />
-      <div className="py-8 px-5 md:px-20">
-        <h2 className="text-2xl font-bold text-center mb-5 md:mb-10">
+      <div className="py-3 px-5 md:px-20">
+        <h2 className="text-2xl font-bold text-center mb-1 md:mb-3">
           How To Buy Cheap Train Tickets?
         </h2>
         <div className="relative">

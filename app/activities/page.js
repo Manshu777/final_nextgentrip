@@ -128,7 +128,7 @@ const Page = () => {
     <>
       <ActivitiesSlider />
 
-      <div className="px-5 md:px-20 py-12">
+      <div className="px-5 md:px-20 py-5">
         <div className="flex justify-between mb-8 items-center">
           <div className="col-auto">
             <h2
@@ -198,7 +198,7 @@ const Page = () => {
         <div className="swiper-pagination custom-pagination"></div>
       </div>
 
-      <div className="px-5 md:px-20 py-10">
+      <div className="px-5 md:px-20 py-5">
         <div className="flex justify-between mb-8 items-center">
           <h2
             data-aos="fade-up"

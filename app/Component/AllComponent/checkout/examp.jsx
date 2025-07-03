@@ -10,16 +10,17 @@ import { FaArrowDown, FaRupeeSign } from "react-icons/fa";
 import { RiArrowDropDownLine, RiHospitalLine } from "react-icons/ri";
 import { FaArrowDown19, FaCheck } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import "swiper/css";
 import Image from "next/image";
 import axios from "axios";
 import { apilink } from "../../common";
 import { useRouter } from "next/navigation";
 import { FaSpinner } from "react-icons/fa";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-const Page = ({ setActiveTab,fdatas, price }) => {
-
+const Page = ({ setActiveTab, fdatas, price }) => {
   const router = useRouter();
 
   const [user, setUser] = useState();
@@ -31,23 +32,17 @@ const Page = ({ setActiveTab,fdatas, price }) => {
   const [showModal, setShowModal] = useState(false);
   const [errors, setErrors] = useState({});
   const [bookingResponse, setBookingResponse] = useState(null);
-  const [userInfo,setUserinfo] = useState();
+  const [userInfo, setUserinfo] = useState();
 
-  const [showForms, setShowForms] = useState([true]); 
+  const [showForms, setShowForms] = useState([true]);
 
   const [isLoading, setIsLoading] = useState(false); // State to manage loading
 
-
-
-
-
   useEffect(() => {
-    
     const fetchUserData = async (userId) => {
       try {
         const { data } = await axios.get(`${apilink}/user/${userId}`);
         setUserinfo(data.user);
-        
 
         // If you need to update passengers with user info
         if (data.user && passengers.length > 0) {
@@ -61,7 +56,6 @@ const Page = ({ setActiveTab,fdatas, price }) => {
         }
       } catch (error) {
         console.error("Error fetching user data:", error);
-        
       }
     };
 
@@ -90,8 +84,6 @@ const Page = ({ setActiveTab,fdatas, price }) => {
     }
   };
 
-
-  
   // Toggle visibility of a specific passenger form
   const toggleFormVisibility = (index) => {
     const updatedShowForms = [...showForms];
@@ -123,15 +115,18 @@ const Page = ({ setActiveTab,fdatas, price }) => {
       if (!passenger.PassportNo) {
         newErrors[`PassportNo_${index}`] = "Passport Number is required.";
       } else if (passenger.PassportNo.length !== 8) {
-        newErrors[`PassportNo_${index}`] = "Passport Number must be 8 characters long.";
+        newErrors[`PassportNo_${index}`] =
+          "Passport Number must be 8 characters long.";
       }
       if (!passenger.PassportExpiry) {
-        newErrors[`PassportExpiry_${index}`] = "Passport Expiry Date is required.";
+        newErrors[`PassportExpiry_${index}`] =
+          "Passport Expiry Date is required.";
       } else {
         const currentDate = new Date();
         const expiryDate = new Date(passenger.PassportExpiry);
         if (expiryDate <= currentDate) {
-          newErrors[`PassportExpiry_${index}`] = "Passport Expiry Date must be in the future.";
+          newErrors[`PassportExpiry_${index}`] =
+            "Passport Expiry Date must be in the future.";
         }
       }
       if (!passenger.AddressLine1) {
@@ -143,7 +138,8 @@ const Page = ({ setActiveTab,fdatas, price }) => {
       if (!passenger.ContactNo) {
         newErrors[`ContactNo_${index}`] = "Contact Number is required.";
       } else if (!/^\d{10}$/.test(passenger.ContactNo)) {
-        newErrors[`ContactNo_${index}`] = "Phone Number must be 10 digits long.";
+        newErrors[`ContactNo_${index}`] =
+          "Phone Number must be 10 digits long.";
       }
       if (!passenger.Email) {
         newErrors[`Email_${index}`] = "Email is required.";
@@ -156,10 +152,9 @@ const Page = ({ setActiveTab,fdatas, price }) => {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
-
-  const now = new Date(Date.now())
-const  addate = new Date(fdatas?.addat);
-const differenceInMinutes = (now - addate) / (1000 * 60);
+  const now = new Date(Date.now());
+  const addate = new Date(fdatas?.addat);
+  const differenceInMinutes = (now - addate) / (1000 * 60);
   useEffect(() => {
     const initialPassengers = () => {
       let passengers = [];
@@ -186,13 +181,12 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
           }
         });
       }
-      ("Initial Passengers:", passengers);
+      "Initial Passengers:", passengers;
       setPassengers(passengers);
     };
 
     initialPassengers();
   }, [fdatas]);
-
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -200,12 +194,6 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
     script.async = true;
     document.body.appendChild(script);
   }, []);
-
-
-
-
-
-
 
   const addTraveler = () => {
     const newTraveler = {
@@ -230,42 +218,47 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
 
   const handlebook = async (e) => {
     e.preventDefault();
-  
+
     const isValid = validateAllForms();
-  
+
     if (!isValid) {
-      alert("Please fill out all required fields and fix the errors before submitting.");
+      alert(
+        "Please fill out all required fields and fix the errors before submitting."
+      );
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       // Calculate amount in paise (INR * 100)
       const amount = fdatas?.data?.Fare?.OfferedFare * 100;
-  
+
       // Call Laravel backend to create Razorpay order
-      const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
-        amount: amount,
-        currency: "INR",
-        receipt: `receipt_${Date.now()}`,
-      });
-  
+      const orderResponse = await axios.post(
+        `${apilink}/create-razorpay-order`,
+        {
+          amount: amount,
+          currency: "INR",
+          receipt: `receipt_${Date.now()}`,
+        }
+      );
+
       const { order_id } = orderResponse.data;
-  
+
       const options = {
-        key: 'rzp_live_GHQAKE32vCoZBA', 
+        key: "rzp_live_GHQAKE32vCoZBA",
         amount: amount,
         currency: "INR",
         name: "Your Company",
         description: "Flight Booking Payment",
-    
+
         order_id: order_id,
         handler: async (response) => {
           // Payment successful — now call your existing booking API
-  
+
           const fareBreakdown = fdatas?.data?.FareBreakdown;
-  
+
           const payload = {
             ResultIndex: fdatas?.ResultIndex,
             EndUserIp: fdatas?.ip,
@@ -273,15 +266,17 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
             fFareBreakdown: fareBreakdown,
             email: userInfo.email,
             user_id: userInfo.id,
-            razorpay_payment_id: response.razorpay_payment_id, 
+            razorpay_payment_id: response.razorpay_payment_id,
             Passengers: passengers.map((passenger) => {
               const passengerFare = fareBreakdown.find(
                 (fare) => fare.PassengerType === passenger.PaxType
               );
-  
-              const baseFarePerPassenger = passengerFare?.BaseFare / passengerFare?.PassengerCount;
-              const taxPerPassenger = passengerFare?.Tax / passengerFare?.PassengerCount;
-  
+
+              const baseFarePerPassenger =
+                passengerFare?.BaseFare / passengerFare?.PassengerCount;
+              const taxPerPassenger =
+                passengerFare?.Tax / passengerFare?.PassengerCount;
+
               return {
                 Title: passenger.Title,
                 FirstName: passenger.FirstName,
@@ -317,15 +312,17 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
               };
             }),
           };
-  
-          const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+
+          const checkOutFlightDetail = JSON.parse(
+            localStorage.getItem("checkOutFlightDetail")
+          );
           const isLCC = checkOutFlightDetail?.IsLCC === true;
           const apiEndpoint = isLCC
             ? `${apilink}/flight-book-llc`
             : `${apilink}/flight-book`;
-  
+
           const bookingResponse = await axios.post(apiEndpoint, payload);
-  
+
           if (bookingResponse.data?.status === "success") {
             Swal.fire({
               icon: "success",
@@ -338,15 +335,15 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
           }
         },
         prefill: {
-          name: 'Manshu',
-          email: 'manshu.developer@gmail.com',
+          name: "Manshu",
+          email: "manshu.developer@gmail.com",
           contact: passengers[0]?.ContactNo || "",
         },
         theme: {
           color: "#DA5200",
         },
       };
-  
+
       const razorpay = new window.Razorpay(options);
       razorpay.open();
     } catch (error) {
@@ -361,21 +358,18 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
     }
   };
 
-  
   const handleBookingError = (data) => {
     Swal.fire({
-      icon: 'error',
-      title: 'Booking Failed',
-      text: data?.message || 'An error occurred while processing your booking.',
-      confirmButtonText: 'OK',
+      icon: "error",
+      title: "Booking Failed",
+      text: data?.message || "An error occurred while processing your booking.",
+      confirmButtonText: "OK",
     });
   };
-
 
   const closeModal = () => {
     setShowModal(false);
   };
-
 
   useEffect(() => {
     const userid = JSON.parse(localStorage.getItem("NextGenUser"));
@@ -385,19 +379,20 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
       const data = await axios.get(`${apilink}/user/${userid}`);
       if (data.data.success) {
         setUser(data.data.user);
-      }
-      else{
-    
+      } else {
       }
     };
     fetchuserData();
   }, []);
 
-
-
   const formatDate = (dateStr) => {
     const targetDate = new Date(dateStr);
-    const options = { weekday: "short", day: "2-digit", month: "short", year: "numeric" };
+    const options = {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
     const formattedDate = targetDate.toLocaleDateString("en-US", options);
     const [weekday, month, day, year] = formattedDate.split(/[\s,]+/);
     return `${weekday}-${day} ${month} ${year}`;
@@ -406,31 +401,44 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
     const date = new Date(dateTimeStr);
 
     // Format the date
-    const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    const options = {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    const formattedDate = date.toLocaleDateString("en-US", options);
 
     // Format the time
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedTime = `${hours % 12 || 12}:${minutes
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
 
     return { formattedDate, formattedTime };
   };
 
-
- 
-
   const BookingConfirmationModal = ({ bookingResponse, onClose }) => {
-    const { PNR, BookingId, Passenger, FlightItinerary, traceId, token, userIp } = bookingResponse;
+    const {
+      PNR,
+      BookingId,
+      Passenger,
+      FlightItinerary,
+      traceId,
+      token,
+      userIp,
+    } = bookingResponse;
     const passenger = Passenger[0]; // Assuming there's at least one passenger
     const segment = FlightItinerary.Segments[0]; // Assuming there's at least one segment
 
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
         <div className="bg-white max-h-[70vh] overflow-y-auto p-6 rounded-lg shadow-lg w-11/12 max-w-2xl transform transition-all duration-300 scale-95 hover:scale-100">
-          <h2 className="text-2xl font-bold text-center mb-4 text-[#DA5200]">🎉 Booking Confirmed!</h2>
-
+          <h2 className="text-2xl font-bold text-center mb-4 text-[#DA5200]">
+            🎉 Booking Confirmed!
+          </h2>
 
           <table className="w-full mb-6">
             <thead>
@@ -450,7 +458,9 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold">Passenger Name</td>
-                <td className="p-2 text-blue-600">{passenger.FirstName} {passenger.LastName}</td>
+                <td className="p-2 text-blue-600">
+                  {passenger.FirstName} {passenger.LastName}
+                </td>
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold">Contact Number</td>
@@ -475,9 +485,10 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
             </tbody>
           </table>
 
-
           <div className="bg-gray-100 p-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">✈️ Flight Detailscccc</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              ✈️ Flight Detailscccc
+            </h3>
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-200">
@@ -488,7 +499,10 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
               <tbody>
                 <tr className="border-b">
                   <td className="p-2 font-semibold">Airline</td>
-                  <td className="p-2">{segment.Airline.AirlineName} ({segment.Airline.AirlineCode})</td>
+                  <td className="p-2">
+                    {segment.Airline.AirlineName} ({segment.Airline.AirlineCode}
+                    )
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 font-semibold">Flight Number</td>
@@ -497,26 +511,29 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                 <tr className="border-b">
                   <td className="p-2 font-semibold">Departure</td>
                   <td className="p-2">
-                    {segment.Origin.Airport.CityName} ({segment.Origin.Airport.AirportCode}) at {new Date(segment.Origin.DepTime).toLocaleString()}
+                    {segment.Origin.Airport.CityName} (
+                    {segment.Origin.Airport.AirportCode}) at{" "}
+                    {new Date(segment.Origin.DepTime).toLocaleString()}
                   </td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 font-semibold">Arrival</td>
                   <td className="p-2">
-                    {segment.Destination.Airport.CityName} ({segment.Destination.Airport.AirportCode}) at {new Date(segment.Destination.ArrTime).toLocaleString()}
+                    {segment.Destination.Airport.CityName} (
+                    {segment.Destination.Airport.AirportCode}) at{" "}
+                    {new Date(segment.Destination.ArrTime).toLocaleString()}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              🎟️ Your ticket will be sent to your email ID. Please take a screenshot of this page for your reference.
+              🎟️ Your ticket will be sent to your email ID. Please take a
+              screenshot of this page for your reference.
             </p>
           </div>
-
 
           <div className="mt-6 flex justify-center">
             <button
@@ -528,20 +545,13 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
           </div>
         </div>
       </div>
-
     );
   };
 
-
-
-
- 
   return (
     <div className="">
       <div className="md:grid md:grid-cols-6 gap-5 mt-3">
-
         <div className="col-span-4 leftSide space-y-6">
-       
           <div className="FirstChild border rounded-lg shadow-lg">
             <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg">
               <div className="flex items-center gap-3">
@@ -549,15 +559,17 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                   <GiAirplaneDeparture />
                 </div>
                 <div className="flex justify-between gap-10">
-                <span className="text-sm md:text-xl font-medium">Flight Detail</span>
-                <span className="text-sm md:text-xl font-medium text-red-700">
-                  { differenceInMinutes>11  && <span>Token is Expire Search flight again</span> }
-                </span>
+                  <span className="text-sm md:text-xl font-medium">
+                    Flight Detail
+                  </span>
+                  <span className="text-sm md:text-xl font-medium text-red-700">
+                    {differenceInMinutes > 11 && (
+                      <span>Token is Expire Search flight again</span>
+                    )}
+                  </span>
                 </div>
               </div>
             </div>
-
-
 
             <div className=" ">
               <div className=" rounded-sm border  px-3 py-4 relative space-y-5">
@@ -567,9 +579,18 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                 <div className="flex items-center gap-3 text-md md:text-xl">
                   <IoAirplaneSharp className=" font-bold -rotate-45" />
                   <div className="flex items-center gap-1">
-                    <h4 className="">{fdatas?.data?.Segments[0][0]?.Origin?.Airport?.CityName} - {fdatas?.data?.Segments[0][0]?.Destination?.Airport?.CityName}  </h4>
+                    <h4 className="">
+                      {fdatas?.data?.Segments[0][0]?.Origin?.Airport?.CityName}{" "}
+                      -{" "}
+                      {
+                        fdatas?.data?.Segments[0][0]?.Destination?.Airport
+                          ?.CityName
+                      }{" "}
+                    </h4>
                     <p className="border-s-2 border-black px-2  text-sm">
-                      {formatDate(fdatas?.data?.Segments[0][0]?.Origin?.DepTime)}
+                      {formatDate(
+                        fdatas?.data?.Segments[0][0]?.Origin?.DepTime
+                      )}
                     </p>
                   </div>
                 </div>
@@ -581,57 +602,108 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                       className="h-10 w-10 rounded-lg"
                     />
                     <div>
-                      <p className="text-sm md:text-lg">{fdatas?.data?.Segments[0][0]?.Airline?.AirlineName}</p>
-                      <p className="text-xs">{fdatas?.data?.Airline?.Segments[0][0]?.AirlineCode}-{fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}</p>
-                      <p className="text-xs">{[
-                        "All",
-                        "Economy",
-                        "PremiumEconomy",
-                        "Business",
-                        "PremiumBusiness",
-                        "First",
-                      ].filter((inf, ind) => { ind + 1 == fdatas?.data?.Segments[0][0]?.CabinClass })}</p>
+                      <p className="text-sm md:text-lg">
+                        {fdatas?.data?.Segments[0][0]?.Airline?.AirlineName}
+                      </p>
+                      <p className="text-xs">
+                        {fdatas?.data?.Airline?.Segments[0][0]?.AirlineCode}-
+                        {fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}
+                      </p>
+                      <p className="text-xs">
+                        {[
+                          "All",
+                          "Economy",
+                          "PremiumEconomy",
+                          "Business",
+                          "PremiumBusiness",
+                          "First",
+                        ].filter((inf, ind) => {
+                          ind + 1 == fdatas?.data?.Segments[0][0]?.CabinClass;
+                        })}
+                      </p>
                     </div>
                   </div>
 
                   <div className="flex  w-full  gap-2 justify-between md:w-[70%] md:px-3">
                     <div className="flex flex-col gap-1  items-start">
                       <h4 className="font-extrabold text-md md:text-xl">
-                        {formatDateTime(fdatas?.data?.Segments[0][0]?.Origin?.DepTime).formattedTime}
+                        {
+                          formatDateTime(
+                            fdatas?.data?.Segments[0][0]?.Origin?.DepTime
+                          ).formattedTime
+                        }
                       </h4>
                       <div className="flex flex-col text-xs ">
                         <span className="font-bold text-nowrap">
-                          {fdatas?.data?.Segments[0][0]?.Origin?.Airport?.CityName}  ({fdatas?.data?.Segments[0][0]?.Origin?.Airport?.AirportCode} )
+                          {
+                            fdatas?.data?.Segments[0][0]?.Origin?.Airport
+                              ?.CityName
+                          }{" "}
+                          (
+                          {
+                            fdatas?.data?.Segments[0][0]?.Origin?.Airport
+                              ?.AirportCode
+                          }{" "}
+                          )
                         </span>
-                        <span>{formatDate(fdatas?.data?.Segments[0][0]?.Origin?.DepTime)}</span>
+                        <span>
+                          {formatDate(
+                            fdatas?.data?.Segments[0][0]?.Origin?.DepTime
+                          )}
+                        </span>
                         <span>Terminal -1</span>
                       </div>
                     </div>
 
                     <div className="flex  flex-col gap-4 items-center">
-                      <p className="text-xs">{Math.floor(fdatas?.data?.Segments[0][0]?.Duration / 60)}h-{fdatas?.data?.Segments[0][0]?.Duration % 60}m</p>
+                      <p className="text-xs">
+                        {Math.floor(
+                          fdatas?.data?.Segments[0][0]?.Duration / 60
+                        )}
+                        h-{fdatas?.data?.Segments[0][0]?.Duration % 60}m
+                      </p>
                       <div className="border-t-2 border-black border-dotted w-full flex justify-center relative">
                         <div className="absolute -top-3 bg-white text-lg rounded-full">
                           <GiAirplaneDeparture />
                         </div>
                       </div>
-                      {fdatas?.data?.IsRefundable ? <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                        REFUNDABLE
-                      </span> : <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                        NO REFUNDABLE
-                      </span>}
-
+                      {fdatas?.data?.IsRefundable ? (
+                        <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+                          REFUNDABLE
+                        </span>
+                      ) : (
+                        <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+                          NO REFUNDABLE
+                        </span>
+                      )}
                     </div>
 
                     <div className="flex flex-col gap-1 items-start">
                       <h4 className="font-extrabold text-sm md:text-xl">
-                        {formatDateTime(fdatas?.data?.Segments[0][0]?.Destination?.ArrTime).formattedTime}
+                        {
+                          formatDateTime(
+                            fdatas?.data?.Segments[0][0]?.Destination?.ArrTime
+                          ).formattedTime
+                        }
                       </h4>
                       <div className="flex flex-col text-xs ">
                         <span className="text-nowrap font-bold">
-                          {fdatas?.data?.Segments[0][0]?.Destination?.Airport?.CityName}  ({fdatas?.data?.Segments[0][0]?.Destination?.Airport?.AirportCode} )
+                          {
+                            fdatas?.data?.Segments[0][0]?.Destination?.Airport
+                              ?.CityName
+                          }{" "}
+                          (
+                          {
+                            fdatas?.data?.Segments[0][0]?.Destination?.Airport
+                              ?.AirportCode
+                          }{" "}
+                          )
                         </span>
-                        <span>{formatDate(fdatas?.data?.Segments[0][0]?.Destination?.ArrTime)}</span>
+                        <span>
+                          {formatDate(
+                            fdatas?.data?.Segments[0][0]?.Destination?.ArrTime
+                          )}
+                        </span>
                         <span>Terminal -2</span>
                       </div>
                     </div>
@@ -662,12 +734,12 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                         />
                       </div>
                       <div className="">
-
                         <h6 className=" text-black text-sm font-semibold capitalize">
                           {fdatas?.data?.Segments[0][0]?.Airline?.AirlineName}
                         </h6>
                         <p className="text-gray-500 text-[12px] font-semibold">
-                          {fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}-{fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}
+                          {fdatas?.data?.Segments[0][0]?.Airline?.AirlineCode}-
+                          {fdatas?.data?.Segments[0][0]?.Airline?.FlightNumber}
                         </p>
                       </div>
                     </div>
@@ -679,12 +751,9 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                     </div>
                   </div>
                 </div>
-
               </div>
             </div>
-
           </div>
-
 
           <div className="FirstChild border rounded-lg shadow-lg">
             <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg">
@@ -693,15 +762,14 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                   <GiAirplaneDeparture />
                 </div>
                 <div>
-                <span className="text-sm md:text-xl font-medium">Traveller Details</span> 
-                
+                  <span className="text-sm md:text-xl font-medium">
+                    Traveller Details
+                  </span>
                 </div>
-
               </div>
             </div>
             <div className="p-4">
               <h3 className="text-lg font-semibold">ADULT</h3>
-
 
               {passengers?.map((passenger, index) => (
                 <div key={index} className="m-4 rounded-lg shadow-lg border-2">
@@ -719,9 +787,10 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
 
                   {showForms[index] && (
                     <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border rounded-md shadow-lg">
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Title</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Title
+                        </label>
                         <select
                           name="Title"
                           value={passenger.Title}
@@ -735,13 +804,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           <option value="Mrs">Mrs</option>
                         </select>
                         {errors[`Title_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Title_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Title_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">First Name</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          First Name
+                        </label>
                         <input
                           type="text"
                           name="FirstName"
@@ -751,13 +823,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`FirstName_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`FirstName_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`FirstName_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Last Name</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Last Name
+                        </label>
                         <input
                           type="text"
                           name="LastName"
@@ -767,13 +842,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`LastName_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`LastName_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`LastName_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Gender</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Gender
+                        </label>
                         <select
                           name="Gender"
                           value={passenger.Gender}
@@ -787,28 +865,41 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           <option value="3">Other</option>
                         </select>
                         {errors[`Gender_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Gender_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Gender_${index}`]}
+                          </p>
                         )}
                       </div>
 
-                      <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of Birth</label>
-                        <input
-                          type="date"
-                          name="DateOfBirth"
-                          value={passenger.DateOfBirth}
-                          onChange={(e) => handleChange(e, index)}
-                          className="w-full border border-gray-300 rounded-md p-2"
-                          required
-                        />
-                        {errors[`DateOfBirth_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
-                        )}
-                      </div>
+                     <div>
+  <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of birth</label>
+  <input
+    type="date"
+    name="DateOfBirth"
+    value={passenger.DateOfBirth}
+    onChange={(e) => {
+      const value = e.target.value;
+      const year = value.split("-")[0]; // Get the year part
+      if (year.length > 4) {
+        alert("Year cannot be more than 4 digits");
+        return;
+      }
+      handleChange(e, index);
+    }}
+    className="w-full border border-gray-300 rounded-md p-2"
+    required
+    min="1900-01-01"
+    max={new Date().toISOString().split("T")[0]}
+  />
+  {errors[`DateOfBirth_${index}`] && (
+    <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
+  )}
+</div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Passport No</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Passport No
+                        </label>
                         <input
                           type="text"
                           name="PassportNo"
@@ -818,13 +909,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`PassportNo_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`PassportNo_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`PassportNo_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Passport Expiry</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Passport Expiry
+                        </label>
                         <input
                           type="date"
                           name="PassportExpiry"
@@ -834,13 +928,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`PassportExpiry_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`PassportExpiry_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`PassportExpiry_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Address</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Address
+                        </label>
                         <input
                           type="text"
                           name="AddressLine1"
@@ -850,13 +947,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`AddressLine1_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`AddressLine1_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`AddressLine1_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">City</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          City
+                        </label>
                         <input
                           type="text"
                           name="City"
@@ -866,13 +966,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`City_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`City_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`City_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Contact Number</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Contact Number
+                        </label>
                         <input
                           type="text"
                           name="ContactNo"
@@ -882,13 +985,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`ContactNo_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`ContactNo_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`ContactNo_${index}`]}
+                          </p>
                         )}
                       </div>
 
-
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Email</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Email
+                        </label>
                         <input
                           type="email"
                           name="Email"
@@ -898,22 +1004,16 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
                           required
                         />
                         {errors[`Email_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Email_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Email_${index}`]}
+                          </p>
                         )}
                       </div>
                     </form>
                   )}
                 </div>
               ))}
-
-
-
-           
-
             </div>
-
-
-
 
             <div className="p-4 text-gray-500 text-sm flex items-center gap-1">
               <FaLock /> Secure Booking & Data Protection
@@ -921,10 +1021,8 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
           </div>
         </div>
 
-
         <div className="w-full md:col-span-2 rightSide space-y-4 md:px-4">
           <div className="sticky top-0">
-  
             <div className="priceBoxAndDetails border rounded shadow-lg">
               <div className="border rounded-t flex items-center px-3 py-2 bg-[#D1EAFF]">
                 <h3>Price Summary</h3>
@@ -941,28 +1039,30 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
 
             {/* Offers and Promo Codes Section */}
             <div className="offersAndPromoCode border rounded shadow-lg">
-              <div className="bg-[#2196F3] px-3 py-2 text-white">Offers and Promo Codes</div>
+              <div className="bg-[#2196F3] px-3 py-2 text-white">
+                Offers and Promo Codes
+              </div>
               {/* Offers rendering */}
             </div>
 
             {/* Continue Booking Button */}
             <div className="booking flex justify-center items-center mt-3">
-            <button
+              <button
                 className={`bg-[#DA5200] text-sm lg:text-lg tracking-normal text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${
-                    isLoading ? "opacity-75 cursor-not-allowed" : ""
+                  isLoading ? "opacity-75 cursor-not-allowed" : ""
                 }`}
                 onClick={handlebook}
-                disabled={isLoading} 
-            >
+                disabled={isLoading}
+              >
                 {isLoading ? (
-                    <>
-                        <FaSpinner className="animate-spin mr-2" /> 
-                        Booking...
-                    </>
+                  <>
+                    <FaSpinner className="animate-spin mr-2" />
+                    Booking...
+                  </>
                 ) : (
-                    "Continue Booking"
+                  "Continue Booking"
                 )}
-            </button>
+              </button>
             </div>
           </div>
         </div>
@@ -974,7 +1074,6 @@ const differenceInMinutes = (now - addate) / (1000 * 60);
           onClose={closeModal}
         />
       )}
-
     </div>
   );
 };

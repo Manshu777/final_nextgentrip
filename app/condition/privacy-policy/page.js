@@ -12,7 +12,7 @@ const PrivacyPolicy = () => {
         <meta name="description" content="Learn how NextGenTrip, in partnership with Razorpay, collects, uses, and protects your personal data. Understand our privacy practices for secure travel bookings." />
       </head>
 
-      <section className="bg-gray-50 py-10">
+      <section className="bg-gray-50 py-4">
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <div className="flex justify-center">

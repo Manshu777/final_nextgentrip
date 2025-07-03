@@ -90,7 +90,7 @@ const Page = () => {
         </div>
 
         {/* Section 2 */}
-        <div className="mt-8 px-5 lg:px-20" >
+        <div className="mt-2 px-5 lg:px-20" >
           <h2 className="text-3xl font-bold ">
             Book Your Bus Ticket with Us
           </h2>
@@ -121,7 +121,7 @@ const Page = () => {
       
 
         {/* Section 3 */}
-        <div className="my-16">
+        <div className="my-4">
           <h2 className="text-3xl font-bold mb-5 text-center">
            Why You'll Love Booking Here
           </h2>

@@ -24,7 +24,7 @@ const FAQSection = () => {
 
   return (
     <div className="block lg:flex gap-12 items-center px-5 lg:px-20">
-    <div className="flex-1 max-w-full lg:max-w-6xl py-10">
+    <div className="flex-1 max-w-full lg:max-w-6xl py-8">
       <h2 className="text-2xl font-bold mb-4">Frequently Asked Questions</h2>
       <div className="">
         {faqs.map((faq, index) => (

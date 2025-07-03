@@ -78,7 +78,7 @@ export default function Page() {
 
   return (
     <>
-      <div className="h-[80vh] bg-gradient-to-r from-[#10325a] to-[#45a183] text-white flex justify-center items-center px-5 md:px-16 lg:px-20">
+      <div className="h-[50vh] bg-gradient-to-r from-[#10325a] to-[#45a183] text-white flex justify-center items-center px-5 md:px-16 lg:px-20">
         <div className="text-center lg:space-y-8">
           <h5 className="text-2xl md:text-3xl lg:text-4xl font-bold">
             Welcome to NextGen - Curators of Exceptional Luxury Travel.
@@ -121,7 +121,7 @@ export default function Page() {
         </div>
 
         {/* Experience the NextGen Difference Section */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h3 className="text-2xl font-semibold">Experience the NextGen Difference</h3>
           <p>
             At NextGen, we redefine luxury travel through personalized service,
@@ -140,7 +140,7 @@ export default function Page() {
         </div>
 
         {/* Testimonials Section */}
-        <div className="bg-white p-8 rounded-lg space-y-6">
+        <div className="bg-white p-4 rounded-lg ">
           <h3 className="text-2xl font-semibold">Our Clients’ Precious Moments</h3>
           {testimonials.map((testimonial, index) => (
             <div key={index} className="space-y-2">
@@ -152,7 +152,7 @@ export default function Page() {
         </div>
 
         {/* Contact Section */}
-        <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-6">
+        <div className="bg-[#f0f7f5] p-4 rounded-lg ">
           <h3 className="text-2xl font-semibold">Find Your Favorite Luxury Getaway</h3>
           <p>
             Ready to embark on your elite adventure? Whether planning a romantic

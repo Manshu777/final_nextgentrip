@@ -148,10 +148,7 @@ const HotelSliderCompo = ({ isLoading, children }) => {
   return (
     <>
       <div className="md:my-6">
-
-
-
-        <div className=" lg:flex-row  lg:px-28 gap-4 w-full md:my-15 flex justify-center px-[5%] ">
+        <div className="flex flex-col lg:flex-row justify-end w-full md:gap-4 px-4 my-1 md:my-2 ">
         <Swiper
             className=" w-full  h-[250px]  md:h-[350px] lg:h-full"
             loop={true}

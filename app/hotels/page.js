@@ -61,7 +61,7 @@ dispatch(getAllRegHotels())
 
 </div>
       <div className="px-0 lg:px-20">
-        <h2 className="text-lg text-center lg:text-2xl font-semibold md:mb-5 mt-5 sm:mt-0">
+        <h2 className="text-lg text-center lg:text-2xl font-semibold md:mb-2 mt-5 sm:mt-0">
 
           Book Hotels at Popular Destinations
         </h2>
@@ -71,7 +71,7 @@ dispatch(getAllRegHotels())
 
 
 
-        <div className="_polrdestnbx md:mt-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:p-5">
+        <div className="_polrdestnbx md:mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:p-5">
   {allReghotels && allReghotels?.info?.map((dest, index) => (
     <Link
       key={index}
@@ -138,7 +138,7 @@ dispatch(getAllRegHotels())
 
 
 
-        <div className="mt-4 text-center">
+        <div className="mt-2 text-center">
           <button
             onClick={handleViewAll}
             className="bg-[#2196F3] text-white py-2 px-4 rounded-full"
@@ -154,7 +154,7 @@ dispatch(getAllRegHotels())
 
         
       </div>
-      <div className=" px-4 md:px-32 my-6 md:my-20">
+      <div className=" px-4 md:px-32 my-3 md:my-6">
 <HotelSliderCompo />
 </div>
 

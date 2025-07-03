@@ -88,9 +88,9 @@ export default function InsurancePage() {
           </div>
       </section>
       <section className="bg-gray-50 text-gray-800 font-sans px-5 md:px-16 xl:px-32">
-      <section className="py-16">
+      <section className="py-4">
         <div className="container mx-auto px-6">
-          <h2 className="text-3xl font-bold text-center mb-12">Our Insurance Services</h2>
+          <h2 className="text-3xl font-bold text-center mb-4">Our Insurance Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {insuranceServices.map((service, index) => (
               <div
@@ -109,17 +109,17 @@ export default function InsurancePage() {
         </div>
       </section>
     </section>
-    <section className="bg-gray-100 py-16 px-5 md:px-16 xl:px-32">
+    <section className="bg-gray-100 py-4 px-5 md:px-16 xl:px-32">
       <div className="container   ">
         <h2 className="text-3xl  text-center font-bold text-[#10325a] mb-8">
           Why Choose Our Insurance Services?
         </h2>
-        <p className="text-base md:text-xl text-gray-600 mb-12 text-center">
+        <p className="text-base md:text-xl text-gray-600 mb-4 text-center">
           Our insurance services are designed to provide you with comprehensive coverage, peace of mind, and financial protection against unexpected events.
         </p>
-        <div className="space-y-12">
+        <div className="space-y-4">
           {benefits.map((benefit, index) => (
-            <div key={index} className="mb-8 bg-slate-100 shadow-lg px-5 rounded-md py-5">
+            <div key={index} className="mb-2 bg-slate-100 shadow-lg px-5 rounded-md py-2">
               <h3 className="text-2xl font-semibold text-[#10325a] mb-4">{benefit.title}</h3>
               <p className="text-lg text-gray-600 mb-4">{benefit.description}</p>
               <ul className="list-disc list-inside text-left text-gray-600">
