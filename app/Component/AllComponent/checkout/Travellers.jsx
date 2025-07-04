@@ -9,9 +9,16 @@ import { MdOutlineSecurity } from "react-icons/md";
 import { RiArrowDropDownLine, RiHospitalLine } from "react-icons/ri";
 import { FaArrowDown19, FaCheck } from "react-icons/fa6";
 import { FaLock } from "react-icons/fa6";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import "swiper/css";
-import { FaRupeeSign, FaArrowDown, FaSpinner, FaTag, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import {
+  FaRupeeSign,
+  FaArrowDown,
+  FaSpinner,
+  FaTag,
+  FaChevronDown,
+  FaChevronUp,
+} from "react-icons/fa";
 
 import Image from "next/image";
 import axios from "axios";
@@ -19,7 +26,7 @@ import { apilink } from "../../common";
 import { useRouter } from "next/navigation";
 
 // New import for generating UUIDs for API logs
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const Page = ({ setActiveTab, fdatas, price }) => {
   const router = useRouter();
@@ -39,12 +46,13 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
   const [checkPassport, setCheckPassport] = useState(false);
   // New state for SSR and GST
+  const todayMeDATE = new Date().toISOString().split('T')[0]; 
   const [ssrDetails, setSsrDetails] = useState({});
   const [gstDetails, setGstDetails] = useState({
     GSTNumber: "",
     GSTCompanyName: "",
     GSTEmail: "",
-    GSTPhone: ""
+    GSTPhone: "",
   });
 
   const [isPriceBreakdownOpen, setIsPriceBreakdownOpen] = useState(true); // Toggle for mobile
@@ -83,11 +91,13 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     }
   };
 
-
-   console.log('fdatasfdatas',fdatas?.data?.Response?.Results)
+  console.log("fdatasfdatas", fdatas?.data?.Response?.Results);
   // Calculate total after promo (mock implementation)
-  const originalFare = fdatas?.data?.Response?.Results?.Fare?.PublishedFare || 0;
-  const discount = appliedPromo ? (originalFare * appliedPromo.discount) / 100 : 0;
+  const originalFare =
+    fdatas?.data?.Response?.Results?.Fare?.PublishedFare || 0;
+  const discount = appliedPromo
+    ? (originalFare * appliedPromo.discount) / 100
+    : 0;
   const finalFare = originalFare - discount;
   // New state for token management
   const [authToken, setAuthToken] = useState(null);
@@ -134,7 +144,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          router.push('/');
+          router.push("/");
           return 0;
         }
         return prev - 1;
@@ -148,7 +158,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   const formatCountdown = (seconds) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   const handleChange = (e, index) => {
@@ -190,13 +200,14 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     const newErrors = {};
     let checkMEEE = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
 
-    setCheckPassport(checkMEEE?.data?.Response?.Results.IsPassportRequiredAtBook);
+    setCheckPassport(
+      checkMEEE?.data?.Response?.Results.IsPassportRequiredAtBook
+    );
 
-    console.log('checkMEEE',checkPassport)
-
+    console.log("checkMEEE", checkPassport);
 
     // setCheckPassport(checkMEEE.data.Results.IsPassportRequiredAtBook);
-    console.log('passengers',passengers)
+    console.log("passengers", passengers);
     passengers.forEach((passenger, index) => {
       if (!passenger.Title) {
         newErrors[`Title_${index}`] = "Title is required.";
@@ -212,6 +223,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       }
       if (!passenger.DateOfBirth) {
         newErrors[`DateOfBirth_${index}`] = "Date of Birth is required.";
+      }else{
+        const dobErrors = validateDateOfBirth(passenger.DateOfBirth, passenger.PaxType, index);
+        Object.assign(newErrors, dobErrors);
       }
 
       // Validate passport fields if required
@@ -219,15 +233,18 @@ const Page = ({ setActiveTab, fdatas, price }) => {
         if (!passenger.PassportNo) {
           newErrors[`PassportNo_${index}`] = "Passport Number is required.";
         } else if (passenger.PassportNo.length !== 8) {
-          newErrors[`PassportNo_${index}`] = "Passport Number must be 8 characters long.";
+          newErrors[`PassportNo_${index}`] =
+            "Passport Number must be 8 characters long.";
         }
         if (!passenger.PassportExpiry) {
-          newErrors[`PassportExpiry_${index}`] = "Passport Expiry Date is required.";
+          newErrors[`PassportExpiry_${index}`] =
+            "Passport Expiry Date is required.";
         } else {
           const currentDate = new Date();
           const expiryDate = new Date(passenger.PassportExpiry);
           if (expiryDate <= currentDate) {
-            newErrors[`PassportExpiry_${index}`] = "Passport Expiry Date must be in the future.";
+            newErrors[`PassportExpiry_${index}`] =
+              "Passport Expiry Date must be in the future.";
           }
         }
       }
@@ -241,7 +258,8 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       if (!passenger.ContactNo) {
         newErrors[`ContactNo_${index}`] = "Contact Number is required.";
       } else if (!/^\d{10}$/.test(passenger.ContactNo)) {
-        newErrors[`ContactNo_${index}`] = "Phone Number must be 10 digits long.";
+        newErrors[`ContactNo_${index}`] =
+          "Phone Number must be 10 digits long.";
       }
       if (!passenger.Email) {
         newErrors[`Email_${index}`] = "Email is required.";
@@ -250,20 +268,20 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       }
 
       // Validate GST for lead passenger if required
-      if (checkMEEE?.data?.Response?.Results.IsGSTMandatory && passenger.IsLeadPax) {
-        if (!gstDetails.GSTNumber) {
-          newErrors[`GSTNumber_${index}`] = "GST Number is required for lead passenger.";
-        }
-        if (!gstDetails.GSTCompanyName) {
-          newErrors[`GSTCompanyName_${index}`] = "GST Company Name is required.";
-        }
-        if (!gstDetails.GSTEmail) {
-          newErrors[`GSTEmail_${index}`] = "GST Email is required.";
-        }
-        if (!gstDetails.GSTPhone) {
-          newErrors[`GSTPhone_${index}`] = "GST Phone Number is required.";
-        }
-      }
+      // if (checkMEEE?.data?.Response?.Results.IsGSTMandatory && passenger.IsLeadPax) {
+      //   if (!gstDetails.GSTNumber) {
+      //     newErrors[`GSTNumber_${index}`] = "GST Number is required for lead passenger.";
+      //   }
+      //   if (!gstDetails.GSTCompanyName) {
+      //     newErrors[`GSTCompanyName_${index}`] = "GST Company Name is required.";
+      //   }
+      //   if (!gstDetails.GSTEmail) {
+      //     newErrors[`GSTEmail_${index}`] = "GST Email is required.";
+      //   }
+      //   if (!gstDetails.GSTPhone) {
+      //     newErrors[`GSTPhone_${index}`] = "GST Phone Number is required.";
+      //   }
+      // }
     });
 
     setErrors(newErrors);
@@ -277,7 +295,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
   useEffect(() => {
     const initialPassengers = () => {
       let passengers = [];
-   
+
       if (fdatas?.data?.Response?.Results?.FareBreakdown) {
         fdatas?.data?.Response?.Results?.FareBreakdown?.forEach((fare) => {
           for (let i = 0; i < fare.PassengerCount; i++) {
@@ -307,9 +325,6 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     };
 
     initialPassengers();
-
-
-
   }, [fdatas]);
 
   useEffect(() => {
@@ -341,10 +356,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     setShowForms([...showForms, true]);
   };
 
-
   const handleBook = async (e) => {
     e.preventDefault();
-  
+
     const isValid = validateAllForms();
     if (!isValid) {
       Swal.fire({
@@ -355,9 +369,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       });
       return;
     }
-  
+
     setBookisLoading(true);
-  
+
     const requestId = uuidv4();
     const requestLog = {
       requestId,
@@ -366,15 +380,17 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       payload: {},
       response: null,
     };
-  
+
     try {
       const leadPassenger = passengers.find((passenger) => passenger.IsLeadPax);
       const fareBreakdown = fdatas?.data?.Response?.Results?.FareBreakdown;
-      const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+      const checkOutFlightDetail = JSON.parse(
+        localStorage.getItem("checkOutFlightDetail")
+      );
       const isLCC = checkOutFlightDetail?.IsLCC === true;
       const isInternational = checkOutFlightDetail?.data?.IsInternational;
       const isSpecialReturn = checkOutFlightDetail?.data?.IsSpecialReturn;
-  
+
       // Determine ResultIndex
       let resultIndex = fdatas?.ResultIndex;
       if (isSpecialReturn && isLCC) {
@@ -382,9 +398,11 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       } else if (!isInternational) {
         resultIndex = fdatas?.ResultIndex;
       }
-  
-      const apiEndpoint = isLCC ? `${apilink}/flight-book-llc` : `${apilink}/flight-book`;
-  
+
+      const apiEndpoint = isLCC
+        ? `${apilink}/flight-book-llc`
+        : `${apilink}/flight-book`;
+
       // Prepare booking payload
       const payload = {
         ResultIndex: resultIndex,
@@ -392,16 +410,18 @@ const Page = ({ setActiveTab, fdatas, price }) => {
         TraceId: fdatas?.traceid,
         fFareBreakdown: fareBreakdown,
         email: leadPassenger?.Email,
-        user_id: '4',
+        user_id: "4",
         checkPassport: checkPassport,
         Passengers: passengers.map((passenger, index) => {
           const passengerFare = fareBreakdown.find(
             (fare) => fare.PassengerType === passenger.PaxType
           );
-  
-          const baseFarePerPassenger = passengerFare?.BaseFare / passengerFare?.PassengerCount;
-          const taxPerPassenger = passengerFare?.Tax / passengerFare?.PassengerCount;
-  
+
+          const baseFarePerPassenger =
+            passengerFare?.BaseFare / passengerFare?.PassengerCount;
+          const taxPerPassenger =
+            passengerFare?.Tax / passengerFare?.PassengerCount;
+
           const passengerPayload = {
             Title: passenger.Title,
             FirstName: passenger.FirstName,
@@ -421,19 +441,24 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               BaseFare: baseFarePerPassenger,
               Tax: taxPerPassenger,
               YQTax: passengerFare?.YQTax,
-              AdditionalTxnFeePub: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
-              AdditionalTxnFeeOfrd: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
+              AdditionalTxnFeePub:
+                fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
+              AdditionalTxnFeeOfrd:
+                fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
               OtherCharges: fdatas?.data?.Response?.Results?.Fare.OtherCharges,
               Discount: fdatas?.data?.Response?.Results?.Fare.Discount,
-              PublishedFare: fdatas?.data?.Response?.Results?.Fare.PublishedFare,
+              PublishedFare:
+                fdatas?.data?.Response?.Results?.Fare.PublishedFare,
               OfferedFare: fdatas?.data?.Response?.Results?.Fare.OfferedFare,
-              TdsOnCommission: fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
+              TdsOnCommission:
+                fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
               TdsOnPLB: fdatas?.data?.Response?.Results?.Fare.TdsOnPLB,
-              TdsOnIncentive: fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
+              TdsOnIncentive:
+                fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
               ServiceFee: fdatas?.data?.Response?.Results?.Fare.ServiceFee,
             },
           };
-  
+
           // Add Passport details only if they exist and are not empty
           if (passenger.PassportNo?.trim()) {
             passengerPayload.PassportNo = passenger.PassportNo.trim();
@@ -441,13 +466,17 @@ const Page = ({ setActiveTab, fdatas, price }) => {
           if (passenger.PassportExpiry?.trim()) {
             passengerPayload.PassportExpiry = passenger.PassportExpiry.trim();
           }
-  
+
           // Add SSR
           if (isLCC && ssrDetails[index]) {
             passengerPayload.SSR = {
-              MealDynamic: Array.isArray(ssrDetails[index].Meal) ? ssrDetails[index].Meal : [ssrDetails[index].Meal],
+              MealDynamic: Array.isArray(ssrDetails[index].Meal)
+                ? ssrDetails[index].Meal
+                : [ssrDetails[index].Meal],
               Baggage: ssrDetails[index].Baggage,
-              SeatDynamic: Array.isArray(ssrDetails[index].Seat) ? ssrDetails[index].Seat : [ssrDetails[index].Seat],
+              SeatDynamic: Array.isArray(ssrDetails[index].Seat)
+                ? ssrDetails[index].Seat
+                : [ssrDetails[index].Seat],
             };
           } else if (!isLCC && ssrDetails[index]) {
             passengerPayload.SSR = {
@@ -455,9 +484,12 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               Seat: ssrDetails[index].Seat || "",
             };
           }
-  
+
           // GST
-          if (passenger.IsLeadPax && checkOutFlightDetail?.data?.IsGSTMandatory) {
+          if (
+            passenger.IsLeadPax &&
+            checkOutFlightDetail?.data?.IsGSTMandatory
+          ) {
             passengerPayload.GSTDetails = {
               GSTNumber: gstDetails.GSTNumber,
               GSTCompanyName: gstDetails.GSTCompanyName,
@@ -465,29 +497,34 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               GSTPhone: gstDetails.GSTPhone,
             };
           }
-  
+
           return passengerPayload;
         }),
       };
-  
+
       requestLog.endpoint = apiEndpoint;
       requestLog.payload = payload;
-  
+
       // 1️⃣ Create Razorpay order
       const amount = fdatas?.data?.Response?.Results?.Fare?.PublishedFare;
-      const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
-        amount: amount,
-        currency: "INR",
-        receipt: `receipt_${Date.now()}`,
-        user_email: leadPassenger?.Email,
-        user_name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
-        user_phone: leadPassenger?.ContactNo,
-      });
-  
+      const orderResponse = await axios.post(
+        `${apilink}/create-razorpay-order`,
+        {
+          amount: amount,
+          currency: "INR",
+          receipt: `receipt_${Date.now()}`,
+          user_email: leadPassenger?.Email,
+          user_name: `${leadPassenger?.FirstName} ${
+            leadPassenger?.LastName || ""
+          }`,
+          user_phone: leadPassenger?.ContactNo,
+        }
+      );
+
       const { order_id } = orderResponse.data;
-  
+
       const options = {
-        key: 'rzp_live_GHQAKE32vCoZBA',
+        key: "rzp_live_GHQAKE32vCoZBA",
         amount: amount * 100,
         currency: "INR",
         name: "Next Gen Trip Pvt Ltd",
@@ -496,29 +533,49 @@ const Page = ({ setActiveTab, fdatas, price }) => {
         handler: async (response) => {
           try {
             const bookingResponse = await axios.post(apiEndpoint, payload);
-  
+
             requestLog.response = bookingResponse.data;
-  
+
             if (bookingResponse.data?.status === "success") {
               await axios.post(`${apilink}/capture-razorpay-payment`, {
                 payment_id: response.razorpay_payment_id,
                 amount: amount,
               });
-  
-              if (!isInternational && !isLCC && fdatas?.ResultIndex.includes("OB")) {
-                const ibPayload = { ...payload, ResultIndex: fdatas?.ResultIndex.replace("OB", "IB") };
-                const ibBookingResponse = await axios.post(apiEndpoint, ibPayload, {
-                  headers: { Authorization: `Bearer ${authToken}` },
-                });
-                requestLog.response = { ...requestLog.response, ibResponse: ibBookingResponse.data };
-                localStorage.setItem(`apiLog_${requestId}_IB`, JSON.stringify(requestLog));
+
+              if (
+                !isInternational &&
+                !isLCC &&
+                fdatas?.ResultIndex.includes("OB")
+              ) {
+                const ibPayload = {
+                  ...payload,
+                  ResultIndex: fdatas?.ResultIndex.replace("OB", "IB"),
+                };
+                const ibBookingResponse = await axios.post(
+                  apiEndpoint,
+                  ibPayload,
+                  {
+                    headers: { Authorization: `Bearer ${authToken}` },
+                  }
+                );
+                requestLog.response = {
+                  ...requestLog.response,
+                  ibResponse: ibBookingResponse.data,
+                };
+                localStorage.setItem(
+                  `apiLog_${requestId}_IB`,
+                  JSON.stringify(requestLog)
+                );
               }
-  
+
               // Success flow
-              localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+              localStorage.setItem(
+                `apiLog_${requestId}`,
+                JSON.stringify(requestLog)
+              );
               setBookingResponse(bookingResponse.data);
               setShowModal(true);
-  
+
               Swal.fire({
                 icon: "success",
                 title: "Booking and Payment Successful",
@@ -526,17 +583,24 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                 confirmButtonText: "OK",
               });
             } else {
-              throw new Error(bookingResponse.data?.message || "Booking failed");
+              throw new Error(
+                bookingResponse.data?.message || "Booking failed"
+              );
             }
           } catch (bookingError) {
             console.error("Error during booking:", bookingError);
             requestLog.response = { error: bookingError.message };
-            localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
-  
+            localStorage.setItem(
+              `apiLog_${requestId}`,
+              JSON.stringify(requestLog)
+            );
+
             Swal.fire({
               icon: "error",
               title: "Booking Failed",
-              text: bookingError?.response?.data?.message || "Booking failed. No payment was captured.",
+              text:
+                bookingError?.response?.data?.message ||
+                "Booking failed. No payment was captured.",
               confirmButtonText: "OK",
             });
           } finally {
@@ -544,7 +608,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
           }
         },
         prefill: {
-          name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ''}`,
+          name: `${leadPassenger?.FirstName} ${leadPassenger?.LastName || ""}`,
           email: leadPassenger?.Email,
           contact: leadPassenger?.ContactNo || "",
         },
@@ -552,22 +616,23 @@ const Page = ({ setActiveTab, fdatas, price }) => {
           color: "#0086da",
         },
       };
-  
+
       const razorpay = new window.Razorpay(options);
-      razorpay.on('payment.failed', function (response) {
+      razorpay.on("payment.failed", function (response) {
         setBookisLoading(false);
         requestLog.response = { error: response.error.description };
         localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
-  
+
         Swal.fire({
           icon: "error",
           title: "Payment Failed",
-          text: response.error.description || "Payment was not successful. Please try again.",
+          text:
+            response.error.description ||
+            "Payment was not successful. Please try again.",
           confirmButtonText: "OK",
         });
       });
       razorpay.open();
-  
     } catch (error) {
       console.error("Error during payment initiation:", error);
       requestLog.response = { error: error.message };
@@ -580,171 +645,166 @@ const Page = ({ setActiveTab, fdatas, price }) => {
       });
       setBookisLoading(false);
     }
-};
+  };
 
+  // const handleBook = async (e) => {
+  //   e.preventDefault();
 
-// const handleBook = async (e) => {
-//   e.preventDefault();
+  //   const isValid = validateAllForms();
+  //   if (!isValid) {
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Validation Error",
+  //       text: "Please fill out all required fields and fix the errors before submitting.",
+  //       confirmButtonText: "OK",
+  //     });
+  //     return;
+  //   }
 
-//   const isValid = validateAllForms();
-//   if (!isValid) {
-//     Swal.fire({
-//       icon: "error",
-//       title: "Validation Error",
-//       text: "Please fill out all required fields and fix the errors before submitting.",
-//       confirmButtonText: "OK",
-//     });
-//     return;
-//   }
+  //   setBookisLoading(true);
 
-//   setBookisLoading(true);
+  //   const requestId = uuidv4();
+  //   const requestLog = {
+  //     requestId,
+  //     timestamp: new Date().toISOString(),
+  //     endpoint: "",
+  //     payload: {},
+  //     response: null,
+  //   };
 
-//   const requestId = uuidv4();
-//   const requestLog = {
-//     requestId,
-//     timestamp: new Date().toISOString(),
-//     endpoint: "",
-//     payload: {},
-//     response: null,
-//   };
+  //   try {
+  //     const leadPassenger = passengers.find((p) => p.IsLeadPax);
+  //     const fareBreakdown = fdatas?.data?.Response?.Results?.FareBreakdown;
+  //     const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
+  //     const isLCC = checkOutFlightDetail?.IsLCC === true;
+  //     const isInternational = checkOutFlightDetail?.data?.IsInternational;
+  //     const isSpecialReturn = checkOutFlightDetail?.data?.IsSpecialReturn;
 
-//   try {
-//     const leadPassenger = passengers.find((p) => p.IsLeadPax);
-//     const fareBreakdown = fdatas?.data?.Response?.Results?.FareBreakdown;
-//     const checkOutFlightDetail = JSON.parse(localStorage.getItem("checkOutFlightDetail"));
-//     const isLCC = checkOutFlightDetail?.IsLCC === true;
-//     const isInternational = checkOutFlightDetail?.data?.IsInternational;
-//     const isSpecialReturn = checkOutFlightDetail?.data?.IsSpecialReturn;
+  //     let resultIndex = fdatas?.ResultIndex;
+  //     if (isSpecialReturn && isLCC) {
+  //       resultIndex = `OB${fdatas?.ResultIndex},IB${fdatas?.ResultIndex}`;
+  //     } else if (!isInternational) {
+  //       resultIndex = fdatas?.ResultIndex;
+  //     }
 
-//     let resultIndex = fdatas?.ResultIndex;
-//     if (isSpecialReturn && isLCC) {
-//       resultIndex = `OB${fdatas?.ResultIndex},IB${fdatas?.ResultIndex}`;
-//     } else if (!isInternational) {
-//       resultIndex = fdatas?.ResultIndex;
-//     }
+  //     const apiEndpoint = isLCC ? `${apilink}/flight-book-llc` : `${apilink}/flight-book`;
 
-//     const apiEndpoint = isLCC ? `${apilink}/flight-book-llc` : `${apilink}/flight-book`;
+  //     const payload = {
+  //       ResultIndex: resultIndex,
+  //       EndUserIp: fdatas?.ip,
+  //       TraceId: fdatas?.traceid,
+  //       fFareBreakdown: fareBreakdown,
+  //       email: leadPassenger?.Email,
+  //       user_id: '4',
+  //       checkPassport: checkPassport,
+  //       Passengers: passengers.map((passenger, index) => {
+  //         const fare = fareBreakdown.find((f) => f.PassengerType === passenger.PaxType);
+  //         const baseFare = fare?.BaseFare / fare?.PassengerCount;
+  //         const tax = fare?.Tax / fare?.PassengerCount;
 
-//     const payload = {
-//       ResultIndex: resultIndex,
-//       EndUserIp: fdatas?.ip,
-//       TraceId: fdatas?.traceid,
-//       fFareBreakdown: fareBreakdown,
-//       email: leadPassenger?.Email,
-//       user_id: '4',
-//       checkPassport: checkPassport,
-//       Passengers: passengers.map((passenger, index) => {
-//         const fare = fareBreakdown.find((f) => f.PassengerType === passenger.PaxType);
-//         const baseFare = fare?.BaseFare / fare?.PassengerCount;
-//         const tax = fare?.Tax / fare?.PassengerCount;
+  //         const obj = {
+  //           Title: passenger.Title,
+  //           FirstName: passenger.FirstName,
+  //           LastName: passenger.LastName,
+  //           PaxType: passenger.PaxType,
+  //           DateOfBirth: passenger.DateOfBirth,
+  //           Gender: parseInt(passenger.Gender, 10),
+  //           AddressLine1: passenger.AddressLine1,
+  //           City: passenger.City,
+  //           CellCountryCode: passenger.CountryCode,
+  //           CountryCode: "IN",
+  //           ContactNo: passenger.ContactNo,
+  //           Email: passenger.Email,
+  //           IsLeadPax: passenger.IsLeadPax,
+  //           Fare: {
+  //             Currency: fare?.Currency,
+  //             BaseFare: baseFare,
+  //             Tax: tax,
+  //             YQTax: fare?.YQTax,
+  //             AdditionalTxnFeePub: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
+  //             AdditionalTxnFeeOfrd: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
+  //             OtherCharges: fdatas?.data?.Response?.Results?.Fare.OtherCharges,
+  //             Discount: fdatas?.data?.Response?.Results?.Fare.Discount,
+  //             PublishedFare: fdatas?.data?.Response?.Results?.Fare.PublishedFare,
+  //             OfferedFare: fdatas?.data?.Response?.Results?.Fare.OfferedFare,
+  //             TdsOnCommission: fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
+  //             TdsOnPLB: fdatas?.data?.Response?.Results?.Fare.TdsOnPLB,
+  //             TdsOnIncentive: fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
+  //             ServiceFee: fdatas?.data?.Response?.Results?.Fare.ServiceFee,
+  //           },
+  //         };
 
-//         const obj = {
-//           Title: passenger.Title,
-//           FirstName: passenger.FirstName,
-//           LastName: passenger.LastName,
-//           PaxType: passenger.PaxType,
-//           DateOfBirth: passenger.DateOfBirth,
-//           Gender: parseInt(passenger.Gender, 10),
-//           AddressLine1: passenger.AddressLine1,
-//           City: passenger.City,
-//           CellCountryCode: passenger.CountryCode,
-//           CountryCode: "IN",
-//           ContactNo: passenger.ContactNo,
-//           Email: passenger.Email,
-//           IsLeadPax: passenger.IsLeadPax,
-//           Fare: {
-//             Currency: fare?.Currency,
-//             BaseFare: baseFare,
-//             Tax: tax,
-//             YQTax: fare?.YQTax,
-//             AdditionalTxnFeePub: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeePub,
-//             AdditionalTxnFeeOfrd: fdatas?.data?.Response?.Results?.Fare.AdditionalTxnFeeOfrd,
-//             OtherCharges: fdatas?.data?.Response?.Results?.Fare.OtherCharges,
-//             Discount: fdatas?.data?.Response?.Results?.Fare.Discount,
-//             PublishedFare: fdatas?.data?.Response?.Results?.Fare.PublishedFare,
-//             OfferedFare: fdatas?.data?.Response?.Results?.Fare.OfferedFare,
-//             TdsOnCommission: fdatas?.data?.Response?.Results?.Fare.TdsOnCommission,
-//             TdsOnPLB: fdatas?.data?.Response?.Results?.Fare.TdsOnPLB,
-//             TdsOnIncentive: fdatas?.data?.Response?.Results?.Fare.TdsOnIncentive,
-//             ServiceFee: fdatas?.data?.Response?.Results?.Fare.ServiceFee,
-//           },
-//         };
+  //         if (passenger.PassportNo?.trim()) obj.PassportNo = passenger.PassportNo.trim();
+  //         if (passenger.PassportExpiry?.trim()) obj.PassportExpiry = passenger.PassportExpiry.trim();
 
-//         if (passenger.PassportNo?.trim()) obj.PassportNo = passenger.PassportNo.trim();
-//         if (passenger.PassportExpiry?.trim()) obj.PassportExpiry = passenger.PassportExpiry.trim();
+  //         if (isLCC && ssrDetails[index]) {
+  //           obj.SSR = {
+  //             MealDynamic: Array.isArray(ssrDetails[index].Meal) ? ssrDetails[index].Meal : [ssrDetails[index].Meal],
+  //             Baggage: ssrDetails[index].Baggage,
+  //             SeatDynamic: Array.isArray(ssrDetails[index].Seat) ? ssrDetails[index].Seat : [ssrDetails[index].Seat],
+  //           };
+  //         } else if (!isLCC && ssrDetails[index]) {
+  //           obj.SSR = {
+  //             Meal: ssrDetails[index].Meal || "",
+  //             Seat: ssrDetails[index].Seat || "",
+  //           };
+  //         }
 
-//         if (isLCC && ssrDetails[index]) {
-//           obj.SSR = {
-//             MealDynamic: Array.isArray(ssrDetails[index].Meal) ? ssrDetails[index].Meal : [ssrDetails[index].Meal],
-//             Baggage: ssrDetails[index].Baggage,
-//             SeatDynamic: Array.isArray(ssrDetails[index].Seat) ? ssrDetails[index].Seat : [ssrDetails[index].Seat],
-//           };
-//         } else if (!isLCC && ssrDetails[index]) {
-//           obj.SSR = {
-//             Meal: ssrDetails[index].Meal || "",
-//             Seat: ssrDetails[index].Seat || "",
-//           };
-//         }
+  //         if (passenger.IsLeadPax && checkOutFlightDetail?.data?.IsGSTMandatory) {
+  //           obj.GSTDetails = {
+  //             GSTNumber: gstDetails.GSTNumber,
+  //             GSTCompanyName: gstDetails.GSTCompanyName,
+  //             GSTEmail: gstDetails.GSTEmail,
+  //             GSTPhone: gstDetails.GSTPhone,
+  //           };
+  //         }
 
-//         if (passenger.IsLeadPax && checkOutFlightDetail?.data?.IsGSTMandatory) {
-//           obj.GSTDetails = {
-//             GSTNumber: gstDetails.GSTNumber,
-//             GSTCompanyName: gstDetails.GSTCompanyName,
-//             GSTEmail: gstDetails.GSTEmail,
-//             GSTPhone: gstDetails.GSTPhone,
-//           };
-//         }
+  //         return obj;
+  //       }),
+  //     };
 
-//         return obj;
-//       }),
-//     };
+  //     requestLog.endpoint = apiEndpoint;
+  //     requestLog.payload = payload;
 
-//     requestLog.endpoint = apiEndpoint;
-//     requestLog.payload = payload;
+  //     const bookingResponse = await axios.post(apiEndpoint, payload);
+  //     requestLog.response = bookingResponse.data;
+  //     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
 
-//     const bookingResponse = await axios.post(apiEndpoint, payload);
-//     requestLog.response = bookingResponse.data;
-//     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+  //     if (bookingResponse.data?.status === "success") {
+  //       setBookingResponse(bookingResponse.data);
+  //       setShowModal(true);
+  //       Swal.fire({
+  //         icon: "success",
+  //         title: "Booking Successful",
+  //         text: "Your flight has been booked!",
+  //         confirmButtonText: "OK",
+  //       });
+  //     } else {
+  //       throw new Error(bookingResponse.data?.message || "Booking failed");
+  //     }
 
-//     if (bookingResponse.data?.status === "success") {
-//       setBookingResponse(bookingResponse.data);
-//       setShowModal(true);
-//       Swal.fire({
-//         icon: "success",
-//         title: "Booking Successful",
-//         text: "Your flight has been booked!",
-//         confirmButtonText: "OK",
-//       });
-//     } else {
-//       throw new Error(bookingResponse.data?.message || "Booking failed");
-//     }
+  //   } catch (error) {
+  //     console.error("Booking Error:", error);
+  //     requestLog.response = { error: error.message };
+  //     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
 
-//   } catch (error) {
-//     console.error("Booking Error:", error);
-//     requestLog.response = { error: error.message };
-//     localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
-
-//     Swal.fire({
-//       icon: "error",
-//       title: "Booking Failed",
-//       text: error?.response?.data?.message || error.message || "Something went wrong",
-//       confirmButtonText: "OK",
-//     });
-//   } finally {
-//     setBookisLoading(false);
-//   }
-// };
-
-
-  
-  
+  //     Swal.fire({
+  //       icon: "error",
+  //       title: "Booking Failed",
+  //       text: error?.response?.data?.message || error.message || "Something went wrong",
+  //       confirmButtonText: "OK",
+  //     });
+  //   } finally {
+  //     setBookisLoading(false);
+  //   }
+  // };
 
   const handleBookingError = (data) => {
     Swal.fire({
-      icon: 'error',
-      title: 'Booking Failed',
-      text: data?.message || 'An error occurred while processing your booking.',
-      confirmButtonText: 'OK',
+      icon: "error",
+      title: "Booking Failed",
+      text: data?.message || "An error occurred while processing your booking.",
+      confirmButtonText: "OK",
     });
   };
 
@@ -775,26 +835,83 @@ const Page = ({ setActiveTab, fdatas, price }) => {
 
   const formatDate = (dateStr) => {
     const targetDate = new Date(dateStr);
-    const options = { weekday: "short", day: "2-digit", month: "short", year: "numeric" };
+    const options = {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
     const formattedDate = targetDate.toLocaleDateString("en-US", options);
     const [weekday, month, day, year] = formattedDate.split(/[\s,]+/);
     return `${weekday}-${day} ${month} ${year}`;
   };
 
+
+   const validateDateOfBirth = (dob, paxType, index) => {
+    const errors = {};
+    const dobDate = new Date(dob);
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const dobYear = dobDate.getFullYear();
+
+    // Prevent invalid future years
+    if (dobYear > currentYear) {
+      errors[`DateOfBirth_${index}`] = "Date of Birth cannot be in the future.";
+      return errors;
+    }
+
+    // Calculate age in years
+    let age = currentYear - dobYear;
+    const monthDiff = currentDate.getMonth() - dobDate.getMonth();
+    const dayDiff = currentDate.getDate() - dobDate.getDate();
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+      age--;
+    }
+
+    // Age validation based on PaxType
+    if (paxType === 1) { // Adult
+      if (age <= 12) {
+        errors[`DateOfBirth_${index}`] = "Adult must be older than 12 years.";
+      } else if (age > 100) {
+        errors[`DateOfBirth_${index}`] = "Adult age cannot exceed 100 years.";
+      }
+    } else if (paxType === 2) { // Child
+      if (age < 2 || age > 12) {
+        errors[`DateOfBirth_${index}`] = "Child must be between 2 and 12 years old.";
+      }
+    } else if (paxType === 3) { // Infant
+      const ageInMonths = (currentDate - dobDate) / (1000 * 60 * 60 * 24 * 30.42);
+      if (ageInMonths > 24) {
+        errors[`DateOfBirth_${index}`] = "Infant must be less than 2 years old.";
+      }
+    }
+
+    return errors;
+  };
+
+
   const formatDateTime = (dateTimeStr) => {
     const date = new Date(dateTimeStr);
-    const options = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-    const formattedDate = date.toLocaleDateString('en-US', options);
+    const options = {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    };
+    const formattedDate = date.toLocaleDateString("en-US", options);
     const hours = date.getHours();
     const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    const formattedTime = `${hours % 12 || 12}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    const ampm = hours >= 12 ? "PM" : "AM";
+    const formattedTime = `${hours % 12 || 12}:${minutes
+      .toString()
+      .padStart(2, "0")} ${ampm}`;
     return { formattedDate, formattedTime };
   };
 
   useEffect(() => {
-    if (differenceInMinutes > 15) { // Align with trace ID validity
-      router.push('/flight');
+    if (differenceInMinutes > 15) {
+      // Align with trace ID validity
+      router.push("/flight");
     }
   }, [differenceInMinutes, router]);
 
@@ -831,25 +948,29 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold text-sm">Booking ID</td>
-                <td className="p-2 text-blue-600 text-sm">{BookingId || "N/A"}</td>
+                <td className="p-2 text-blue-600 text-sm">
+                  {BookingId || "N/A"}
+                </td>
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold text-sm">Passenger Name</td>
                 <td className="p-2 text-blue-600 text-sm">
-                  {passenger.Title} {passenger.FirstName} {passenger.LastName || "N/A"}
+                  {passenger.Title} {passenger.FirstName}{" "}
+                  {passenger.LastName || "N/A"}
                 </td>
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold text-sm">Contact Number</td>
-                <td className="p-2 text-blue-600 text-sm">{passenger.ContactNo || "N/A"}</td>
+                <td className="p-2 text-blue-600 text-sm">
+                  {passenger.ContactNo || "N/A"}
+                </td>
               </tr>
               <tr className="border-b">
                 <td className="p-2 font-semibold text-sm">Email</td>
-                <td className="p-2 text-blue-600 text-sm">{passenger.Email || "N/A"}</td>
+                <td className="p-2 text-blue-600 text-sm">
+                  {passenger.Email || "N/A"}
+                </td>
               </tr>
-             
-             
-             
             </tbody>
           </table>
           <div className="bg-gray-100 p-4 rounded-lg">
@@ -858,24 +979,30 @@ const Page = ({ setActiveTab, fdatas, price }) => {
               <thead>
                 <tr className="bg-gray-200">
                   <th className="p-2 text-left text-sm font-semibold">Field</th>
-                  <th className="p-2 text-left text-sm font-semibold">Details</th>
+                  <th className="p-2 text-left text-sm font-semibold">
+                    Details
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b">
                   <td className="p-2 font-semibold text-sm">Airline</td>
                   <td className="p-2 text-sm">
-                    {segment?.Airline?.AirlineName} ({segment?.Airline?.AirlineCode || "N/A"})
+                    {segment?.Airline?.AirlineName} (
+                    {segment?.Airline?.AirlineCode || "N/A"})
                   </td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 font-semibold text-sm">Flight Number</td>
-                  <td className="p-2 text-sm">{segment?.Airline?.FlightNumber || "N/A"}</td>
+                  <td className="p-2 text-sm">
+                    {segment?.Airline?.FlightNumber || "N/A"}
+                  </td>
                 </tr>
                 <tr className="border-b">
                   <td className="p-2 font-semibold text-sm">Departure</td>
                   <td className="p-2 text-sm">
-                    {segment?.Origin?.Airport?.CityName} ({segment?.Origin?.Airport?.AirportCode || "N/A"}) at{" "}
+                    {segment?.Origin?.Airport?.CityName} (
+                    {segment?.Origin?.Airport?.AirportCode || "N/A"}) at{" "}
                     {departure.formattedTime} on {departure.formattedDate}
                   </td>
                 </tr>
@@ -883,8 +1010,8 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                   <td className="p-2 font-semibold text-sm">Arrival</td>
                   <td className="p-2 text-sm">
                     {segment?.Destination?.Airport?.CityName} (
-                    {segment?.Destination?.Airport?.AirportCode || "N/A"}) at {arrival.formattedTime} on{" "}
-                    {arrival.formattedDate}
+                    {segment?.Destination?.Airport?.AirportCode || "N/A"}) at{" "}
+                    {arrival.formattedTime} on {arrival.formattedDate}
                   </td>
                 </tr>
               </tbody>
@@ -892,8 +1019,8 @@ const Page = ({ setActiveTab, fdatas, price }) => {
           </div>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              🎟️ Your ticket will be sent to your email ID. Please take a screenshot of this page for your
-              reference.
+              🎟️ Your ticket will be sent to your email ID. Please take a
+              screenshot of this page for your reference.
             </p>
           </div>
           <div className="mt-6 flex justify-center">
@@ -923,7 +1050,7 @@ const Page = ({ setActiveTab, fdatas, price }) => {
     </div>
   );
 
-  console.log('wrfrwff', fdatas?.traceid);
+  console.log("wrfrwff", fdatas?.traceid);
   return (
     <div className="">
       <div className="flex justify-end mb-4">
@@ -940,139 +1067,174 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                   <GiAirplaneDeparture />
                 </div>
                 <div className="flex justify-between gap-10">
-                  <span className="text-sm md:text-xl font-medium">Flight Detail</span>
+                  <span className="text-sm md:text-xl font-medium">
+                    Flight Detail
+                  </span>
                   <span className="text-sm md:text-xl font-medium text-red-700">
-                    {differenceInMinutes > 15 && <span>Trace ID Expired. Search flight again.</span>}
+                    {differenceInMinutes > 15 && (
+                      <span>Trace ID Expired. Search flight again.</span>
+                    )}
                   </span>
                 </div>
               </div>
             </div>
-            {console.log('fdatas',fdatas)}
+            {console.log("fdatas", fdatas)}
             <div className="">
-              {fdatas?.data?.Response?.Results?.Segments?.[0]?.map((segment, index) => (
-                <div key={index} className="rounded-sm border px-3 py-4 relative space-y-5">
-                  <h3 className="bg-gray-600 text-white text-xs w-fit px-3 font-bold rounded-br-xl absolute top-0 left-0">
-                    Depart
-                  </h3>
-                  <div className="flex items-center gap-3 text-md md:text-xl">
-                    <IoAirplaneSharp className="font-bold -rotate-45" />
-                    <div className="flex items-center gap-1">
-                      <h4 className="">
-                        {segment?.Origin?.Airport?.CityName} - {segment?.Destination?.Airport?.CityName}
-                      </h4>
-                      <p className="border-s-2 border-black px-2 text-sm">
-                        {formatDate(segment?.Origin?.DepTime)}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex gap-5 flex-col md:flex-row items-start justify-between space-y-4 lg:space-y-0 lg:space-x-4">
-                    <div className="flex items-center gap-4">
-                      <img
-                        src={`/images/${segment?.Airline?.AirlineCode}.gif`}
-                        alt=""
-                        className="h-10 w-10 rounded-lg"
-                      />
-                      <div>
-                        <p className="text-sm md:text-lg">{segment?.Airline?.AirlineName}</p>
-                        <p className="text-xs">{segment?.Airline?.AirlineCode}-{segment?.Airline?.FlightNumber}</p>
-                        <p className="text-xs">
-                          {[
-                            "All",
-                            "Economy",
-                            "PremiumEconomy",
-                            "Business",
-                            "PremiumBusiness",
-                            "First",
-                          ].filter((inf, ind) => ind + 1 === segment?.CabinClass)}
+              {fdatas?.data?.Response?.Results?.Segments?.[0]?.map(
+                (segment, index) => (
+                  <div
+                    key={index}
+                    className="rounded-sm border px-3 py-4 relative space-y-5"
+                  >
+                    <h3 className="bg-gray-600 text-white text-xs w-fit px-3 font-bold rounded-br-xl absolute top-0 left-0">
+                      Depart
+                    </h3>
+                    <div className="flex items-center gap-3 text-md md:text-xl">
+                      <IoAirplaneSharp className="font-bold -rotate-45" />
+                      <div className="flex items-center gap-1">
+                        <h4 className="">
+                          {segment?.Origin?.Airport?.CityName} -{" "}
+                          {segment?.Destination?.Airport?.CityName}
+                        </h4>
+                        <p className="border-s-2 border-black px-2 text-sm">
+                          {formatDate(segment?.Origin?.DepTime)}
                         </p>
                       </div>
                     </div>
-                    <div className="flex w-full gap-2 justify-between md:w-[70%] md:px-3">
-                      <div className="flex flex-col gap-1 items-start">
-                        <h4 className="font-extrabold text-md md:text-xl">
-                          {formatDateTime(segment?.Origin?.DepTime).formattedTime}
-                        </h4>
-                        <div className="flex flex-col text-xs">
-                          <span className="font-bold text-nowrap">
-                            {segment?.Origin?.Airport?.CityName} ({segment?.Origin?.Airport?.AirportCode})
-                          </span>
-                          <span>{formatDate(segment?.Origin?.DepTime)}</span>
-                          <span>{segment?.Origin?.Airport?.Terminal}</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-4 items-center">
-                        <p className="text-xs">{Math.floor(segment?.Duration / 60)}h-{segment?.Duration % 60}m</p>
-                        <div className="border-t-2 border-black border-dotted w-full flex justify-center relative">
-                          <div className="absolute -top-3 bg-white text-lg rounded-full">
-                            <GiAirplaneDeparture />
-                          </div>
-                        </div>
-                        {fdatas?.data?.Response?.Results?.IsRefundable ? (
-                          <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                            REFUNDABLE
-                          </span>
-                        ) : (
-                          <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
-                            NO REFUNDABLE
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex flex-col gap-1 items-start">
-                        <h4 className="font-extrabold text-sm md:text-xl">
-                          {formatDateTime(segment?.Destination?.ArrTime).formattedTime}
-                        </h4>
-                        <div className="flex flex-col text-xs">
-                          <span className="text-nowrap font-bold">
-                            {segment?.Destination?.Airport?.CityName} ({segment?.Destination?.Airport?.AirportCode})
-                          </span>
-                          <span>{formatDate(segment?.Destination?.ArrTime)}</span>
-                          <span>{segment?.Destination?.Airport?.Terminal}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex flex-col md:flex-row items-start gap-5">
-                    <h3 className="bg-gray-200 font-bold w-fit text-gray-800 rounded-full px-5 text-xs py-1">
-                      saver
-                    </h3>
-                    <p className="text-xs text-gray-400">Fare Rules Baggage</p>
-                  </div>
-                  <div className="border-2">
-                    <div className="p-2 bg-gray-50">
-                      <div className="flex justify-between items-center text-sm font-semibold">
-                        <p className="text-gray-400">Airline</p>
-                        <p className="text-gray-400">Check-in-Baggage</p>
-                        <p className="text-gray-400">Cabin Baggage</p>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-start p-2">
-                      <div className="flex justify-start items-center w-[35%] gap-6">
-                        <div className="flex items-center md:bg-transparent px-3 rounded-t-lg md:rounded-t-none py-4 md:py-0">
-                          <img
-                            src={`/images/${segment?.Airline?.AirlineCode}.gif`}
-                            alt="refund policy"
-                            className="h-7 w-7 rounded-lg"
-                          />
-                        </div>
+                    <div className="flex gap-5 flex-col md:flex-row items-start justify-between space-y-4 lg:space-y-0 lg:space-x-4">
+                      <div className="flex items-center gap-4">
+                        <img
+                          src={`/images/${segment?.Airline?.AirlineCode}.gif`}
+                          alt=""
+                          className="h-10 w-10 rounded-lg"
+                        />
                         <div>
-                          <h6 className="text-black text-sm font-semibold capitalize">
+                          <p className="text-sm md:text-lg">
                             {segment?.Airline?.AirlineName}
-                          </h6>
-                          <p className="text-gray-500 text-[12px] font-semibold">
-                            {segment?.Airline?.AirlineCode}-{segment?.Airline?.FlightNumber}
+                          </p>
+                          <p className="text-xs">
+                            {segment?.Airline?.AirlineCode}-
+                            {segment?.Airline?.FlightNumber}
+                          </p>
+                          <p className="text-xs">
+                            {[
+                              "All",
+                              "Economy",
+                              "PremiumEconomy",
+                              "Business",
+                              "PremiumBusiness",
+                              "First",
+                            ].filter(
+                              (inf, ind) => ind + 1 === segment?.CabinClass
+                            )}
                           </p>
                         </div>
                       </div>
-                      <div className="text-black text-sm font-semibold capitalize w-[28%]">
-                        {segment?.Baggage}
+                      <div className="flex w-full gap-2 justify-between md:w-[70%] md:px-3">
+                        <div className="flex flex-col gap-1 items-start">
+                          <h4 className="font-extrabold text-md md:text-xl">
+                            {
+                              formatDateTime(segment?.Origin?.DepTime)
+                                .formattedTime
+                            }
+                          </h4>
+                          <div className="flex flex-col text-xs">
+                            <span className="font-bold text-nowrap">
+                              {segment?.Origin?.Airport?.CityName} (
+                              {segment?.Origin?.Airport?.AirportCode})
+                            </span>
+                            <span>{formatDate(segment?.Origin?.DepTime)}</span>
+                            <span>{segment?.Origin?.Airport?.Terminal}</span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-4 items-center">
+                          <p className="text-xs">
+                            {Math.floor(segment?.Duration / 60)}h-
+                            {segment?.Duration % 60}m
+                          </p>
+                          <div className="border-t-2 border-black border-dotted w-full flex justify-center relative">
+                            <div className="absolute -top-3 bg-white text-lg rounded-full">
+                              <GiAirplaneDeparture />
+                            </div>
+                          </div>
+                          {fdatas?.data?.Response?.Results?.IsRefundable ? (
+                            <span className="border border-green-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+                              REFUNDABLE
+                            </span>
+                          ) : (
+                            <span className="border border-red-400 px-6 md:px-8 m-0 py-1 rounded-full font-bold text-[0.5rem]">
+                              NO REFUNDABLE
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-1 items-start">
+                          <h4 className="font-extrabold text-sm md:text-xl">
+                            {
+                              formatDateTime(segment?.Destination?.ArrTime)
+                                .formattedTime
+                            }
+                          </h4>
+                          <div className="flex flex-col text-xs">
+                            <span className="text-nowrap font-bold">
+                              {segment?.Destination?.Airport?.CityName} (
+                              {segment?.Destination?.Airport?.AirportCode})
+                            </span>
+                            <span>
+                              {formatDate(segment?.Destination?.ArrTime)}
+                            </span>
+                            <span>
+                              {segment?.Destination?.Airport?.Terminal}
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="text-black text-sm font-semibold capitalize w-[20%]">
-                        {segment?.CabinBaggage}
+                    </div>
+                    <div className="flex flex-col md:flex-row items-start gap-5">
+                      <h3 className="bg-gray-200 font-bold w-fit text-gray-800 rounded-full px-5 text-xs py-1">
+                        saver
+                      </h3>
+                      <p className="text-xs text-gray-400">
+                        Fare Rules Baggage
+                      </p>
+                    </div>
+                    <div className="border-2">
+                      <div className="p-2 bg-gray-50">
+                        <div className="flex justify-between items-center text-sm font-semibold">
+                          <p className="text-gray-400">Airline</p>
+                          <p className="text-gray-400">Check-in-Baggage</p>
+                          <p className="text-gray-400">Cabin Baggage</p>
+                        </div>
+                      </div>
+                      <div className="flex justify-between items-start p-2">
+                        <div className="flex justify-start items-center w-[35%] gap-6">
+                          <div className="flex items-center md:bg-transparent px-3 rounded-t-lg md:rounded-t-none py-4 md:py-0">
+                            <img
+                              src={`/images/${segment?.Airline?.AirlineCode}.gif`}
+                              alt="refund policy"
+                              className="h-7 w-7 rounded-lg"
+                            />
+                          </div>
+                          <div>
+                            <h6 className="text-black text-sm font-semibold capitalize">
+                              {segment?.Airline?.AirlineName}
+                            </h6>
+                            <p className="text-gray-500 text-[12px] font-semibold">
+                              {segment?.Airline?.AirlineCode}-
+                              {segment?.Airline?.FlightNumber}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="text-black text-sm font-semibold capitalize w-[28%]">
+                          {segment?.Baggage}
+                        </div>
+                        <div className="text-black text-sm font-semibold capitalize w-[20%]">
+                          {segment?.CabinBaggage}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              )}
             </div>
           </div>
           <div className="FirstChild border rounded-lg shadow-lg">
@@ -1082,7 +1244,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                   <GiAirplaneDeparture />
                 </div>
                 <div>
-                  <span className="text-sm md:text-xl font-medium">Traveller Details</span>
+                  <span className="text-sm md:text-xl font-medium">
+                    Traveller Details
+                  </span>
                 </div>
               </div>
             </div>
@@ -1104,7 +1268,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                   {showForms[index] && (
                     <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border rounded-md shadow-lg">
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Title</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Title
+                        </label>
                         <select
                           name="Title"
                           value={passenger.Title}
@@ -1118,11 +1284,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           <option value="Mrs">Mrs</option>
                         </select>
                         {errors[`Title_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Title_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Title_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">First Name</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          First Name
+                        </label>
                         <input
                           type="text"
                           name="FirstName"
@@ -1132,11 +1302,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`FirstName_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`FirstName_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`FirstName_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Last Name</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Last Name
+                        </label>
                         <input
                           type="text"
                           name="LastName"
@@ -1146,11 +1320,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`LastName_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`LastName_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`LastName_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Gender</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Gender
+                        </label>
                         <select
                           name="Gender"
                           value={passenger.Gender}
@@ -1164,11 +1342,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           <option value="3">Other</option>
                         </select>
                         {errors[`Gender_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Gender_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Gender_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of Birth</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Date of Birth
+                        </label>
                         <input
                           type="date"
                           name="DateOfBirth"
@@ -1176,15 +1358,21 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           onChange={(e) => handleChange(e, index)}
                           className="w-full border border-gray-300 rounded-md p-2"
                           required
+                           min="1900-01-01"
+                           max={todayMeDATE}
                         />
                         {errors[`DateOfBirth_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`DateOfBirth_${index}`]}
+                          </p>
                         )}
                       </div>
                       {checkPassport && (
                         <>
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Passport No</label>
+                            <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                              Passport No
+                            </label>
                             <input
                               type="text"
                               name="PassportNo"
@@ -1194,11 +1382,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                               required
                             />
                             {errors[`PassportNo_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`PassportNo_${index}`]}</p>
+                              <p className="text-red-500 text-sm">
+                                {errors[`PassportNo_${index}`]}
+                              </p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Passport Expiry</label>
+                            <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                              Passport Expiry
+                            </label>
                             <input
                               type="date"
                               name="PassportExpiry"
@@ -1208,13 +1400,17 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                               required
                             />
                             {errors[`PassportExpiry_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`PassportExpiry_${index}`]}</p>
+                              <p className="text-red-500 text-sm">
+                                {errors[`PassportExpiry_${index}`]}
+                              </p>
                             )}
                           </div>
                         </>
                       )}
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Address</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Address
+                        </label>
                         <input
                           type="text"
                           name="AddressLine1"
@@ -1224,11 +1420,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`AddressLine1_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`AddressLine1_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`AddressLine1_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">City</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          City
+                        </label>
                         <input
                           type="text"
                           name="City"
@@ -1238,11 +1438,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`City_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`City_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`City_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Contact Number</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Contact Number
+                        </label>
                         <input
                           type="text"
                           name="ContactNo"
@@ -1252,11 +1456,15 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`ContactNo_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`ContactNo_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`ContactNo_${index}`]}
+                          </p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-900 mb-1">Email</label>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Email
+                        </label>
                         <input
                           type="email"
                           name="Email"
@@ -1266,115 +1474,147 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                           required
                         />
                         {errors[`Email_${index}`] && (
-                          <p className="text-red-500 text-sm">{errors[`Email_${index}`]}</p>
+                          <p className="text-red-500 text-sm">
+                            {errors[`Email_${index}`]}
+                          </p>
                         )}
                       </div>
                       {/* New: SSR Inputs for LCC Flights */}
-                      {fdatas?.data?.Response?.Results?.IsLCC && ssrDetails[index] && (
-                        <>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Meal Preference</label>
-                            <select
-                              name="Meal"
-                              value={ssrDetails[index]?.Meal || ""}
-                              onChange={(e) => handleSsrChange(index, "Meal", e.target.value)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                            >
-                              <option value="">Select Meal</option>
-                              {/* Example options; populate dynamically from ssrDetails */}
-                              <option value="Veg">Vegetarian</option>
-                              <option value="NonVeg">Non-Vegetarian</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Baggage</label>
-                            <select
-                              name="Baggage"
-                              value={ssrDetails[index]?.Baggage || ""}
-                              onChange={(e) => handleSsrChange(index, "Baggage", e.target.value)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                            >
-                              <option value="">Select Baggage</option>
-                              <option value="15KG">15KG</option>
-                              <option value="20KG">20KG</option>
-                            </select>
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">Seat Preference</label>
-                            <select
-                              name="Seat"
-                              value={ssrDetails[index]?.Seat || ""}
-                              onChange={(e) => handleSsrChange(index, "Seat", e.target.value)}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                            >
-                              <option value="">Select Seat</option>
-                              <option value="Window">Window</option>
-                              <option value="Aisle">Aisle</option>
-                            </select>
-                          </div>
-                        </>
-                      )}
+                      {fdatas?.data?.Response?.Results?.IsLCC &&
+                        ssrDetails[index] && (
+                          <>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                Meal Preference
+                              </label>
+                              <select
+                                name="Meal"
+                                value={ssrDetails[index]?.Meal || ""}
+                                onChange={(e) =>
+                                  handleSsrChange(index, "Meal", e.target.value)
+                                }
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              >
+                                <option value="">Select Meal</option>
+                                {/* Example options; populate dynamically from ssrDetails */}
+                                <option value="Veg">Vegetarian</option>
+                                <option value="NonVeg">Non-Vegetarian</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                Baggage
+                              </label>
+                              <select
+                                name="Baggage"
+                                value={ssrDetails[index]?.Baggage || ""}
+                                onChange={(e) =>
+                                  handleSsrChange(
+                                    index,
+                                    "Baggage",
+                                    e.target.value
+                                  )
+                                }
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              >
+                                <option value="">Select Baggage</option>
+                                <option value="15KG">15KG</option>
+                                <option value="20KG">20KG</option>
+                              </select>
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                Seat Preference
+                              </label>
+                              <select
+                                name="Seat"
+                                value={ssrDetails[index]?.Seat || ""}
+                                onChange={(e) =>
+                                  handleSsrChange(index, "Seat", e.target.value)
+                                }
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              >
+                                <option value="">Select Seat</option>
+                                <option value="Window">Window</option>
+                                <option value="Aisle">Aisle</option>
+                              </select>
+                            </div>
+                          </>
+                        )}
                       {/* New: GST Inputs for Lead Passenger */}
-                      {passenger.IsLeadPax && fdatas?.data?.Response?.Results?.IsGSTMandatory && (
-                        <>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">GST Number</label>
-                            <input
-                              type="text"
-                              name="GSTNumber"
-                              value={gstDetails.GSTNumber}
-                              onChange={handleGstChange}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`GSTNumber_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`GSTNumber_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">GST Company Name</label>
-                            <input
-                              type="text"
-                              name="GSTCompanyName"
-                              value={gstDetails.GSTCompanyName}
-                              onChange={handleGstChange}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`GSTCompanyName_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`GSTCompanyName_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">GST Email</label>
-                            <input
-                              type="email"
-                              name="GSTEmail"
-                              value={gstDetails.GSTEmail}
-                              onChange={handleGstChange}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`GSTEmail_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`GSTEmail_${index}`]}</p>
-                            )}
-                          </div>
-                          <div>
-                            <label className="block text-[10px] font-bold text-gray-900 mb-1">GST Phone</label>
-                            <input
-                              type="text"
-                              name="GSTPhone"
-                              value={gstDetails.GSTPhone}
-                              onChange={handleGstChange}
-                              className="w-full border border-gray-300 rounded-md p-2"
-                              required
-                            />
-                            {errors[`GSTPhone_${index}`] && (
-                              <p className="text-red-500 text-sm">{errors[`GSTPhone_${index}`]}</p>
-                            )}
-                          </div>
-                        </>
-                      )}
+                      {passenger.IsLeadPax &&
+                        fdatas?.data?.Response?.Results?.IsGSTMandatory && (
+                          <>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                GST Number
+                              </label>
+                              <input
+                                type="text"
+                                name="GSTNumber"
+                                value={gstDetails.GSTNumber}
+                                onChange={handleGstChange}
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              />
+                              {errors[`GSTNumber_${index}`] && (
+                                <p className="text-red-500 text-sm">
+                                  {errors[`GSTNumber_${index}`]}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                GST Company Name
+                              </label>
+                              <input
+                                type="text"
+                                name="GSTCompanyName"
+                                value={gstDetails.GSTCompanyName}
+                                onChange={handleGstChange}
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              />
+                              {errors[`GSTCompanyName_${index}`] && (
+                                <p className="text-red-500 text-sm">
+                                  {errors[`GSTCompanyName_${index}`]}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                GST Email
+                              </label>
+                              <input
+                                type="email"
+                                name="GSTEmail"
+                                value={gstDetails.GSTEmail}
+                                onChange={handleGstChange}
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              />
+                              {errors[`GSTEmail_${index}`] && (
+                                <p className="text-red-500 text-sm">
+                                  {errors[`GSTEmail_${index}`]}
+                                </p>
+                              )}
+                            </div>
+                            <div>
+                              <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                                GST Phone
+                              </label>
+                              <input
+                                type="text"
+                                name="GSTPhone"
+                                value={gstDetails.GSTPhone}
+                                onChange={handleGstChange}
+                                className="w-full border border-gray-300 rounded-md p-2"
+                              />
+                              {errors[`GSTPhone_${index}`] && (
+                                <p className="text-red-500 text-sm">
+                                  {errors[`GSTPhone_${index}`]}
+                                </p>
+                              )}
+                            </div>
+                          </>
+                        )}
                     </form>
                   )}
                 </div>
@@ -1390,19 +1630,31 @@ const Page = ({ setActiveTab, fdatas, price }) => {
             {/* Price Summary Card */}
             <div className="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
               <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-3 flex items-center justify-between">
-                <h3 className="text-lg md:text-xl font-semibold text-white">Price Summary</h3>
+                <h3 className="text-lg md:text-xl font-semibold text-white">
+                  Price Summary
+                </h3>
                 <button
                   onClick={togglePriceBreakdown}
                   className="md:hidden text-white focus:outline-none"
                   aria-label="Toggle price breakdown"
                 >
-                  {isPriceBreakdownOpen ? <FaChevronUp size={20} /> : <FaChevronDown size={20} />}
+                  {isPriceBreakdownOpen ? (
+                    <FaChevronUp size={20} />
+                  ) : (
+                    <FaChevronDown size={20} />
+                  )}
                 </button>
               </div>
-              <div className={`px-4 py-3 text-sm ${isPriceBreakdownOpen ? "block" : "hidden md:block"}`}>
+              <div
+                className={`px-4 py-3 text-sm ${
+                  isPriceBreakdownOpen ? "block" : "hidden md:block"
+                }`}
+              >
                 {/* Passenger Count */}
                 <div className="flex justify-between items-center py-2 border-b border-gray-200">
-                  <p className="text-gray-700 font-medium">Adult x {passengers?.length || 0}</p>
+                  <p className="text-gray-700 font-medium">
+                    Adult x {passengers?.length || 0}
+                  </p>
                   <p className="flex items-center font-bold text-gray-900">
                     <FaRupeeSign className="mr-1" size={14} />
                     {originalFare.toLocaleString("en-IN")}
@@ -1414,28 +1666,36 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                     <span>Base Fare:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Response?.Results?.Fare?.BaseFare?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.BaseFare?.toLocaleString(
+                        "en-IN"
+                      ) || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Tax:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Response?.Results?.Fare?.Tax?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.Tax?.toLocaleString(
+                        "en-IN"
+                      ) || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Other Charges:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Response?.Results?.Fare?.OtherCharges?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.OtherCharges?.toLocaleString(
+                        "en-IN"
+                      ) || "0"}
                     </span>
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Service Fee:</span>
                     <span className="flex items-center">
                       <FaRupeeSign size={12} className="mr-1" />
-                      {fdatas?.data?.Response?.Results?.Fare?.ServiceFee?.toLocaleString("en-IN") || "0"}
+                      {fdatas?.data?.Response?.Results?.Fare?.ServiceFee?.toLocaleString(
+                        "en-IN"
+                      ) || "0"}
                     </span>
                   </div>
                   {appliedPromo && (
@@ -1462,7 +1722,9 @@ const Page = ({ setActiveTab, fdatas, price }) => {
             <div className="booking flex justify-center items-center mt-4">
               <button
                 className={`bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full w-full sm:w-4/5 py-3 text-sm md:text-lg font-semibold flex justify-center items-center shadow-md hover:from-orange-600 hover:to-orange-700 transition-all duration-300 ${
-                  isLoading || bookisLoading ? "opacity-50 cursor-not-allowed" : ""
+                  isLoading || bookisLoading
+                    ? "opacity-50 cursor-not-allowed"
+                    : ""
                 }`}
                 onClick={handleBook}
                 disabled={isLoading || bookisLoading}
