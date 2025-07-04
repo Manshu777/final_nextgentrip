@@ -245,7 +245,7 @@ const Comp = ({ slug }) => {
 
       <div className="p-4 flex gap-4 relative max-w-7xl mx-auto">
         {/* Filter Section */}
-        <div className="hidden lg:flex w-1/4 p-4 sticky top-24 h-[120vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
+        <div className="hidden lg:flex w-[20%] p-4 sticky top-24 h-[120vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
           <div className="flex items-center gap-3 text-lg font-semibold text-gray-700 mb-4">
             <MdFilterList className="text-2xl text-blue-600" /> Filters
           </div>
@@ -307,7 +307,7 @@ const Comp = ({ slug }) => {
           {/* Sorting Options */}
           <div className="mb-6">
             <p className="font-semibold text-gray-800 mb-2">Sort By</p>
-            <div className="grid grid-cols-2 gap-2 pl-4">
+            <div className="grid grid-cols-1 gap-2 pl-4">
               {[
                 { id: "L-H", label: "Price: Low to High" },
                 { id: "H-L", label: "Price: High to Low" },
@@ -379,7 +379,7 @@ const Comp = ({ slug }) => {
                 )}
 
                 <div className="block md:flex relative p-5">
-                  <div className="relative">
+                  <div className="w-[50%] relative">
                     <div className="relative">
                       <Image
                         src={getImages(hotel?.hotelDetails)[0] || "/images/not_found_img.png"}
@@ -478,12 +478,12 @@ const Comp = ({ slug }) => {
                               <span className="text-xs flex items-center gap-2">View Room</span>
                             </Link>
                           </div>
-                          <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
+                          {/* <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
                             <span className="text-gray-700">
                               Exclusive offer on Canara Bank Credit Cards. Get {defaultcurrency.symbol}
                               {Math.floor(241 * cuntryprice)} off
                             </span>
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     ) : (

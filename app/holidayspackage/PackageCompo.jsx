@@ -79,9 +79,9 @@ export const PackageCompo = () => {
                 HOT DEALS
               </span>
               <div className="flex ml-2">
-                {[...Array(+tour?.rating)].map((_, i) => (
+                {/* {[...Array(+tour?.rating)].map((_, i) => (
                   <FaStar key={i} className="text-yellow-400" />
-                ))}
+                ))} */}
               </div>
             </div>
             {/* <p className='h-12 text-sm overflow-hidden' dangerouslySetInnerHTML={{ __html: tour?.des }}></p> */}
