@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
+import axios from "axios";
+import { apilink } from "../../Component/common";
 
 function OrderForm() {
   const [formData, setFormData] = useState({
@@ -12,199 +13,612 @@ function OrderForm() {
     customerPassportNo: "",
     travelStartDate: "",
     travelEndDate: "",
+    mobileNo: "", // Added mobileNo field
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [orderValidated, setOrderValidated] = useState(false);
+  const [eSimDetails, setESimDetails] = useState(null);
+  const [orderCreated, setOrderCreated] = useState(false);
+  const [razorpayLoaded, setRazorpayLoaded] = useState(false); // Track Razorpay script loading
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Extract plan data from query parameters
   const plan = {
     id: searchParams.get("planId"),
-    planName: searchParams.get("planName") || "Selected Plan",
+    planName: searchParams.get("planName") || "Selected eSIM Plan",
+  };
+
+  // Load Razorpay script
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => setRazorpayLoaded(true);
+    script.onerror = () => {
+      setError("Failed to load Razorpay SDK. Please try again.");
+      setRazorpayLoaded(false);
+    };
+    document.body.appendChild(script);
+
+    // Cleanup script on component unmount
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  // Validate form inputs
+  const validateForm = () => {
+    const today = new Date().toISOString().split("T")[0];
+    if (formData.customerDOB > today) {
+      setError("Date of Birth cannot be in the future.");
+      return false;
+    }
+    if (formData.travelStartDate > formData.travelEndDate) {
+      setError("Travel End Date must be after Travel Start Date.");
+      return false;
+    }
+    if (!plan.id) {
+      setError("Plan ID is missing. Please select a valid plan.");
+      return false;
+    }
+    if (!formData.mobileNo) {
+      setError("Mobile Number is required.");
+      return false;
+    }
+    return true;
   };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    try {
-      const data = {
-        request: [
-          {
-            id: plan.id,
-            planName: plan.planName,
-            ...formData,
-          },
-        ],
-      };
-      const response = await axios.post(`${apilink}/matrix/validate-order`,data)
-  
-      if (response.data.status === 1) {
-        router.push(
-          `/upload?validatedOrderId=${
-            response.data.data[0].validatedOrderId
-          }&planId=${plan.id}&planName=${encodeURIComponent(plan.planName)}`
-        );
-      } else {
-        setError(response.data.message || "Failed to validate order");
-      }
-    } catch (err) {
-      setError("Something went wrong");
-    } finally {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
+
+  try {
+    // Step 1: Validate form inputs
+    if (!validateForm()) {
       setLoading(false);
+      return;
     }
-  };
+
+    if (!razorpayLoaded) {
+      setError("Razorpay SDK not loaded. Please try again.");
+      setLoading(false);
+      return;
+    }
+
+    // Step 2: Validate order with matrix API
+    const data = {
+      request: [
+        {
+          id: plan.id,
+          planName: plan.planName,
+          ...formData,
+        },
+      ],
+    };
+
+    const validateResponse = await axios.post(
+      `${apilink}/matrix/validate-order`,
+      data,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (validateResponse?.data?.status !== 1) {
+      throw new Error(validateResponse.data.message || "Failed to validate order");
+    }
+
+    const validatedOrderId = validateResponse.data.validatedOrderId;
+    const amount = validateResponse.data.amount;
+
+    if (!validatedOrderId || !amount) {
+      throw new Error("Validated Order ID or amount not found in response.");
+    }
+
+    setOrderValidated(true);
+
+    // Step 3: Create Razorpay order
+    const finalAmount = Math.round(amount * 1.15) * 100; // Convert to paise
+    const razorpayOrderData = {
+      amount: finalAmount,
+      currency: "INR",
+      receipt: `receipt_${validatedOrderId}_${Date.now()}`.slice(0, 40),
+    };
+
+    const razorpayResponse = await axios.post(
+      `${apilink}/create-razorpay-order`,
+      razorpayOrderData,
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+   
+    // Step 4: Open Razorpay payment modal
+    const options = {
+      key: "rzp_live_GHQAKE32vCoZBA",
+      amount: razorpayResponse.data.amount,
+      currency: "INR",
+      name: "eSIM Purchase",
+      description: `Payment for ${plan.planName}`,
+      order_id: razorpayResponse.data.orderId,
+      handler: async function (response) {
+        try {
+       
+
+          // Step 6: Create order after successful payment
+          const orderData = {
+            validatedOrderId: validatedOrderId,
+          };
+
+          const createOrderResponse = await axios.post(
+            `${apilink}/matrix/create-order`,
+            orderData,
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (createOrderResponse?.data?.status !== 1) {
+            throw new Error(createOrderResponse.data.message || "Failed to create order");
+          }
+
+          const orderDetail = createOrderResponse.data.orderDetail?.[0];
+          if (!orderDetail) {
+            throw new Error("Order details not found in response.");
+          }
+
+          // Validate base64 QR code
+          const isValidBase64 = /^[A-Za-z0-9+/=]+$/.test(orderDetail.base64QRCode);
+          if (!isValidBase64) {
+            throw new Error("Invalid QR code format.");
+          }
+
+          // Set eSIM details
+          setESimDetails({
+            planName: orderDetail.name || plan.planName,
+            activationCode: orderDetail.activation_code || "N/A",
+            lpa: orderDetail.lpa || "N/A",
+            simNo: orderDetail.sim_no || "N/A",
+            smdpAddress: orderDetail.smdp_address || "N/A",
+            mobileNo: orderDetail.mobile_no || formData.mobileNo,
+            orderId: createOrderResponse.data.orderId || "N/A",
+            validatedOrderId: createOrderResponse.data.validatedOrderId || "N/A",
+            qrCode: orderDetail.base64QRCode,
+          });
+          setOrderCreated(true);
+        } catch (err) {
+          setError(
+            err.response?.data?.message || err.message || "Failed to process order after payment"
+          );
+        }
+      },
+      prefill: {
+        name: `${formData.customerFirstName} ${formData.customerLastName}`,
+        contact: formData.mobileNo,
+      },
+      theme: {
+        color: "#4F46E5",
+      },
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.on("payment.failed", function (response) {
+      setError(`Payment failed: ${response.error.description || "Please try again."}`);
+    });
+    rzp.open();
+  } catch (err) {
+    setError(
+      err.response?.data?.message || err.message || "Something went wrong. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleBack = () => {
     router.back();
   };
 
+  const handleKYC = () => {
+    router.push(
+      `/e-sim/esim-kyc?orderNo=${eSimDetails.validatedOrderId}&simNo=${eSimDetails.simNo}&mobileNo=${eSimDetails.mobileNo}`
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-gray-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
-        <div className="flex items-center mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-100 flex items-center justify-center p-6">
+      <div className="max-w-lg w-full bg-white rounded-3xl shadow-2xl p-8">
+        <div className="flex items-center mb-8">
           <button
             onClick={handleBack}
-            className="text-blue-600 hover:text-blue-800 mr-4"
+            className="text-indigo-600 hover:text-indigo-800 font-semibold transition-colors"
             aria-label="Go back"
           >
-            ← Back
+            ← Back2
           </button>
-          <h2 className="text-2xl font-bold text-gray-800">
-            Order Details for{" "}
-            <span className="text-blue-600">{plan?.planName}</span>
+          <h2 className="text-3xl font-extrabold text-gray-900 ml-4">
+            {orderCreated && eSimDetails
+              ? "Order Created Successfully"
+              : orderValidated && eSimDetails
+              ? "eSIM Details & Installation"
+              : `Order ${plan.planName}`}
           </h2>
         </div>
+
         {error && (
-          <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg flex items-center">
-            <span className="mr-2">⚠️</span> {error}
+          <div
+            className="mb-6 p-4 bg-red-50 text-red-700 rounded-xl flex items-center"
+            role="alert"
+          >
+            <svg
+              className="w-5 h-5 mr-2"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            {error}
           </div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              First Name
-            </label>
-            <input
-              type="text"
-              name="customerFirstName"
-              value={formData.customerFirstName}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-              placeholder="Enter your first name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="customerLastName"
-              value={formData.customerLastName}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-              placeholder="Enter your last name"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Date of Birth
-            </label>
-            <input
-              type="date"
-              name="customerDOB"
-              value={formData.customerDOB}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Passport Number
-            </label>
-            <input
-              type="text"
-              name="customerPassportNo"
-              value={formData.customerPassportNo}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-              placeholder="Enter your passport number"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Travel Start Date
-            </label>
-            <input
-              type="date"
-              name="travelStartDate"
-              value={formData.travelStartDate}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Travel End Date
-            </label>
-            <input
-              type="date"
-              name="travelEndDate"
-              value={formData.travelEndDate}
-              onChange={handleChange}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full p-3 rounded-lg text-white font-medium transition-all ${
-              loading
-                ? "bg-blue-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            } flex items-center justify-center`}
-          >
-            {loading ? (
-              <>
-                <svg
-                  className="animate-spin h-5 w-5 mr-2 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
+
+        {!orderValidated ? (
+          <form onSubmit={handleSubmit} className="space-y-6" aria-labelledby="form-title">
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="customerFirstName"
+                  className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Validating...
-              </>
-            ) : (
-              "Validate Order"
-            )}
-          </button>
-        </form>
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  id="customerFirstName"
+                  name="customerFirstName"
+                  value={formData.customerFirstName}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  required
+                  placeholder="Enter your first name"
+                  aria-required="true"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="customerLastName"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  id="customerLastName"
+                  name="customerLastName"
+                  value={formData.customerLastName}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  required
+                  placeholder="Enter your last name"
+                  aria-required="true"
+                />
+              </div>
+            </div>
+            <div>
+              <label
+                htmlFor="customerDOB"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Date of Birth
+              </label>
+              <input
+                type="date"
+                id="customerDOB"
+                name="customerDOB"
+                value={formData.customerDOB}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                required
+                aria-required="true"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="customerPassportNo"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Passport Number
+              </label>
+              <input
+                type="text"
+                id="customerPassportNo"
+                name="customerPassportNo"
+                value={formData.customerPassportNo}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                required
+                placeholder="Enter your passport number"
+                aria-required="true"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="mobileNo"
+                className="block text-sm font-medium text-gray-700 mb-1"
+              >
+                Mobile Number
+              </label>
+              <input
+                type="tel"
+                id="mobileNo"
+                name="mobileNo"
+                value={formData.mobileNo}
+                onChange={handleChange}
+                className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                required
+                placeholder="Enter your mobile number"
+                aria-required="true"
+              />
+            </div>
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label
+                  htmlFor="travelStartDate"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Travel Start Date
+                </label>
+                <input
+                  type="date"
+                  id="travelStartDate"
+                  name="travelStartDate"
+                  value={formData.travelStartDate}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  required
+                  aria-required="true"
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="travelEndDate"
+                  className="block text-sm font-medium text-gray-700 mb-1"
+                >
+                  Travel End Date
+                </label>
+                <input
+                  type="date"
+                  id="travelEndDate"
+                  name="travelEndDate"
+                  value={formData.travelEndDate}
+                  onChange={handleChange}
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                  required
+                  aria-required="true"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={loading || !razorpayLoaded}
+              className={`w-full p-3 rounded-xl text-white font-semibold transition-all ${
+                loading || !razorpayLoaded
+                  ? "bg-indigo-400 cursor-not-allowed"
+                  : "bg-indigo-600 hover:bg-indigo-700"
+              } flex items-center justify-center`}
+              aria-label="Validate and proceed to payment"
+            >
+              {loading ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 mr-2 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Processing...
+                </>
+              ) : (
+                "Validate and Proceed to Payment"
+              )}
+            </button>
+          </form>
+        ) : orderCreated && eSimDetails ? (
+          <div className="space-y-6">
+            <div className="bg-green-50 p-6 rounded-xl">
+              <p className="text-lg font-semibold text-green-800">
+                Order Created Successfully!
+              </p>
+              <p className="text-sm text-gray-600 mt-2">
+                Please take a screenshot of this page for your records and proceed to KYC
+                verification to activate your eSIM.
+              </p>
+              <div className="mt-4 flex space-x-4">
+                <button
+                  onClick={handleKYC}
+                  className="p-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all"
+                  aria-label="Proceed to KYC"
+                >
+                  Proceed to KYC
+                </button>
+              </div>
+            </div>
+            <div className="bg-indigo-50 p-6 rounded-xl">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Plan Name:</span> {eSimDetails.planName}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Activation Code:</span>{" "}
+                {eSimDetails.activationCode}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">LPA:</span> {eSimDetails.lpa}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">SIM Number:</span> {eSimDetails.simNo}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">SMDP Address:</span>{" "}
+                {eSimDetails.smdpAddress}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Mobile Number:</span>{" "}
+                {eSimDetails.mobileNo}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Order ID:</span> {eSimDetails.orderId}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Validated Order ID:</span>{" "}
+                {eSimDetails.validatedOrderId}
+              </p>
+              <div className="mt-4">
+                <p className="text-sm font-medium text-gray-600 mb-2">
+                  QR Code for eSIM Activation:
+                </p>
+                <img
+                  src={`data:image/png;base64,${eSimDetails.qrCode}`}
+                  alt="eSIM QR Code"
+                  className="w-40 h-40 mx-auto"
+                  aria-describedby="qr-code-instructions"
+                />
+              </div>
+            </div>
+            <p className="text-sm text-red-600 font-medium">
+              Important: You must complete KYC verification to activate your eSIM.
+            </p>
+          </div>
+        ) : (
+          eSimDetails && (
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Your eSIM Details
+              </h3>
+              <div className="bg-indigo-50 p-6 rounded-xl">
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Plan Name:</span>{" "}
+                  {eSimDetails.planName}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Activation Code:</span>{" "}
+                  {eSimDetails.activationCode}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">LPA:</span> {eSimDetails.lpa}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">SIM Number:</span>{" "}
+                  {eSimDetails.simNo}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">SMDP Address:</span>{" "}
+                  {eSimDetails.smdpAddress}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Mobile Number:</span>{" "}
+                  {eSimDetails.mobileNo}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Order ID:</span>{" "}
+                  {eSimDetails.orderId}
+                </p>
+                <p className="text-sm text-gray-600">
+                  <span className="font-medium">Validated Order ID:</span>{" "}
+                  {eSimDetails.validatedOrderId}
+                </p>
+                <div className="mt-4">
+                  <p className="text-sm font-medium text-gray-600 mb-2">
+                    QR Code for eSIM Activation:
+                  </p>
+                  <img
+                    src={`data:image/png;base64,${eSimDetails.qrCode}`}
+                    alt="eSIM QR Code"
+                    className="w-40 h-40 mx-auto"
+                    aria-describedby="qr-code-instructions"
+                  />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-800">
+                How to Install Your eSIM
+              </h3>
+              <div className="bg-gray-50 p-6 rounded-xl space-y-4">
+                <p className="text-sm text-gray-600" id="qr-code-instructions">
+                  Follow these steps to activate your eSIM on your device after KYC
+                  verification:
+                </p>
+                <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600">
+                  <li>
+                    <span className="font-medium">Scan the QR Code:</span> Go to your
+                    device's settings, navigate to "Cellular" or "Mobile Data," and select
+                    "Add Cellular Plan" or "Add eSIM." Scan the QR code displayed above.
+                  </li>
+                  <li>
+                    <span className="font-medium">Manual Activation (if needed):</span>{" "}
+                    If your device does not support QR code scanning, you can manually
+                    enter the LPA: <code>{eSimDetails.lpa}</code> and SMDP Address:{" "}
+                    <code>{eSimDetails.smdpAddress}</code>.
+                  </li>
+                  <li>
+                    <span className="font-medium">Follow On-Screen Instructions:</span>{" "}
+                    Your device will guide you through the activation process. Ensure you
+                    have an internet connection (Wi-Fi or another data source) during
+                    setup.
+                  </li>
+                  <li>
+                    <span className="font-medium">Confirm Activation:</span> Once
+                    activated, your eSIM will be listed under your cellular plans. Select
+                    it as your active plan if prompted.
+                  </li>
+                  <li>
+                    <span className="font-medium">Troubleshooting:</span> If you
+                    encounter issues, ensure your device is eSIM-compatible and unlocked.
+                    Contact support with your Order ID ({eSimDetails.orderId}) for
+                    assistance.
+                  </li>
+                </ol>
+                <p className="text-sm text-gray-600 italic">
+                  Note: Activation will only occur after successful KYC verification.
+                  Ensure your travel dates align with the plan's validity period.
+                </p>
+              </div>
+            </div>
+          )
+        )}
       </div>
     </div>
   );
