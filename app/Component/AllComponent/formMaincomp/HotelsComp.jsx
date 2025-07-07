@@ -22,10 +22,19 @@ const HotelsComp = () => {
   const currentDate = today(localTimeZone);
 
   // Initialize Check In to current date
-  const [arivitime, setarivitime] = useState(currentDate.toDate(localTimeZone));
+  const [arivitime, setarivitime] = useState(() => {
+    const savedCheckIn = JSON.parse(localStorage.getItem("hotelItems"))?.checkIntime;
+    return savedCheckIn && new Date(savedCheckIn) >= currentDate.toDate(localTimeZone)
+      ? new Date(savedCheckIn)
+      : currentDate.toDate(localTimeZone);
+  });
 
-  // Initialize Check Out to next day
+  // Initialize Check Out to next day or saved date
   const [checkOut, setcheckOut] = useState(() => {
+    const savedCheckOut = JSON.parse(localStorage.getItem("hotelItems"))?.checkouttime;
+    if (savedCheckOut && new Date(savedCheckOut) > currentDate.toDate(localTimeZone)) {
+      return new Date(savedCheckOut);
+    }
     const nextDay = currentDate.toDate(localTimeZone);
     nextDay.setDate(nextDay.getDate() + 1);
     return nextDay;
@@ -37,7 +46,7 @@ const HotelsComp = () => {
   const [childcount, setchildcount] = useState(0);
   const [numberOfRoom, setNumberOfRoom] = useState(1);
   const [childAges, setChildAges] = useState([]);
-  const [cnCoide, setcnCoide] = useState("IN");
+  const [cnCoide, setcnCoide] = useState("IN"); // Default to India
   const [countrySearch, setCountrySearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -110,7 +119,7 @@ const HotelsComp = () => {
 
   const handleVisibilityChange = (value) => {
     setIsVisible(value);
-    if (value !== "country") setCountrySearch(""); // Clear search when closing country dropdown
+    if (value !== "country") setCountrySearch("");
   };
 
   const handleClick = (option) => {
@@ -123,6 +132,10 @@ const HotelsComp = () => {
 
   const handelreturn = (newRange) => {
     const date = new Date(newRange.year, newRange.month - 1, newRange.day);
+    if (date < currentDate.toDate(localTimeZone)) {
+      alert("Check-in date cannot be in the past.");
+      return;
+    }
     const nextDate = new Date(date);
     nextDate.setDate(date.getDate() + 1);
     setarivitime(date);
@@ -136,6 +149,10 @@ const HotelsComp = () => {
       alert("Check Out date must be after Check In date.");
       return;
     }
+    if (date < currentDate.toDate(localTimeZone)) {
+      alert("Check-out date cannot be in the past.");
+      return;
+    }
     setcheckOut(date);
     setIsVisible("");
   };
@@ -145,9 +162,12 @@ const HotelsComp = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Load last selected country from localStorage
-    const savedCountry = JSON.parse(localStorage.getItem("SelectedCountry")) || { Code: "IN" };
-    setcnCoide(savedCountry.Code);
+    // Save default India to localStorage on initial load
+    const savedCountry = JSON.parse(localStorage.getItem("SelectedCountry"));
+    if (!savedCountry) {
+      saveToLocalStorage("SelectedCountry", { Code: "IN", Name: "India" }, 1);
+    }
+    setcnCoide("IN");
   }, []);
 
   useEffect(() => {
@@ -161,7 +181,7 @@ const HotelsComp = () => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
-        setCountrySearch(""); // Clear search on outside click
+        setCountrySearch("");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -244,12 +264,12 @@ const HotelsComp = () => {
   // Handle country selection
   const handleCountrySelect = (code, name) => {
     setcnCoide(code);
-    setCity({ Name: "", Code: "", isHotel: false }); // Reset city when country changes
+    setCity({ Name: "", Code: "", isHotel: false });
     setIsVisible("");
     setCountrySearch("");
-    // Save selected country to localStorage
     saveToLocalStorage("SelectedCountry", { Code: code, Name: name }, 1);
   };
+
 
   return (
     <div className="header relative md:px-5 lg:px-12 xl:px-24">
