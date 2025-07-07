@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar } from "@nextui-org/react";
-import { today, getLocalTimeZone, parseDate } from "@internationalized/date";
+import { today, getLocalTimeZone } from "@internationalized/date";
 import Navbar from "../Navbar";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineMeetingRoom } from "react-icons/md";
@@ -37,15 +37,16 @@ const HotelsComp = () => {
   const [childcount, setchildcount] = useState(0);
   const [numberOfRoom, setNumberOfRoom] = useState(1);
   const [childAges, setChildAges] = useState([]);
-  const [cnCoide, setcnCoide] = useState("IN"); // Default to India
-  const [countrySearch, setCountrySearch] = useState("India"); // Default to India
+  const [cnCoide, setcnCoide] = useState("IN");
+  const [countrySearch, setCountrySearch] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   // Fetch countries from Redux store
   const countries = useSelector((state) => state.citysearch.countries) || [];
 
   // Filter countries based on search input
   const filteredCountries = countries.filter((country) =>
-    country.Name.toLowerCase().includes(countrySearch?.toLowerCase())
+    country.Name.toLowerCase().includes(countrySearch.toLowerCase())
   );
 
   const handleCitySelect = (selectedItem) => {
@@ -109,7 +110,7 @@ const HotelsComp = () => {
 
   const handleVisibilityChange = (value) => {
     setIsVisible(value);
-    if (value !== "country") setCountrySearch("India"); // Reset to India when closing country dropdown
+    if (value !== "country") setCountrySearch(""); // Clear search when closing country dropdown
   };
 
   const handleClick = (option) => {
@@ -127,14 +128,6 @@ const HotelsComp = () => {
     setarivitime(date);
     setcheckOut(nextDate);
     setIsVisible("");
-    // Save dates to localStorage
-    localStorage.setItem(
-      "hotelDates",
-      JSON.stringify({
-        checkIn: formatDateToLocal(date),
-        checkOut: formatDateToLocal(nextDate),
-      })
-    );
   };
 
   const handelreturn2 = (newRange) => {
@@ -145,14 +138,6 @@ const HotelsComp = () => {
     }
     setcheckOut(date);
     setIsVisible("");
-    // Save dates to localStorage
-    localStorage.setItem(
-      "hotelDates",
-      JSON.stringify({
-        checkIn: formatDateToLocal(arivitime),
-        checkOut: formatDateToLocal(date),
-      })
-    );
   };
 
   useEffect(() => {
@@ -160,12 +145,9 @@ const HotelsComp = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    // Load last selected country from localStorage, default to India
-    const savedCountry = JSON.parse(localStorage.getItem("SelectedCountry")) || { Code: "IN", Name: "India" };
+    // Load last selected country from localStorage
+    const savedCountry = JSON.parse(localStorage.getItem("SelectedCountry")) || { Code: "IN" };
     setcnCoide(savedCountry.Code);
-    setCountrySearch(savedCountry.Name);
-    // Save India to localStorage if not already set
-    saveToLocalStorage("SelectedCountry", { Code: "IN", Name: "India" }, 1);
   }, []);
 
   useEffect(() => {
@@ -176,52 +158,10 @@ const HotelsComp = () => {
   }, []);
 
   useEffect(() => {
-    // Load saved dates from localStorage and validate against current date
-    const savedDates = JSON.parse(localStorage.getItem("hotelDates"));
-    if (savedDates) {
-      const savedCheckIn = new Date(savedDates.checkIn);
-      const savedCheckOut = new Date(savedDates.checkOut);
-      const todayDate = currentDate.toDate(localTimeZone);
-
-      // If saved check-in is before today, reset to today
-      if (savedCheckIn < todayDate) {
-        setarivitime(todayDate);
-        const nextDay = new Date(todayDate);
-        nextDay.setDate(todayDate.getDate() + 1);
-        setcheckOut(nextDay);
-        localStorage.setItem(
-          "hotelDates",
-          JSON.stringify({
-            checkIn: formatDateToLocal(todayDate),
-            checkOut: formatDateToLocal(nextDay),
-          })
-        );
-      } else {
-        // If saved check-in is valid, ensure check-out is after check-in
-        if (savedCheckOut <= savedCheckIn) {
-          const nextDay = new Date(savedCheckIn);
-          nextDay.setDate(savedCheckIn.getDate() + 1);
-          setcheckOut(nextDay);
-          localStorage.setItem(
-            "hotelDates",
-            JSON.stringify({
-              checkIn: formatDateToLocal(savedCheckIn),
-              checkOut: formatDateToLocal(nextDay),
-            })
-          );
-        } else {
-          setarivitime(savedCheckIn);
-          setcheckOut(savedCheckOut);
-        }
-      }
-    }
-  }, [currentDate]);
-
-  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-
-        setCountrySearch("India"); // Reset to India on outside click
+        setIsOpen(false);
+        setCountrySearch(""); // Clear search on outside click
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -306,7 +246,7 @@ const HotelsComp = () => {
     setcnCoide(code);
     setCity({ Name: "", Code: "", isHotel: false }); // Reset city when country changes
     setIsVisible("");
-    setCountrySearch(name); // Update search to reflect selected country
+    setCountrySearch("");
     // Save selected country to localStorage
     saveToLocalStorage("SelectedCountry", { Code: code, Name: name }, 1);
   };
@@ -326,11 +266,11 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]" ref={dropdownRef}>
               <div
                 onClick={() => handleClick("country")}
-                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border-2 border-slate-400 text-black"
+                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
               >
                 <IoLocationSharp className="text-xl" />
-                <span className="text-[14px]  text-black capitalize">
-                  {countries.find((c) => c.Code === cnCoide)?.Name || "India"}
+                <span className="text-[12px] md:text-xl text-black font-bold capitalize">
+                  {countries.find((c) => c.Code === cnCoide)?.Name || "Select Country"}
                 </span>
               </div>
               {isVisible === "country" && (
@@ -340,7 +280,7 @@ const HotelsComp = () => {
                     value={countrySearch}
                     onChange={(e) => setCountrySearch(e.target.value)}
                     placeholder="Search country..."
-                    className="w-full p-2 mb-2 border-2 border-slate-300 rounded text-black"
+                    className="w-full p-2 mb-2 border border-slate-300 rounded text-black"
                     aria-label="Search for a country"
                   />
                   {filteredCountries.length > 0 ? (
@@ -363,11 +303,11 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[30%]">
               <div
                 onClick={() => handleClick("city")}
-                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border-2 border-slate-400 text-black"
+                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[8px] md:text-xl text-black capitalize">
+                  <span className="text-[12px] md:text-xl text-black font-bold capitalize">
                     {city.Name || "Select City/Hotel"}
                   </span>
                 </div>
@@ -386,19 +326,19 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("date")}
-                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-400 rounded-md"
+                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
               >
                 <div className="text-slate-400">
                   {arivitime && (
                     <>
                       <div className="flex items-baseline text-black">
-                        <span className="text-xl md:text-2xl pr-1 ">
+                        <span className="text-xl md:text-2xl pr-1 font-bold">
                           {arivitime.getDate()}
                         </span>
-                        <span className="text-sm ">
+                        <span className="text-sm font-semibold">
                           {arivitime.toLocaleString("default", { month: "short" })}
                         </span>
-                        <span className="text-sm ">
+                        <span className="text-sm font-semibold">
                           {arivitime.getFullYear()}
                         </span>
                       </div>
@@ -414,7 +354,7 @@ const HotelsComp = () => {
                 >
                   <Calendar
                     aria-label="Select check-in date"
-                    value={arivitime ? parseDate(formatDateToLocal(arivitime)) : currentDate}
+                    value={currentDate}
                     onChange={handelreturn}
                     minValue={currentDate}
                   />
@@ -425,19 +365,19 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("checkout")}
-                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-400 rounded-md"
+                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
               >
                 <div className="text-slate-400">
                   {checkOut && (
                     <>
                       <div className="flex items-baseline text-black">
-                        <span className="text-xl md:text-2xl pr-1 ">
+                        <span className="text-xl md:text-2xl pr-1 font-bold">
                           {checkOut.getDate()}
                         </span>
-                        <span className="text-sm  pr-1 ">
+                        <span className="text-sm font-semibold">
                           {checkOut.toLocaleString("default", { month: "short" })}
                         </span>
-                        <span className="text-sm ">
+                        <span className="text-sm font-semibold">
                           {checkOut.getFullYear()}
                         </span>
                       </div>
@@ -453,9 +393,9 @@ const HotelsComp = () => {
                 >
                   <Calendar
                     aria-label="Select check-out date"
-                    value={checkOut ? parseDate(formatDateToLocal(checkOut)) : currentDate.add({ days: 1 })}
+                    value={currentDate.add({ days: 1 })}
                     onChange={handelreturn2}
-                    minValue={arivitime ? parseDate(formatDateToLocal(arivitime)).add({ days: 1 }) : currentDate.add({ days: 1 })}
+                    minValue={currentDate.add({ days: 1 })}
                   />
                 </div>
               )}
@@ -464,7 +404,7 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[15%]">
               <div
                 onClick={() => setIsVisible("roomcheck")}
-                className="flex items-center justify-between px-3 py-1 border-2 text-black border-slate-400 rounded-md"
+                className="flex items-center justify-between px-3 py-1 border-2 text-black border-slate-200 rounded-md"
               >
                 <div className="flex items-center gap-2">
                   <div>
