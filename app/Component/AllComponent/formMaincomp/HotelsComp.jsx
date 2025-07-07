@@ -220,7 +220,7 @@ const HotelsComp = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+
         setCountrySearch("India"); // Reset to India on outside click
       }
     };
