@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar } from "@nextui-org/react";
-import { today, getLocalTimeZone } from "@internationalized/date";
+import { today, getLocalTimeZone, parseDate } from "@internationalized/date";
 import Navbar from "../Navbar";
 import { IoLocationSharp } from "react-icons/io5";
 import { MdOutlineMeetingRoom } from "react-icons/md";
@@ -32,14 +32,21 @@ const HotelsComp = () => {
   });
 
   const [isVisible, setIsVisible] = useState("");
-  // Updated state to differentiate between city and hotel
   const [city, setCity] = useState({ Name: "delhi", Code: "130443", isHotel: false });
   const [adultcount, setadultcount] = useState(1);
   const [childcount, setchildcount] = useState(0);
   const [numberOfRoom, setNumberOfRoom] = useState(1);
   const [childAges, setChildAges] = useState([]);
-  const [cnCoide, setcnCoide] = useState("IN");
-  const [isOpen, setIsOpen] = useState(false);
+  const [cnCoide, setcnCoide] = useState("IN"); // Default to India
+  const [countrySearch, setCountrySearch] = useState("India"); // Default to India
+
+  // Fetch countries from Redux store
+  const countries = useSelector((state) => state.citysearch.countries) || [];
+
+  // Filter countries based on search input
+  const filteredCountries = countries.filter((country) =>
+    country.Name.toLowerCase().includes(countrySearch?.toLowerCase())
+  );
 
   const handleCitySelect = (selectedItem) => {
     if (typeof selectedItem !== "object" || !selectedItem) {
@@ -48,18 +55,16 @@ const HotelsComp = () => {
       return;
     }
 
-    // Check if the selection is a hotel
     if (selectedItem.hotel_name && selectedItem.hotel_code) {
       console.log("Selected hotel:", selectedItem);
       setCity({
         Name: selectedItem.hotel_name,
         Code: selectedItem.hotel_code,
-        cityCode: selectedItem.city_code, // Store city_code for reference
+        cityCode: selectedItem.city_code,
         cityName: selectedItem.city_name,
         isHotel: true,
       });
 
-      // Save to Top Hotels
       saveToLocalStorage("TopHotels", {
         hotelName: selectedItem.hotel_name,
         hotelCode: selectedItem.hotel_code,
@@ -74,7 +79,6 @@ const HotelsComp = () => {
         isHotel: false,
       });
 
-      // Save to Top Cities
       saveToLocalStorage("TopCities", {
         Name: selectedItem.city_name,
         Code: selectedItem.city_code,
@@ -105,13 +109,17 @@ const HotelsComp = () => {
 
   const handleVisibilityChange = (value) => {
     setIsVisible(value);
+    if (value !== "country") setCountrySearch("India"); // Reset to India when closing country dropdown
   };
 
   const handleClick = (option) => {
+    if (option === "city" && !cnCoide) {
+      alert("Please select a country first.");
+      return;
+    }
     setIsVisible(option);
   };
 
-  // Update Check In date
   const handelreturn = (newRange) => {
     const date = new Date(newRange.year, newRange.month - 1, newRange.day);
     const nextDate = new Date(date);
@@ -119,9 +127,16 @@ const HotelsComp = () => {
     setarivitime(date);
     setcheckOut(nextDate);
     setIsVisible("");
+    // Save dates to localStorage
+    localStorage.setItem(
+      "hotelDates",
+      JSON.stringify({
+        checkIn: formatDateToLocal(date),
+        checkOut: formatDateToLocal(nextDate),
+      })
+    );
   };
 
-  // Update Check Out date
   const handelreturn2 = (newRange) => {
     const date = new Date(newRange.year, newRange.month - 1, newRange.day);
     if (date <= arivitime) {
@@ -130,11 +145,28 @@ const HotelsComp = () => {
     }
     setcheckOut(date);
     setIsVisible("");
+    // Save dates to localStorage
+    localStorage.setItem(
+      "hotelDates",
+      JSON.stringify({
+        checkIn: formatDateToLocal(arivitime),
+        checkOut: formatDateToLocal(date),
+      })
+    );
   };
 
   useEffect(() => {
     dispatch(getAllCountries());
   }, [dispatch]);
+
+  useEffect(() => {
+    // Load last selected country from localStorage, default to India
+    const savedCountry = JSON.parse(localStorage.getItem("SelectedCountry")) || { Code: "IN", Name: "India" };
+    setcnCoide(savedCountry.Code);
+    setCountrySearch(savedCountry.Name);
+    // Save India to localStorage if not already set
+    saveToLocalStorage("SelectedCountry", { Code: "IN", Name: "India" }, 1);
+  }, []);
 
   useEffect(() => {
     const topCities = JSON.parse(localStorage.getItem("TopCities")) || [];
@@ -144,9 +176,52 @@ const HotelsComp = () => {
   }, []);
 
   useEffect(() => {
+    // Load saved dates from localStorage and validate against current date
+    const savedDates = JSON.parse(localStorage.getItem("hotelDates"));
+    if (savedDates) {
+      const savedCheckIn = new Date(savedDates.checkIn);
+      const savedCheckOut = new Date(savedDates.checkOut);
+      const todayDate = currentDate.toDate(localTimeZone);
+
+      // If saved check-in is before today, reset to today
+      if (savedCheckIn < todayDate) {
+        setarivitime(todayDate);
+        const nextDay = new Date(todayDate);
+        nextDay.setDate(todayDate.getDate() + 1);
+        setcheckOut(nextDay);
+        localStorage.setItem(
+          "hotelDates",
+          JSON.stringify({
+            checkIn: formatDateToLocal(todayDate),
+            checkOut: formatDateToLocal(nextDay),
+          })
+        );
+      } else {
+        // If saved check-in is valid, ensure check-out is after check-in
+        if (savedCheckOut <= savedCheckIn) {
+          const nextDay = new Date(savedCheckIn);
+          nextDay.setDate(savedCheckIn.getDate() + 1);
+          setcheckOut(nextDay);
+          localStorage.setItem(
+            "hotelDates",
+            JSON.stringify({
+              checkIn: formatDateToLocal(savedCheckIn),
+              checkOut: formatDateToLocal(nextDay),
+            })
+          );
+        } else {
+          setarivitime(savedCheckIn);
+          setcheckOut(savedCheckOut);
+        }
+      }
+    }
+  }, [currentDate]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
+        setCountrySearch("India"); // Reset to India on outside click
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -161,67 +236,80 @@ const HotelsComp = () => {
   };
 
   const handlehotelSearch = () => {
-  if (!city.Code || !city.Name) {
-    alert("Please select a valid city or hotel.");
-    return;
-  }
+    if (!cnCoide) {
+      alert("Please select a country.");
+      return;
+    }
+    if (!city.Code || !city.Name) {
+      alert("Please select a valid city or hotel.");
+      return;
+    }
 
-  if (!arivitime || !checkOut || isNaN(new Date(arivitime)) || isNaN(new Date(checkOut))) {
-    alert("Please provide valid check-in and check-out dates.");
-    return;
-  }
+    if (!arivitime || !checkOut || isNaN(new Date(arivitime)) || isNaN(new Date(checkOut))) {
+      alert("Please provide valid check-in and check-out dates.");
+      return;
+    }
 
-  const validChildAges = childAges.filter(
-    (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
-  );
+    const validChildAges = childAges.filter(
+      (age) => age !== undefined && !isNaN(age) && age >= 1 && age <= 18
+    );
 
-  if (validChildAges.length !== childcount) {
-    alert("Please provide valid ages (1–18) for all children.");
-    return;
-  }
+    if (validChildAges.length !== childcount) {
+      alert("Please provide valid ages (1–18) for all children.");
+      return;
+    }
 
-  localStorage.setItem(
-    "hotelItems",
-    JSON.stringify({
-      place: { Name: city.Name, Code: city.Code, isHotel: city.isHotel, cityCode: city.cityCode },
-      checkIntime: arivitime,
-      checkouttime: checkOut,
-      adultcount,
-      childcount,
-      childAges: validChildAges,
-      numberOfRoom,
-    })
-  );
+    localStorage.setItem(
+      "hotelItems",
+      JSON.stringify({
+        place: { Name: city.Name, Code: city.Code, isHotel: city.isHotel, cityCode: city.cityCode },
+        checkIntime: arivitime,
+        checkouttime: checkOut,
+        adultcount,
+        childcount,
+        childAges: validChildAges,
+        numberOfRoom,
+      })
+    );
 
-  const checkInDate = formatDateToLocal(arivitime);
-  const checkOutDate = formatDateToLocal(checkOut);
+    const checkInDate = formatDateToLocal(arivitime);
+    const checkOutDate = formatDateToLocal(checkOut);
 
-  const childAgesQuery =
-    validChildAges.length > 0
-      ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
-      : "";
+    const childAgesQuery =
+      validChildAges.length > 0
+        ? `&childAges=${encodeURIComponent(validChildAges.join(","))}`
+        : "";
 
-  // Determine if it's a hotel or city search
-  const isHotel = city.isHotel;
-  const nameKey = isHotel ? "hotelName" : "cityName";
-  const nameValue = encodeURIComponent(city.Name);
-  // Always use cityCode, whether it's a hotel or city
-  const codeValue = encodeURIComponent(city.isHotel ? city.cityCode : city.Code);
+    const isHotel = city.isHotel;
+    const nameKey = isHotel ? "hotelName" : "cityName";
+    const nameValue = encodeURIComponent(city.Name);
+    const codeValue = encodeURIComponent(city.isHotel ? city.cityCode : city.Code);
 
-  console.log("Selected Name:", city.Name, "Is Hotel:", isHotel, "City Code:", codeValue);
+    console.log("Selected Name:", city.Name, "Is Hotel:", isHotel, "City Code:", codeValue);
 
-  router.push(
-    `/hotels/${nameKey}=${nameValue}&citycode=${codeValue}&checkin=${encodeURIComponent(
-      checkInDate
-    )}&checkout=${encodeURIComponent(checkOutDate)}&adult=${encodeURIComponent(
-      adultcount
-    )}&child=${encodeURIComponent(childcount)}${childAgesQuery}&rooms=${encodeURIComponent(
-      numberOfRoom
-    )}&page=0&star=0`
-  );
-};
+    router.push(
+      `/hotels/${nameKey}=${nameValue}&citycode=${codeValue}&checkin=${encodeURIComponent(
+        checkInDate
+      )}&checkout=${encodeURIComponent(checkOutDate)}&adult=${encodeURIComponent(
+        adultcount
+      )}&child=${encodeURIComponent(childcount)}${childAgesQuery}&rooms=${encodeURIComponent(
+        numberOfRoom
+      )}&page=0&star=0`
+    );
+  };
+
   const maxAdultsPerRoom = 8;
   const maxChildrenPerRoom = 4;
+
+  // Handle country selection
+  const handleCountrySelect = (code, name) => {
+    setcnCoide(code);
+    setCity({ Name: "", Code: "", isHotel: false }); // Reset city when country changes
+    setIsVisible("");
+    setCountrySearch(name); // Update search to reflect selected country
+    // Save selected country to localStorage
+    saveToLocalStorage("SelectedCountry", { Code: code, Name: name }, 1);
+  };
 
   return (
     <div className="header relative md:px-5 lg:px-12 xl:px-24">
@@ -234,16 +322,53 @@ const HotelsComp = () => {
         </div>
         <div className="px-4 border-b-2 shadow-sm space-y-1 py-3">
           <div className="tabs FromDateDeapt flex flex-col lg:flex-row justify-between gap-4">
-
-            <div className="relative w-full lg:w-[50%]">
+            {/* Country Dropdown */}
+            <div className="relative w-full lg:w-[20%]" ref={dropdownRef}>
+              <div
+                onClick={() => handleClick("country")}
+                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border-2 border-slate-400 text-black"
+              >
+                <IoLocationSharp className="text-xl" />
+                <span className="text-[14px]  text-black capitalize">
+                  {countries.find((c) => c.Code === cnCoide)?.Name || "India"}
+                </span>
+              </div>
+              {isVisible === "country" && (
+                <div className="absolute w-full top-full bg-white rounded-lg shadow-md z-50 p-2 max-h-[300px] overflow-y-auto">
+                  <input
+                    type="text"
+                    value={countrySearch}
+                    onChange={(e) => setCountrySearch(e.target.value)}
+                    placeholder="Search country..."
+                    className="w-full p-2 mb-2 border-2 border-slate-300 rounded text-black"
+                    aria-label="Search for a country"
+                  />
+                  {filteredCountries.length > 0 ? (
+                    filteredCountries.map((country) => (
+                      <div
+                        key={country.Code}
+                        onClick={() => handleCountrySelect(country.Code, country.Name)}
+                        className="px-2 py-1 hover:bg-gray-100 cursor-pointer text-black"
+                      >
+                        {country.Name}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="px-2 py-1 text-gray-500">No countries found</div>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* City/Hotel Input */}
+            <div className="relative w-full lg:w-[30%]">
               <div
                 onClick={() => handleClick("city")}
-                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
+                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border-2 border-slate-400 text-black"
               >
                 <IoLocationSharp className="text-xl" />
                 <div className="flex flex-col">
-                  <span className="text-[12px] md:text-xl text-black font-bold capitalize">
-                    {city.Name}
+                  <span className="text-[8px] md:text-xl text-black capitalize">
+                    {city.Name || "Select City/Hotel"}
                   </span>
                 </div>
               </div>
@@ -261,19 +386,19 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("date")}
-                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-400 rounded-md"
               >
                 <div className="text-slate-400">
                   {arivitime && (
                     <>
                       <div className="flex items-baseline text-black">
-                        <span className="text-xl md:text-2xl pr-1 font-bold">
+                        <span className="text-xl md:text-2xl pr-1 ">
                           {arivitime.getDate()}
                         </span>
-                        <span className="text-sm font-semibold">
+                        <span className="text-sm ">
                           {arivitime.toLocaleString("default", { month: "short" })}
                         </span>
-                        <span className="text-sm font-semibold">
+                        <span className="text-sm ">
                           {arivitime.getFullYear()}
                         </span>
                       </div>
@@ -289,7 +414,7 @@ const HotelsComp = () => {
                 >
                   <Calendar
                     aria-label="Select check-in date"
-                    value={currentDate}
+                    value={arivitime ? parseDate(formatDateToLocal(arivitime)) : currentDate}
                     onChange={handelreturn}
                     minValue={currentDate}
                   />
@@ -300,19 +425,19 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]">
               <div
                 onClick={() => handleClick("checkout")}
-                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center gap-2 px-3 py-1 border-2 text-black border-slate-400 rounded-md"
               >
                 <div className="text-slate-400">
                   {checkOut && (
                     <>
                       <div className="flex items-baseline text-black">
-                        <span className="text-xl md:text-2xl pr-1 font-bold">
+                        <span className="text-xl md:text-2xl pr-1 ">
                           {checkOut.getDate()}
                         </span>
-                        <span className="text-sm font-semibold">
+                        <span className="text-sm  pr-1 ">
                           {checkOut.toLocaleString("default", { month: "short" })}
                         </span>
-                        <span className="text-sm font-semibold">
+                        <span className="text-sm ">
                           {checkOut.getFullYear()}
                         </span>
                       </div>
@@ -322,12 +447,15 @@ const HotelsComp = () => {
                 </div>
               </div>
               {isVisible === "checkout" && (
-                <div className="bg-white text-black p-5 shadow-2xl absolute top-full left-0 mt-2 z-10">
+                <div
+                  className="bg-white text-black p-5 shadow-2xl absolute top-full left-0 mt-2 z-10"
+                  onMouseLeave={() => setIsVisible("")}
+                >
                   <Calendar
                     aria-label="Select check-out date"
-                    value={currentDate.add({ days: 1 })}
+                    value={checkOut ? parseDate(formatDateToLocal(checkOut)) : currentDate.add({ days: 1 })}
                     onChange={handelreturn2}
-                    minValue={currentDate.add({ days: 1 })}
+                    minValue={arivitime ? parseDate(formatDateToLocal(arivitime)).add({ days: 1 }) : currentDate.add({ days: 1 })}
                   />
                 </div>
               )}
@@ -336,7 +464,7 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[15%]">
               <div
                 onClick={() => setIsVisible("roomcheck")}
-                className="flex items-center justify-between px-3 py-1 border-2 text-black border-slate-200 rounded-md"
+                className="flex items-center justify-between px-3 py-1 border-2 text-black border-slate-400 rounded-md"
               >
                 <div className="flex items-center gap-2">
                   <div>
@@ -358,7 +486,6 @@ const HotelsComp = () => {
                   onMouseLeave={() => setIsVisible("")}
                 >
                   <div className="shadow-2xl rounded-md bg-white flex flex-col gap-4 p-4">
-                    {/* Adult Count */}
                     <div className="flex gap-3 justify-between">
                       <p className="text-nowrap text-gray-700">Adult Count</p>
                       <div className="flex items-center gap-3">
@@ -400,7 +527,6 @@ const HotelsComp = () => {
                         </button>
                       </div>
                     </div>
-                    {/* Child Count */}
                     <div className="flex gap-3 justify-between">
                       <p className="text-nowrap text-gray-700">Child Count</p>
                       <div className="flex items-center gap-3">
@@ -444,7 +570,6 @@ const HotelsComp = () => {
                         </button>
                       </div>
                     </div>
-                    {/* Child Ages */}
                     {childcount > 0 && (
                       <div className="flex flex-col gap-2">
                         <p className="text-gray-700">Child Ages</p>
@@ -477,7 +602,6 @@ const HotelsComp = () => {
                         ))}
                       </div>
                     )}
-
                     <div className="flex gap-3 justify-between">
                       <p className="text-nowrap text-gray-700">Room Count</p>
                       <div className="flex items-center gap-3">
@@ -496,7 +620,7 @@ const HotelsComp = () => {
                         >
                           -
                         </button>
-                        <p className="px-2 border">{numberOfRoom}</p>
+                        <p className="px-2 border text-gray-700">{numberOfRoom}</p>
                         <button
                           className="px-2 text-black border"
                           onClick={() => {
