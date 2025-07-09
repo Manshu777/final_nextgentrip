@@ -871,30 +871,34 @@ const Page = ({ setActiveTab, fdatas, price }) => {
                         )}
                       </div>
 
-                     <div>
-  <label className="block text-[10px] font-bold text-gray-900 mb-1">Date of birth</label>
-  <input
-    type="date"
-    name="DateOfBirth"
-    value={passenger.DateOfBirth}
-    onChange={(e) => {
-      const value = e.target.value;
-      const year = value.split("-")[0]; // Get the year part
-      if (year.length > 4) {
-        alert("Year cannot be more than 4 digits");
-        return;
-      }
-      handleChange(e, index);
-    }}
-    className="w-full border border-gray-300 rounded-md p-2"
-    required
-    min="1900-01-01"
-    max={new Date().toISOString().split("T")[0]}
-  />
-  {errors[`DateOfBirth_${index}`] && (
-    <p className="text-red-500 text-sm">{errors[`DateOfBirth_${index}`]}</p>
-  )}
-</div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-900 mb-1">
+                          Date of birth
+                        </label>
+                        <input
+                          type="date"
+                          name="DateOfBirth"
+                          value={passenger.DateOfBirth}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            const year = value.split("-")[0]; // Get the year part
+                            if (year.length > 4) {
+                              alert("Year cannot be more than 4 digits");
+                              return;
+                            }
+                            handleChange(e, index);
+                          }}
+                          className="w-full border border-gray-300 rounded-md p-2"
+                          required
+                          min="1900-01-01"
+                          max={new Date().toISOString().split("T")[0]}
+                        />
+                        {errors[`DateOfBirth_${index}`] && (
+                          <p className="text-red-500 text-sm">
+                            {errors[`DateOfBirth_${index}`]}
+                          </p>
+                        )}
+                      </div>
 
                       <div>
                         <label className="block text-[10px] font-bold text-gray-900 mb-1">

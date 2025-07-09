@@ -417,12 +417,12 @@ const Footer = () => {
                       </Link>
                     </li>
                     <li>
-                      {/* <Link
+                      <Link
                         href="/our-leaders"
                         className="text-xs sm:text-sm leading-6 text-gray-600 hover:text-gray-900"
                       >
                         Our Leaders
-                      </Link> */}
+                      </Link>
                     </li>
                   </ul>
                 </div>

@@ -174,8 +174,6 @@ const PlansPage = () => {
     setSelectedCountry(e.target.value);
   };
 
- 
-
 
   const handleKeyDown = (e) => {
     if (!isOpen || filteredCountries.length === 0) return;
@@ -343,8 +341,6 @@ const PlansPage = () => {
           </div>
         )}
       </div>
-
-     
     </div>
   </>
   );

@@ -15,8 +15,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { apilink, storageLink } from "../Component/common";
 import { getSliderData } from "../Component/Store/slices/SliderSlice";
 
-
-
 const allData = [
   {
     title: "Exclusive Offer",
@@ -173,7 +171,7 @@ const HotelSliderCompo = ({ isLoading, children }) => {
  
             >
 
-            {["loadimg-1.png", "loadimg-2.png","loadimg-3.png","loadimg-4.png","loadimg-5.png","loadimg-6.png"].map((img, index) => <SwiperSlide
+            {["loadimg-1.webp", "loadimg-2.webp","loadimg-3.webp","loadimg-4.webp","loadimg-5.webp","loadimg-6.webp"].map((img, index) => <SwiperSlide
               className="flex flex-col   rounded-2xl shadow-sm bg-white-900"
             > 
 
@@ -184,9 +182,6 @@ const HotelSliderCompo = ({ isLoading, children }) => {
 
               </div>
             </SwiperSlide>)}
-
-
-
 
           </Swiper>
         </div>

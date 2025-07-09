@@ -105,16 +105,16 @@ const TopFlight = () => {
   const attractions = [
     { name: "Jaipur", image: "/images/jaipur.webp", isNew: true, link: "/FamousPlaces/InnerLakshadweep" },
     { name: "Bali", image: "/images/bali.webp", link: "/FamousPlaces/Bali" },
-    { name: "Goa", image: "/images/goa.jpg", link: "/FamousPlaces/Andaman" },
-    { name: "Australia", image: "/images/austrailia.jpg", link: "/FamousPlaces/Kashmir" },
-    { name: "Dubai", image: "/images/dubai.jpg", link: "/FamousPlaces/Dubai" },
-    { name: "Paris", image: "/images/paris.jpg", link: "/FamousPlaces/Jaipur" },
-    { name: "Kashmir", image: "/images/kashmir.jpg", link: "/FamousPlaces/Bengaluru" },
-    { name: "Singapore", image: "/images/singapore.jpg", link: "/FamousPlaces/Singapore" },
-    { name: "Leh", image: "/images/leh.jpg", link: "/FamousPlaces/Leh" },
-    { name: "Singapore Alt", image: "/images/singapore2.jpg", link: "/FamousPlaces/Leh" },
-    { name: "France", image: "/images/france.jpg", link: "/FamousPlaces/Leh" },
-    { name: "Thar", image: "/images/thar.jpg", link: "/FamousPlaces/Kerala" },
+    { name: "Goa", image: "/images/goa1.webp", link: "/FamousPlaces/Andaman" },
+    { name: "Australia", image: "/images/austrailia (1).webp", link: "/FamousPlaces/Kashmir" },
+    { name: "Dubai", image: "/images/dubai.webp", link: "/FamousPlaces/Dubai" },
+    { name: "Paris", image: "/images/paris.webp", link: "/FamousPlaces/Jaipur" },
+    { name: "Kashmir", image: "/images/kashmir.webp", link: "/FamousPlaces/Bengaluru" },
+    { name: "Singapore", image: "/images/singapore.webp", link: "/FamousPlaces/Singapore" },
+    { name: "Leh", image: "/images/leh.webp", link: "/FamousPlaces/Leh" },
+    { name: "Singapore Alt", image: "/images/singapore2.webp", link: "/FamousPlaces/Leh" },
+    { name: "France", image: "/images/france.webp", link: "/FamousPlaces/Leh" },
+    { name: "Thar", image: "/images/thar.webp", link: "/FamousPlaces/Kerala" },
   ];
 
   const [topport, setTopport] = useState([]);
