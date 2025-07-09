@@ -30,7 +30,7 @@ export default function OurLeadersPage() {
     <section className="py-4 px-6 bg-gradient-to-b from-white to-gray-100 font-sans">
       <div className="max-w-7xl mx-auto text-center mb-4">
         <h1 className="text-4xl font-bold text-[#10325a] mb-4 tracking-tight">
-          Our Leadership Team
+          Management Team
         </h1>
         <p className="text-gray-700 max-w-2xl mx-auto text-base leading-relaxed">
           Meet the distinguished leaders shaping the future of NextGenTrip with expertise, vision, and a shared commitment to ethical innovation.
