@@ -285,10 +285,10 @@ const Comp = ({ slug }) => {
 
                     <div className="flex-1 pl-0 md:pl-5">
                       <div className=" my-5 md:my-0 flex justify-between items-center">
-                        <p className="text-base md:text-2xl font-black">{hotel.hotelDetails.HotelDetails[0].HotelName}</p>
+                        <p className="text-base md:text-xl font-black">{hotel.hotelDetails.HotelDetails[0].HotelName}</p>
                         <div>
                           <div className="flex items-center">
-                            <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
+                            <span className="bg-blue-500 text-white px-2 text-sm rounded-full text-[8px]">
                               {hotel?.hotelDetails?.HotelDetails[0]?.HotelRating}
                             </span>
                             <span className=" ml-2 text-blue-600">
@@ -302,7 +302,7 @@ const Comp = ({ slug }) => {
                       </div>
 
                       <div className="text-gray-500">
-                        <span className="text-blue-600">{hotel?.hotelDetails?.HotelDetails[0]?.Address}</span> |{" "}
+                        <span className="text-blue-600 text-[8px]">{hotel?.hotelDetails?.HotelDetails[0]?.Address}</span> |{" "}
                         {hotel?.hotelDetails?.HotelDetails[0]?.distance}
                       </div>
 

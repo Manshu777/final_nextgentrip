@@ -57,17 +57,22 @@ const Comp = ({ slug }) => {
     return (
       <div className="flex gap-1">
         {Array.from({ length: 5 }, (_, index) => (
-          <FaStar key={index} className={index < starCount ? "text-yellow-400" : "text-gray-300"} />
+          <FaStar
+            key={index}
+            className={index < starCount ? "text-yellow-400" : "text-gray-300"}
+          />
         ))}
       </div>
     );
   }, []);
 
-
-
   // Get images with fallback
   const getImages = useCallback((hotelDetails) => {
-    return hotelDetails?.HotelDetails?.[0]?.Images || hotelDetails?.HotelDetails?.[0]?.images || [];
+    return (
+      hotelDetails?.HotelDetails?.[0]?.Images ||
+      hotelDetails?.HotelDetails?.[0]?.images ||
+      []
+    );
   }, []);
 
   // Fetch hotels on mount or when parameters change
@@ -86,7 +91,18 @@ const Comp = ({ slug }) => {
         per_page: 10, // Match backend default
       })
     );
-  }, [dispatch, cityCode, checkIn, checkOut, adults, hotelName,children, childAges, page, defaultcurrency.country]);
+  }, [
+    dispatch,
+    cityCode,
+    checkIn,
+    checkOut,
+    adults,
+    hotelName,
+    children,
+    childAges,
+    page,
+    defaultcurrency.country,
+  ]);
 
   // Filter and sort hotels
   const applyFilters = useCallback(() => {
@@ -96,16 +112,20 @@ const Comp = ({ slug }) => {
     if (selectedStars) {
       const starValue = parseInt(selectedStars.replace("star", ""));
       filtered = filtered.filter(
-        (hotel) => hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating === starValue
+        (hotel) =>
+          hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating === starValue
       );
     }
 
     // Apply price range filter
     if (selectedPriceRange) {
       filtered = filtered.filter((hotel) => {
-        const minPrice = Math.min(
-          ...(hotel?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
-        ) * cuntryprice;
+        const minPrice =
+          Math.min(
+            ...(hotel?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [
+              Infinity,
+            ])
+          ) * cuntryprice;
         switch (selectedPriceRange) {
           case "price1":
             return minPrice >= 0 && minPrice <= 1500;
@@ -128,12 +148,18 @@ const Comp = ({ slug }) => {
     // Apply sorting
     if (sortOption) {
       filtered.sort((a, b) => {
-        const aPrice = Math.min(
-          ...(a?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
-        ) * cuntryprice;
-        const bPrice = Math.min(
-          ...(b?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [Infinity])
-        ) * cuntryprice;
+        const aPrice =
+          Math.min(
+            ...(a?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [
+              Infinity,
+            ])
+          ) * cuntryprice;
+        const bPrice =
+          Math.min(
+            ...(b?.searchResults?.Rooms?.map((room) => room?.TotalFare) || [
+              Infinity,
+            ])
+          ) * cuntryprice;
         switch (sortOption) {
           case "L-H":
             return aPrice - bPrice;
@@ -157,7 +183,13 @@ const Comp = ({ slug }) => {
 
     setFilteredHotels(filtered);
     setIsFiltered(!!selectedStars || !!selectedPriceRange || !!sortOption);
-  }, [allhoteldata.info?.totalHotels, selectedStars, selectedPriceRange, sortOption, cuntryprice]);
+  }, [
+    allhoteldata.info?.totalHotels,
+    selectedStars,
+    selectedPriceRange,
+    sortOption,
+    cuntryprice,
+  ]);
 
   // Apply filters when data or filter options change
   useEffect(() => {
@@ -172,13 +204,30 @@ const Comp = ({ slug }) => {
     setIsFiltered(false);
   }, []);
 
-  const handlePageChange = useCallback((pageNum) => {
-    resetFilters();
-    router.push(
-      `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
-      }&page=${pageNum}`
-    );
-  }, [router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
+  const handlePageChange = useCallback(
+    (pageNum) => {
+      resetFilters();
+      router.push(
+        `/hotels/cityName=${encodeURIComponent(
+          cityName
+        )}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${
+          childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
+        }&page=${pageNum}`
+      );
+    },
+    [
+      router,
+      cityName,
+      cityCode,
+      checkIn,
+      checkOut,
+      adults,
+      children,
+      roomes,
+      childAges,
+      resetFilters,
+    ]
+  );
 
   // Handle filter changes
   const handleStarChange = useCallback((e) => {
@@ -208,7 +257,17 @@ const Comp = ({ slug }) => {
         per_page: 10,
       })
     );
-  }, [dispatch, cityCode, checkIn, checkOut, adults, children, childAges, page, defaultcurrency.country]);
+  }, [
+    dispatch,
+    cityCode,
+    checkIn,
+    checkOut,
+    adults,
+    children,
+    childAges,
+    page,
+    defaultcurrency.country,
+  ]);
 
   // Pagination handlers
   const handleNextPage = useCallback(() => {
@@ -216,19 +275,52 @@ const Comp = ({ slug }) => {
     if (page < totalPages) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""}&page=${page + 1}`
+        `/hotels/cityName=${encodeURIComponent(
+          cityName
+        )}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${
+          childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
+        }&page=${page + 1}`
       );
     }
-  }, [page, allhoteldata.info?.pagination?.total_pages, router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
+  }, [
+    page,
+    allhoteldata.info?.pagination?.total_pages,
+    router,
+    cityName,
+    cityCode,
+    checkIn,
+    checkOut,
+    adults,
+    children,
+    roomes,
+    childAges,
+    resetFilters,
+  ]);
 
   const handlePrevPage = useCallback(() => {
     if (page > 1) {
       resetFilters();
       router.push(
-        `/hotels/cityName=${encodeURIComponent(cityName)}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""}&page=${page - 1}`
+        `/hotels/cityName=${encodeURIComponent(
+          cityName
+        )}&citycode=${cityCode}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}${
+          childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
+        }&page=${page - 1}`
       );
     }
-  }, [page, router, cityName, cityCode, checkIn, checkOut, adults, children, roomes, childAges, resetFilters]);
+  }, [
+    page,
+    router,
+    cityName,
+    cityCode,
+    checkIn,
+    checkOut,
+    adults,
+    children,
+    roomes,
+    childAges,
+    resetFilters,
+  ]);
 
   return (
     <>
@@ -236,40 +328,44 @@ const Comp = ({ slug }) => {
 
       {allhoteldata.isLoading ? (
         <div className="space-y-6">
-                <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
-          <div className="loader"></div>
-          <p className="ml-4 text-lg font-semibold text-gray-700">Loading hotels...</p>
-        </div>
+          <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+            <div className="loader"></div>
+            <p className="ml-4 text-lg font-semibold text-gray-700">
+              Loading hotels...
+            </p>
+          </div>
         </div>
       ) : null}
 
-      <div className="p-4 flex gap-4 relative max-w-7xl mx-auto">
+      <div className="p-4 flex gap-6 relative max-w-5xl mx-auto">
         {/* Filter Section */}
-        <div className="hidden lg:flex w-[20%] p-4 sticky top-24 h-[120vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
-          <div className="flex items-center gap-3 text-lg font-semibold text-gray-700 mb-4">
-            <MdFilterList className="text-2xl text-blue-600" /> Filters
+        <div className="hidden lg:flex w-[20%] p-2 sticky top-24 h-[80vh] bg-white border border-gray-200 rounded-lg shadow-lg hover:border-blue-600 transition-all duration-300 flex-col">
+          <div className="flex items-center gap-3 text-[12px] font-semibold text-gray-700 mb-2">
+            <MdFilterList className="text-[12px] text-blue-600" /> Filters
           </div>
 
           {/* Star Rating Filter */}
-          <div className="mb-6">
-            <p className="font-semibold text-gray-800 mb-2">By Stars</p>
-            <div className="flex flex-col gap-2 pl-4">
+          <div className="mb-3">
+            <p className="font-semibold text-gray-800  text-[12px]">By Stars</p>
+            <div className="flex flex-col pl-4 text-[12px]">
               {[1, 2, 3, 4, 5].map((star) => (
-                <label key={star} className="flex items-center gap-2 cursor-pointer">
+                <label
+                  key={star}
+                  className="flex items-center  cursor-pointer"
+                >
                   <input
                     type="radio"
                     name="star"
                     value={`star${star}`}
                     checked={selectedStars === `star${star}`}
                     onChange={handleStarChange}
-                    className="text-blue-600 focus:ring-blue-500"
+                    className="text-blue-600 focus:ring-blue-500 w-3 h-3"
                     aria-label={`${star} Star rating`}
                   />
                   <span className="flex items-center gap-1 text-gray-700 hover:text-blue-600">
-                    {[...Array(star)].map((_, i) => (
-                      <FaStar key={i} className="text-yellow-400" />
-                    ))}
-                    <span className="ml-1">{star} Star{star > 1 ? "s" : ""}</span>
+                    <span className="ml-1">
+                      {star} Star{star > 1 ? "s" : ""}
+                    </span>
                   </span>
                 </label>
               ))}
@@ -277,54 +373,81 @@ const Comp = ({ slug }) => {
           </div>
 
           {/* Price Range Filter */}
-          <div className="mb-6">
-            <p className="font-semibold text-gray-800 mb-2">Price per Night ({defaultcurrency.symbol})</p>
-            <div className="flex flex-col gap-2 pl-4">
+          <div className="mb-3">
+            <p className="font-semibold text-gray-800  text-[12px]">
+              Price per Night ({defaultcurrency.symbol})
+            </p>
+            <div className="flex flex-col  pl-4 text-[12px]">
               {[
-                { id: "price1", range: `${defaultcurrency.symbol}0 - ${defaultcurrency.symbol}1500` },
-                { id: "price2", range: `${defaultcurrency.symbol}1500 - ${defaultcurrency.symbol}3500` },
-                { id: "price3", range: `${defaultcurrency.symbol}3500 - ${defaultcurrency.symbol}7500` },
-                { id: "price4", range: `${defaultcurrency.symbol}7500 - ${defaultcurrency.symbol}11500` },
-                { id: "price5", range: `${defaultcurrency.symbol}11500 - ${defaultcurrency.symbol}15000` },
+                {
+                  id: "price1",
+                  range: `${defaultcurrency.symbol}0 - ${defaultcurrency.symbol}1500`,
+                },
+                {
+                  id: "price2",
+                  range: `${defaultcurrency.symbol}1500 - ${defaultcurrency.symbol}3500`,
+                },
+                {
+                  id: "price3",
+                  range: `${defaultcurrency.symbol}3500 - ${defaultcurrency.symbol}7500`,
+                },
+                {
+                  id: "price4",
+                  range: `${defaultcurrency.symbol}7500 - ${defaultcurrency.symbol}11500`,
+                },
+                {
+                  id: "price5",
+                  range: `${defaultcurrency.symbol}11500 - ${defaultcurrency.symbol}15000`,
+                },
                 { id: "price6", range: `${defaultcurrency.symbol}15000+` },
               ].map((price) => (
-                <label key={price.id} className="flex items-center gap-2 cursor-pointer">
+                <label
+                  key={price.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     name="price"
                     value={price.id}
                     checked={selectedPriceRange === price.id}
                     onChange={handlePriceChange}
-                    className="text-blue-600 focus:ring-blue-500"
+                    className="text-blue-600 focus:ring-blue-500 w-3 h-3"
                     aria-label={price.range}
                   />
-                  <span className="text-gray-700 hover:text-blue-600">{price.range}</span>
+                  <span className="text-gray-700 hover:text-blue-600">
+                    {price.range}
+                  </span>
                 </label>
               ))}
             </div>
           </div>
 
           {/* Sorting Options */}
-          <div className="mb-6">
-            <p className="font-semibold text-gray-800 mb-2">Sort By</p>
-            <div className="grid grid-cols-1 gap-2 pl-4">
+          <div className="mb-3">
+            <p className="font-semibold text-gray-800  text-[12px]">Sort By</p>
+            <div className="grid grid-cols-1  pl-4 text-[12px]">
               {[
                 { id: "L-H", label: "Price: Low to High" },
                 { id: "H-L", label: "Price: High to Low" },
                 { id: "bestRating", label: "Best Rating" },
                 { id: "newest", label: "Newest" },
               ].map((sort) => (
-                <label key={sort.id} className="flex items-center gap-2 cursor-pointer">
+                <label
+                  key={sort.id}
+                  className="flex items-center gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     name="sort"
                     value={sort.id}
                     checked={sortOption === sort.id}
                     onChange={handleSortChange}
-                    className="text-blue-600 focus:ring-blue-500"
+                    className="text-blue-600 focus:ring-blue-500 w-3 h-3"
                     aria-label={sort.label}
                   />
-                  <span className="text-gray-700 hover:text-blue-600">{sort.label}</span>
+                  <span className="text-gray-700 hover:text-blue-600">
+                    {sort.label}
+                  </span>
                 </label>
               ))}
             </div>
@@ -344,10 +467,13 @@ const Comp = ({ slug }) => {
         {/* Hotel List */}
         <div className="w-full lg:w-3/4 flex flex-col">
           {allhoteldata.isLoading ? (
-            <div className="p-5 text-center text-gray-500">Loading hotels...</div>
+            <div className="p-5 text-center text-gray-500">
+              Loading hotels...
+            </div>
           ) : allhoteldata.error ? (
             <div className="p-5 text-center text-red-500">
-              Failed to load hotels: {allhoteldata.error.message || "Unknown error"}
+              Failed to load hotels:{" "}
+              {allhoteldata.error.message || "Unknown error"}
               <button
                 onClick={handleRetry}
                 className="ml-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
@@ -382,7 +508,10 @@ const Comp = ({ slug }) => {
                   <div className="w-[50%] relative">
                     <div className="relative">
                       <Image
-                        src={getImages(hotel?.hotelDetails)[0] || "/images/not_found_img.png"}
+                        src={
+                          getImages(hotel?.hotelDetails)[0] ||
+                          "/images/not_found_img.png"
+                        }
                         alt="hotelImg"
                         width={350}
                         height={150}
@@ -424,31 +553,38 @@ const Comp = ({ slug }) => {
 
                   <div className="flex-1 pl-0 md:pl-5">
                     <div className="my-5 md:my-0 flex justify-between items-center">
-                      <p className="text-base md:text-2xl font-black">
-                        {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelName || "Unknown Hotel"}
+                      <p className="text-base md:text-xl font-black">
+                        {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelName ||
+                          "Unknown Hotel"}
                       </p>
                       <div>
                         <div className="flex items-center">
                           <span className="bg-blue-500 text-white px-2 text-sm rounded-full">
-                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || "N/A"}
+                            {hotel?.hotelDetails?.HotelDetails?.[0]
+                              ?.HotelRating || "N/A"}
                           </span>
                           <span className="ml-2 text-blue-600">
-                            {hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || "N/A"}
+                            {hotel?.hotelDetails?.HotelDetails?.[0]
+                              ?.HotelRating || "N/A"}
                           </span>
                         </div>
                         <div className="hidden md:flex items-center justify-center mt-2">
-                          {renderStars(hotel?.hotelDetails?.HotelDetails?.[0]?.HotelRating || 0)}
+                          {renderStars(
+                            hotel?.hotelDetails?.HotelDetails?.[0]
+                              ?.HotelRating || 0
+                          )}
                         </div>
                       </div>
                     </div>
 
                     <div className="text-gray-500">
                       <span className="text-blue-600">
-                        {hotel?.hotelDetails?.HotelDetails?.[0]?.Address || "No address available"}
+                        {hotel?.hotelDetails?.HotelDetails?.[0]?.Address ||
+                          "No address available"}
                       </span>
                     </div>
                     {hotel?.searchResults?.Status?.Code === 200 &&
-                      hotel?.searchResults?.Rooms?.length > 0 ? (
+                    hotel?.searchResults?.Rooms?.length > 0 ? (
                       <div>
                         <div key={0}>
                           <div className="flex items-end justify-between">
@@ -458,24 +594,36 @@ const Comp = ({ slug }) => {
                                 {Math.floor(
                                   (hotel.searchResults.Rooms[0].TotalFare -
                                     hotel.searchResults.Rooms[0].TotalTax) *
-                                  cuntryprice
+                                    cuntryprice
                                 )}
                               </p>
                               <p className="text-gray-500">
                                 + {defaultcurrency.symbol}
-                                {Math.floor(hotel.searchResults.Rooms[0].TotalTax * cuntryprice)}{" "}
+                                {Math.floor(
+                                  hotel.searchResults.Rooms[0].TotalTax *
+                                    cuntryprice
+                                )}{" "}
                                 taxes & fees
                               </p>
-                              <p className="text-sm text-gray-500 mt-2">Per Night</p>
+                              <p className="text-sm text-gray-500 mt-2">
+                                Per Night
+                              </p>
                             </div>
                             <Link
                               href={`/hotelSearchCheckin/cityName=${encodeURIComponent(
                                 cityName
-                              )}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${hotel.searchResults.HotelCode}${childAges.length > 0 ? `&childAges=${childAges.join(",")}` : ""
-                                }`}
+                              )}&checkin=${checkIn}&checkout=${checkOut}&adult=${adults}&child=${children}&roomes=${roomes}&hotelcode=${
+                                hotel.searchResults.HotelCode
+                              }${
+                                childAges.length > 0
+                                  ? `&childAges=${childAges.join(",")}`
+                                  : ""
+                              }`}
                               className="bg-orange-600 text-white rounded-full w-28 h-8 flex items-center justify-center"
                             >
-                              <span className="text-xs flex items-center gap-2">View Room</span>
+                              <span className="text-xs flex items-center gap-2">
+                                View Room
+                              </span>
                             </Link>
                           </div>
                           {/* <div className="hidden md:block bg-[#ECF5FE] px-5 py-2 text-sm shadow-lg">
@@ -494,93 +642,100 @@ const Comp = ({ slug }) => {
               </div>
             ))
           ) : (
-            <div className="p-5 text-center text-gray-500">No hotels available</div>
+            <div className="p-5 text-center text-gray-500">
+              No hotels available
+            </div>
           )}
 
           {/* Pagination */}
           {allhoteldata.info?.pagination?.total_pages > 1 && (
-  <div className="flex flex-wrap justify-center gap-4 mt-6 items-center">
-    {/* Previous Button */}
-    <button
-      onClick={handlePrevPage}
-      disabled={page <= 1}
-      className={`px-4 py-2 rounded-lg font-semibold ${
-        page <= 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-600 text-white hover:bg-blue-700"
-      }`}
-    >
-      Previous
-    </button>
+            <div className="flex flex-wrap justify-center gap-4 mt-6 items-center">
+              {/* Previous Button */}
+              <button
+                onClick={handlePrevPage}
+                disabled={page <= 1}
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  page <= 1
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+              >
+                Previous
+              </button>
 
-    {/* Simplified Page Numbers */}
-    <div className="flex gap-2">
-      {[page - 1, page, page + 1].map((pageNumber) => {
-        if (
-          pageNumber < 1 ||
-          pageNumber > (allhoteldata.info?.pagination?.total_pages || 1)
-        )
-          return null;
-        return (
-          <button
-            key={pageNumber}
-            onClick={() => handlePageChange(pageNumber)}
-            className={`px-3 py-1 rounded-lg font-semibold ${
-              page === pageNumber
-                ? "bg-blue-600 text-white"
-                : "bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white"
-            }`}
-          >
-            {pageNumber}
-          </button>
-        );
-      })}
-    </div>
+              {/* Simplified Page Numbers */}
+              <div className="flex gap-2">
+                {[page - 1, page, page + 1].map((pageNumber) => {
+                  if (
+                    pageNumber < 1 ||
+                    pageNumber >
+                      (allhoteldata.info?.pagination?.total_pages || 1)
+                  )
+                    return null;
+                  return (
+                    <button
+                      key={pageNumber}
+                      onClick={() => handlePageChange(pageNumber)}
+                      className={`px-3 py-1 rounded-lg font-semibold ${
+                        page === pageNumber
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-200 text-gray-700 hover:bg-blue-500 hover:text-white"
+                      }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+              </div>
 
-    {/* Jump to page input */}
-    <div className="flex items-center gap-2">
-      <label htmlFor="jumpPage" className="text-gray-700 text-sm">
-        Go to page:
-      </label>
-      <input
-        id="jumpPage"
-        type="number"
-        min={1}
-        max={allhoteldata.info?.pagination?.total_pages}
-        className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center"
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            const value = parseInt(e.target.value);
-            if (
-              value >= 1 &&
-              value <= (allhoteldata.info?.pagination?.total_pages || 1)
-            ) {
-              handlePageChange(value);
-            }
-          }
-        }}
-        placeholder="Pg"
-      />
-    </div>
+              {/* Jump to page input */}
+              <div className="flex items-center gap-2">
+                <label htmlFor="jumpPage" className="text-gray-700 text-sm">
+                  Go to page:
+                </label>
+                <input
+                  id="jumpPage"
+                  type="number"
+                  min={1}
+                  max={allhoteldata.info?.pagination?.total_pages}
+                  className="w-16 px-2 py-1 border border-gray-300 rounded-lg text-center"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      const value = parseInt(e.target.value);
+                      if (
+                        value >= 1 &&
+                        value <=
+                          (allhoteldata.info?.pagination?.total_pages || 1)
+                      ) {
+                        handlePageChange(value);
+                      }
+                    }
+                  }}
+                  placeholder="Pg"
+                />
+              </div>
 
-    {/* Page Info */}
-    <span className="text-gray-700 text-sm">
-      Page {page} of {allhoteldata.info?.pagination?.total_pages}
-    </span>
+              {/* Page Info */}
+              <span className="text-gray-700 text-sm">
+                Page {page} of {allhoteldata.info?.pagination?.total_pages}
+              </span>
 
-    {/* Next Button */}
-    <button
-      onClick={handleNextPage}
-      disabled={page >= (allhoteldata.info?.pagination?.total_pages || 1)}
-      className={`px-4 py-2 rounded-lg font-semibold ${
-        page >= (allhoteldata.info?.pagination?.total_pages || 1)
-          ? "bg-gray-300 cursor-not-allowed"
-          : "bg-blue-600 text-white hover:bg-blue-700"
-      }`}
-    >
-      Next
-    </button>
-  </div>
-)}
-
+              {/* Next Button */}
+              <button
+                onClick={handleNextPage}
+                disabled={
+                  page >= (allhoteldata.info?.pagination?.total_pages || 1)
+                }
+                className={`px-4 py-2 rounded-lg font-semibold ${
+                  page >= (allhoteldata.info?.pagination?.total_pages || 1)
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-blue-600 text-white hover:bg-blue-700"
+                }`}
+              >
+                Next
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </>

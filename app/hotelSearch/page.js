@@ -146,7 +146,7 @@ const page = () => {
 
                   <div className="flex-1 pl-0 md:pl-5">
                     <div className=" my-5 md:my-0 flex justify-between items-center">
-                      <p className="text-base md:text-2xl font-black">{hotel.name}</p>
+                      <p className="text-base md:text-xl font-black">{hotel.name}</p>
                       <div>
                         <div className="flex items-center">
                           <span className="bg-blue-500 text-white px-2 text-sm rounded-full">

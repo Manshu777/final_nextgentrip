@@ -694,8 +694,8 @@ const togglePopup = async (id, ResultIndex) => {
       )}
 
       <Header />
-      <div className="block md:flex px-0 lg:px-28 items-start gap-3 my-5  ">
-        <div className="hidden md:block  sticky top-6 w-1/4">
+      <div className="block md:flex px-0 lg:px-28 items-start gap-6 my-5  ">
+        <div className="hidden md:block  sticky top-6 w-1/5">
           <FlightFliter
             airlines={airlines}
             handelFilter={handelFilter}
