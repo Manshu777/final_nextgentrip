@@ -490,7 +490,7 @@ useEffect(() => {
                       </div>
                       <hr className="my-5 border-gray-300" />
                       <div className="flex gap-3 items-center">
-                        <img src="/Images/google-maps.webp" alt="Candolim" className="mr-2 lg:w-10 h-full" />
+                        <img src="/images/google-maps.webp" alt="Candolim" className="mr-2 lg:w-10 h-full" />
                         <div>
                           <p className="font-bold">Candolim</p>
                           <p className="text-gray-600 text-sm">5 minutes walk to Candolim Beach</p>
@@ -620,7 +620,7 @@ useEffect(() => {
                     <div className="lg:w-2/6">
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("contact")}>
-                          <img src="/Images/location2.webp" alt="CategoryIcon" width={22} height={32} />
+                          <img src="/images/location2.webp" alt="CategoryIcon" width={22} height={32} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Contacts</span>
                             {showingsection === "contact" ? <FaChevronDown /> : <FaChevronRight />}
@@ -651,7 +651,7 @@ useEffect(() => {
                       </div>
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("attractions")}>
-                          <img src="/Images/cameraonr.webp" alt="CategoryIcon" width={22} height={39} />
+                          <img src="/images/cameraonr.webp" alt="CategoryIcon" width={22} height={39} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Attractions</span>
                             {showingsection === "attractions" ? <FaChevronDown /> : <FaChevronRight />}
@@ -669,7 +669,7 @@ useEffect(() => {
                       </div>
                       <div>
                         <div className="selected flex w-full items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("transport")}>
-                          <img src="/Images/flight_train.webp" alt="CategoryIcon" width={22} height={40} />
+                          <img src="/images/flight_train.webp" alt="CategoryIcon" width={22} height={40} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Transport</span>
                           </p>
@@ -677,7 +677,7 @@ useEffect(() => {
                       </div>
                       <div>
                         <div className="selected flex items-center gap-4 cursor-pointer py-5 border-b" onClick={() => setShowingsection("restaurants")}>
-                          <img src="/Images/restaurant.webp" alt="CategoryIcon" width={22} height={40} />
+                          <img src="/images/restaurant.webp" alt="CategoryIcon" width={22} height={40} />
                           <p className="ml-2 flex w-full justify-between items-center">
                             <span>Restaurants</span>
                           </p>
