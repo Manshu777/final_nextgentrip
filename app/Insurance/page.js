@@ -78,7 +78,7 @@ export default function InsurancePage() {
 
       <main>
       <section
-  style={{ backgroundImage: "url('/images/Insurance.webp')" }}
+  style={{ backgroundImage: "url('/images/insurance.webp')" }}
   className="min-h-[80vh] py-10 flex items-center relative bg-center bg-cover text-white px-5 md:px-16 xl:px-32"
 >
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900 to-transparent z-0"></div>
