@@ -1,7 +1,7 @@
 'use client';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { getSingleHotel } from '../../Component/Store/slices/getHotelSlice';
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -50,7 +50,6 @@ const HotelSlugComp = ({ slugs }) => {
   const [viewmore, setViewmore] = useState(false);
   const [loading, setLoading] = useState(false);
 
-
   useEffect(() => {
     dispatch(getSingleHotel({ HotelCode, checkIn, checkOut, adults, children, roomes }));
   }, []);
@@ -59,31 +58,27 @@ const HotelSlugComp = ({ slugs }) => {
     sethotelinfo(state);
   }, [state]);
 
-const handlePreBooking = async (BookingCode) => {
-  setLoading(true);
-  await dispatch(gethotelPreBookingApi({ BookingCode }));
-  // Don't access preBookinghotelState immediately here!
-};
+  const handlePreBooking = async (BookingCode) => {
+    setLoading(true);
+    await dispatch(gethotelPreBookingApi({ BookingCode }));
+  };
 
-useEffect(() => {
-  if (
-    preBookinghotelState?.info?.HotelResult &&
-    preBookinghotelState.info.HotelResult.length > 0
-  ) {
-    const hotelData = preBookinghotelState.info.HotelResult[0];
-    const cancellationPolicies = hotelData.Rooms?.[0]?.CancelPolicies;
-    const validationPolicies = preBookinghotelState.info?.ValidationInfo;
+  useEffect(() => {
+    if (
+      preBookinghotelState?.info?.HotelResult &&
+      preBookinghotelState.info.HotelResult.length > 0
+    ) {
+      const hotelData = preBookinghotelState.info.HotelResult[0];
+      const cancellationPolicies = hotelData.Rooms?.[0]?.CancelPolicies;
+      const validationPolicies = preBookinghotelState.info?.ValidationInfo;
 
-    localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
-    localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
-    sethotel(hotelData);
-    setIsOpen(true);
-    setLoading(false);
-  }
-}, [preBookinghotelState]);
-
-
-
+      localStorage.setItem("cancellationPolicies", JSON.stringify(cancellationPolicies));
+      localStorage.setItem("validationPolicies", JSON.stringify(validationPolicies));
+      sethotel(hotelData);
+      setIsOpen(true);
+      setLoading(false);
+    }
+  }, [preBookinghotelState]);
 
   const togglePopup = () => setIsOpen(!isOpen);
 
@@ -94,8 +89,6 @@ useEffect(() => {
     router.push('/hotels/checkout');
   };
 
-
-  console.log('hotelinfo.info', hotelinfo?.info)
   return (
     <>
       {isOpen && hotel && (
@@ -261,7 +254,6 @@ useEffect(() => {
                 <div className="p-6 bg-white rounded-3xl flex flex-col lg:flex-row w-full justify-between myshadow">
                   <div className="lg:w-2/3 relative">
                     <div className="flex items-center justify-between mb-5" id="WBTH">
-
                       <h2 className="text-2xl font-bold flex items-center gap-4">
                         {hotelinfo.info.hoteldetail1[0].HotelName}
                         <span className="flex text-base gap-1">
@@ -304,13 +296,10 @@ useEffect(() => {
                           ))}
                         </span>
                       </h2>
-
                     </div>
-
-
                     <div className="lg:flex gap-5 mb-5">
                       <div>
-                        <div className="relative w-full  lg:w-[400px] h-[200px] lg:h-[340px] mb-4">
+                        <div className="relative w-full lg:w-[400px] h-[200px] lg:h-[340px] mb-4">
                           <img
                             src={hotelinfo.info?.hoteldetail1[0]?.Images?.[0] || '/Images/not_found_img.png'}
                             alt="hotel image"
@@ -347,9 +336,6 @@ useEffect(() => {
                             objectFit="cover"
                             className="w-full lg:w-[302px] h-40"
                           />
-                          {/* <div className="absolute bottom-0 left-0 w-full p-2 rounded-b-lg text-sm bg-gray-800 bg-opacity-15 text-white text-center">
-                            Room photos
-                          </div> */}
                         </div>
                         <div className="relative w-full lg:w-[302px] h-40">
                           <img
@@ -385,11 +371,7 @@ useEffect(() => {
                           </button>
                         </li>
                       </ul>
-
-
                     </div>
-
-
                     {handelpricesection === "services" && (
                       <div className='absolute top-0 left-0 h-full w-full bg-white'>
                         <ImCancelCircle className='absolute top-0 right-10 text-3xl' onClick={() => sethandelpriceSection("")} />
@@ -414,26 +396,14 @@ useEffect(() => {
                         </div>
                       </div>
                     )}
-
                     {hotelinfo.info.hoteldetail2[0].Rooms[0].RoomPromotion && (
                       <p className="text-sm text-green-600 font-semibold">
                         Promotion: {hotelinfo.info.hoteldetail2[0].Rooms[0].RoomPromotion.join(", ").replace(/\|/g, "")}
                       </p>
                     )}
                   </div>
-
-
-
-
-
-
-
-
                   <div className="lg:w-[30%] hidden lg:block lg:sticky lg:top-24 h-full">
-
                     <div className="mb-5 border-2 rounded-2xl p-3">
-
-
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}
@@ -540,7 +510,6 @@ useEffect(() => {
                     <div className="mb-5 border-2 rounded-2xl p-3">
                       <h3 className="text-lg font-bold">Classic</h3>
                       <p className="mt-2 text-gray-700">Fits 2 Adults</p>
-
                       <div className="mt-5">
                         <p className="text-lg line-through text-gray-500">
                           {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalFare}
@@ -590,9 +559,11 @@ useEffect(() => {
                             <div key={indp} className='flex gap-3'>
                               <p>Day {indp + 1}</p> : <p> ₹ {info_p.BasePrice}</p>
                             </div>
+
+
                           ))}
                           <div className='flex gap-3'>
-                            <p className='font-semibold'>Taxs</p> : <p>₹ {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalTax}</p>
+                            <p className='font-semibold'>Taxes</p> : <p>₹ {hotelinfo.info.hoteldetail2[0].Rooms[0].TotalTax}</p>
                           </div>
                         </div>
                         <div className='flex gap-3 my-9 font-bold text-2xl'>
@@ -602,6 +573,60 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
+                {/* New Available Rooms Section */}
+                <section className="p-6 bg-white rounded-3xl my-5 shadow-lg">
+                  <h2 className="text-2xl font-bold mb-4">Available Rooms</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {hotelinfo.info.hoteldetail2[0].Rooms.map((room, index) => (
+                      <div key={index} className="border rounded-xl p-4 shadow-md hover:shadow-lg transition-shadow">
+                        <h3 className="text-lg font-semibold">{room.Name[0]}</h3>
+                        <p className="text-sm text-gray-600 mt-1">Inclusion: {room.Inclusion}</p>
+                        <p className="text-sm text-gray-600">Meal Type: {room.MealType.replace('_', ' ')}</p>
+                        {room.RoomPromotion && (
+                          <p className="text-sm text-green-600 font-semibold mt-1">
+                            Promotion: {room.RoomPromotion.join(", ").replace(/\|/g, "")}
+                          </p>
+                        )}
+                        <div className="mt-3">
+                          <p className="text-lg line-through text-gray-500">₹{room.TotalFare}</p>
+                          <p className="text-xl font-bold text-black">
+                            ₹{Math.floor(room.TotalFare - room.TotalTax)}
+                          </p>
+                          <p className="text-sm text-gray-700">+ ₹{room.TotalTax} taxes & fees</p>
+                        </div>
+                        <div className="mt-3">
+                          <h4 className="text-sm font-semibold">Cancellation Policy:</h4>
+                          <ul className="list-disc pl-5 text-sm text-gray-600">
+                            {room.CancelPolicies.map((policy, idx) => (
+                              <li key={idx}>
+                                From {policy.FromDate}: {policy.CancellationCharge === 0 ? "Free cancellation" : `${policy.ChargeType} charge: ${policy.CancellationCharge}%`}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div className="mt-4">
+                          <button
+                            onClick={() => handlePreBooking(room.BookingCode)}
+                            className={`w-full py-2 text-white font-bold rounded-xl transition-all duration-200 ${loading ? "bg-blue-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+                            disabled={loading}
+                          >
+                            {loading ? (
+                              <span className="flex items-center justify-center gap-2">
+                                <svg className="animate-spin h-5 w-5 text-white" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                                </svg>
+                                Loading...
+                              </span>
+                            ) : (
+                              "Book This Room"
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </section>
                 <section className="p-6 bg-white rounded-3xl my-5 shadow-lg" id="">
                   <p className="text-lg font-semibold mb-1">Location</p>
                   <span className="text-sm font-semibold">
