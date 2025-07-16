@@ -65,13 +65,13 @@ const MiniNav = () => {
             heading: "Home",
             listData: [
               {
-                link: "/",
-                list: " Nextgentrip.com",
+                link: "/about",
+                list: " About ",
               },
              
               {
-                link: "/blog",
-                list: "Blog",
+                link: "/our-leaders",
+                list: "Management Team",
               },
               {
                 link: "/ATI/loyalty-program/",

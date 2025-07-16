@@ -86,12 +86,12 @@ const Navbar = () => {
       class: "eVisa",
       link: "https://www.visanextgen.com/",
     },
-    // {
-    //   name: t("cab"),
-    //   className: "meuicowidth cabmenuico",
-    //   class: "cab-icon",
-    //   link: "/cabs",
-    // },
+    {
+      name: t("cab"),
+      className: "meuicowidth cabmenuico",
+      class: "cab-icon",
+      link: "/cabs",
+    },
 
 
 
