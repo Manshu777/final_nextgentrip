@@ -50,9 +50,16 @@ export default function InsuranceHeader() {
       const parsedData = JSON.parse(savedData);
       setAllData({
         ...parsedData,
-        Plan_Category: planCategories.find(cat => cat.id === parsedData.Plan_Category?.id) || planCategories[0],
-        Plan_Coverage: planCoverage.find(cov => cov.id === parsedData.Plan_Coverage?.id) || planCoverage[0],
-        Plan_Type: planTypes.find(type => type.id === parsedData.Plan_Type) ? parsedData.Plan_Type : planTypes[0].id,
+        Plan_Category:
+          planCategories.find(
+            (cat) => cat.id === parsedData.Plan_Category?.id
+          ) || planCategories[0],
+        Plan_Coverage:
+          planCoverage.find((cov) => cov.id === parsedData.Plan_Coverage?.id) ||
+          planCoverage[0],
+        Plan_Type: planTypes.find((type) => type.id === parsedData.Plan_Type)
+          ? parsedData.Plan_Type
+          : planTypes[0].id,
       });
     }
   }, []);
@@ -92,7 +99,7 @@ export default function InsuranceHeader() {
       alert("End date must be after start date.");
       return;
     }
-    if (alldata.PaxAge.some(age => !age || isNaN(age) || age <= 0)) {
+    if (alldata.PaxAge.some((age) => !age || isNaN(age) || age <= 0)) {
       alert("Please provide valid ages for all passengers.");
       return;
     }
@@ -100,7 +107,19 @@ export default function InsuranceHeader() {
     setIsLoading(true);
     setTimeout(() => {
       navigation.push(
-        `/Insurance/plancategory=${encodeURIComponent(alldata.Plan_Category.id)}&plancoverage=${encodeURIComponent(alldata.Plan_Coverage.id)}&plantype=${encodeURIComponent(alldata.Plan_Type)}&travelstartdate=${encodeURIComponent(alldata.TravelStartDate)}&travelenddate=${encodeURIComponent(alldata.TravelEndDate)}&noofpax=${encodeURIComponent(alldata.NoOfPax)}&paxage=${encodeURIComponent(alldata.PaxAge.join(","))}`
+        `/Insurance/plancategory=${encodeURIComponent(
+          alldata.Plan_Category.id
+        )}&plancoverage=${encodeURIComponent(
+          alldata.Plan_Coverage.id
+        )}&plantype=${encodeURIComponent(
+          alldata.Plan_Type
+        )}&travelstartdate=${encodeURIComponent(
+          alldata.TravelStartDate
+        )}&travelenddate=${encodeURIComponent(
+          alldata.TravelEndDate
+        )}&noofpax=${encodeURIComponent(
+          alldata.NoOfPax
+        )}&paxage=${encodeURIComponent(alldata.PaxAge.join(","))}`
       );
       setIsLoading(false);
     }, 1000);
@@ -117,27 +136,37 @@ export default function InsuranceHeader() {
         <div className="bg-white shadow-md rounded-lg p-4 md:p-6 lg:p-5">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-6">
             <div className="col-span-1">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Travel Start Date</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Travel Start Date
+              </label>
               <input
                 type="date"
                 value={alldata.TravelStartDate}
-                onChange={(e) => setAllData({ ...alldata, TravelStartDate: e.target.value })}
+                onChange={(e) =>
+                  setAllData({ ...alldata, TravelStartDate: e.target.value })
+                }
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
               />
             </div>
 
             <div className="col-span-1">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Travel End Date</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Travel End Date
+              </label>
               <input
                 type="date"
                 value={alldata.TravelEndDate}
-                onChange={(e) => setAllData({ ...alldata, TravelEndDate: e.target.value })}
+                onChange={(e) =>
+                  setAllData({ ...alldata, TravelEndDate: e.target.value })
+                }
                 className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500"
               />
             </div>
 
             <div className="col-span-1 relative">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Passengers</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Passengers
+              </label>
               <div
                 className="flex justify-between items-center p-2 border border-gray-300 rounded-md hover:border-blue-500 bg-white cursor-pointer"
                 onClick={() => setIsVisible(!isVisible)}
@@ -145,9 +174,13 @@ export default function InsuranceHeader() {
                 onKeyDown={(e) => e.key === "Enter" && setIsVisible(!isVisible)}
               >
                 <div>
-                  <p className="text-lg font-bold text-black">{alldata.NoOfPax}</p>
+                  <p className="text-lg font-bold text-black">
+                    {alldata.NoOfPax}
+                  </p>
                 </div>
-                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>
+                <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
+                  Edit
+                </button>
               </div>
 
               {isVisible && (
@@ -156,14 +189,18 @@ export default function InsuranceHeader() {
                   className="absolute top-full left-0 z-50 mt-2 w-[300px] bg-white border border-gray-200 rounded-xl shadow-2xl p-5 transition-all duration-300"
                 >
                   <div className="flex justify-between items-center mb-4">
-                    <span className="text-sm font-semibold text-gray-700">Adult Count</span>
+                    <span className="text-sm font-semibold text-gray-700">
+                      No. of Pax
+                    </span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handlePaxChange(false)}
                         disabled={alldata.NoOfPax <= 1}
                         className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full hover:bg-red-100 disabled:opacity-50 transition"
                       >
-                        <span className="text-lg font-bold text-red-500">-</span>
+                        <span className="text-lg font-bold text-red-500">
+                          -
+                        </span>
                       </button>
                       <span className="px-4 py-1 border border-gray-300 rounded-md bg-gray-100 text-gray-800 font-medium min-w-[40px] text-center">
                         {alldata.NoOfPax}
@@ -172,37 +209,50 @@ export default function InsuranceHeader() {
                         onClick={() => handlePaxChange(true)}
                         className="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-full hover:bg-green-100 transition"
                       >
-                        <span className="text-lg font-bold text-green-600">+</span>
+                        <span className="text-lg font-bold text-green-600">
+                          +
+                        </span>
                       </button>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 gap-3">
-                    {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <label className="text-[12px] text-gray-600 whitespace-nowrap">Passenger {index + 1} Age:</label>
-                        <input
-                          type="number"
-                          min="1"
-                          max="100"
-                          value={alldata.PaxAge[index] || ""}
-                          onChange={(e) => handleAgeChange(index, e.target.value)}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                        />
-                      </div>
-                    ))}
+                  <div className="mb-2 text-[12px] text-gray-500 italic">
+                    Min. age: 6 Months | Max. age: 70 years
                   </div>
+
+                 <div className="flex gap-4 overflow-x-auto whitespace-nowrap pb-2">
+  {Array.from({ length: alldata.NoOfPax }).map((_, index) => (
+    <div key={index} className="flex items-center gap-2">
+      <label className="text-[12px] text-gray-600 whitespace-nowrap">
+        Pax: {index + 1}
+      </label>
+      <input
+        type="number"
+        min="1"
+        max="100"
+        value={alldata.PaxAge[index] || ""}
+        onChange={(e) => handleAgeChange(index, e.target.value)}
+        className="w-[60px] p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+  ))}
+</div>
+
                 </div>
               )}
             </div>
 
             <div className="col-span-1">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Category</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Plan Category
+              </label>
               <select
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Category.id}
                 onChange={(e) => {
-                  const selectedCategory = planCategories.find((cat) => cat.id == e.target.value);
+                  const selectedCategory = planCategories.find(
+                    (cat) => cat.id == e.target.value
+                  );
                   let updatedCoverage = alldata.Plan_Coverage;
                   if (selectedCategory.id === 2) {
                     updatedCoverage = planCoverage.find((cov) => cov.id === 3);
@@ -223,14 +273,18 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Coverage</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Plan Coverage
+              </label>
               <select
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Coverage.id}
                 onChange={(e) =>
                   setAllData({
                     ...alldata,
-                    Plan_Coverage: planCoverage.find((cov) => cov.id == e.target.value),
+                    Plan_Coverage: planCoverage.find(
+                      (cov) => cov.id == e.target.value
+                    ),
                   })
                 }
               >
@@ -243,11 +297,15 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Plan Type</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">
+                Plan Type
+              </label>
               <select
                 className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500"
                 value={alldata.Plan_Type}
-                onChange={(e) => setAllData({ ...alldata, Plan_Type: e.target.value })}
+                onChange={(e) =>
+                  setAllData({ ...alldata, Plan_Type: e.target.value })
+                }
               >
                 {planTypes.map((type) => (
                   <option key={type.id} value={type.id}>
@@ -265,8 +323,20 @@ export default function InsuranceHeader() {
               >
                 {isLoading ? (
                   <div className="flex items-center justify-center gap-2">
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
                       <path
                         className="opacity-75"
                         fill="currentColor"
