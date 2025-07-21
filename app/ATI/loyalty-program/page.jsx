@@ -1,6 +1,13 @@
 import React from "react";
 import { FaCrown, FaMedal, FaStar, FaUserPlus, FaSuitcase, FaGift } from "react-icons/fa";
 
+
+export const metadata = {
+  title: "NextGen Rewards – Loyalty Program for Travel Enthusiasts",
+  description:
+    "Join the NextGenTrip Rewards Program to unlock travel discounts, earn perks, and enjoy VIP benefits. Travel smarter and get rewarded!",
+};
+
 export default function RewardsPage() {
   const tiers = [
     {
@@ -55,6 +62,8 @@ export default function RewardsPage() {
 
   return (
     <main>
+      {/* Head Section for Meta Info */}
+  
       {/* Hero Section */}
       <section className="bg-[#10325a] text-white py-16 px-6 text-center">
         <h1 className="text-5xl font-extrabold mb-3">NextGen Rewards</h1>
@@ -62,9 +71,6 @@ export default function RewardsPage() {
           Welcome to the travel club that pays you back! Earn points, unlock exclusive discounts,
           and elevate your travel experience with NextGenTrip.
         </p>
-        {/* <button className="mt-8 bg-white text-[#10325a] px-8 py-3 font-bold rounded-full hover:scale-105 hover:bg-gray-200 transition-all duration-300">
-          Join Now for Free
-        </button> */}
       </section>
 
       {/* Tiers Section */}
@@ -113,9 +119,6 @@ export default function RewardsPage() {
         <p className="text-sm mb-6">
           Join thousands of travelers already earning with NextGen Rewards. The world is waiting—get rewarded while exploring it.
         </p>
-        {/* <button className="bg-white text-[#45a183] font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-all">
-          Start Earning Today
-        </button> */}
       </section>
     </main>
   );

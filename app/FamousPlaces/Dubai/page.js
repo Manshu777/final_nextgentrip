@@ -267,6 +267,17 @@ const page = () => {
 
   return (
     <>
+
+     <head>
+        <title>
+        Dubai Tour Packages – Top Deals & Places | NextGenTrip
+        </title>
+
+        <meta
+          name="description"
+          content="Uncover the magic of Dubai with NextGenTrip. Explore towering skyscrapers, thrilling desert safaris, luxury malls & more. Plan your perfect trip today!"
+        />
+      </head>
       <section className="px-5 sm:px-5 md:px-10 lg:px-20 py-8">
         <div className="flex flex-col gap-5 ">
           <div>

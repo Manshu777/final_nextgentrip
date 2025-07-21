@@ -4,12 +4,6 @@ import Image from 'next/image';
 
 const leaders = [
   {
-    name: 'Dr. J.C. Jhuraney',
-    title: 'Director – M/s Next Gen Trip Pvt. Ltd',
-    image: '/images/leaders/jhauraneysahab (1).webp',
-    bio: 'Dr. J.C. Jhuraney, Director at M/s Next Gen Trip Pvt. Ltd., is a visionary leader with a distinguished career spanning decades in leadership development, organizational excellence and people strategy. As a senior figure at NextGenTrip, he plays a crucial role in shaping the company’s human capital framework and leadership culture. He has previously served as Whole Time Director & CHRO with Omax Group, Chairman of the HR & IR Committee of CII (Northern Region) and Vice President of the Delhi Management Association. Renowned for his sharp insights in executive coaching, leadership mentoring and organizational transformation, Dr. Jhuraney is deeply committed to building inclusive, high-performing cultures. His influence is central to NextGenTrip’s commitment to ethical growth, innovation and people-first practices. Under his direction, the company continues to empower talent and drive bold leadership, setting new benchmarks in the travel industry.',
-  },
-  {
     name: 'Ms. Geeta Sachdeva',
     title: 'Director – M/s Next Gen Trip Pvt. Ltd',
     image: '/images/leaders/geeta sachdeva.jpeg',
@@ -27,6 +21,12 @@ const leaders = [
     image: '/images/leaders/vishal rana.jpeg',
     bio: 'Dr. Vishal Rana, Director at M/s Next Gen Trip Pvt. Ltd., is a visionary entrepreneur and MBBS graduate from Government Medical College, Amritsar. A passionate traveler and innovator, he founded Next Gen Trip to simplify and enrich the global travel experience. Under his leadership, the company has grown into a dynamic, tech-driven platform offering air tickets, hotels, cruises, charters, travel insurance, global eSIMs, JoinMarriages and international internships. Dr. Rana’s mission is to make travel more affordable, meaningful and culturally immersive. His initiatives like JoinMarriages and global training programs reflect a unique vision of travel as a tool for human connection and cultural exchange. By blending innovation with empathy, he is redefining modern travel for a new generation of explorers. With a strong commitment to accessibility, global connectivity and purposeful experiences, Dr. Rana continues to lead Next Gen Trip toward its goal of becoming a truly transformative force in the travel industry.',
   },
+  {
+  name: 'Dr. J.C. Jhuraney',
+  title: 'Advisor – M/s Next Gen Trip Pvt. Ltd.',
+  image: '/images/leaders/jhauraneysahab (1).webp',
+  bio: 'Dr. J.C. Jhuraney – Advisor, M/s Next Gen Trip Pvt. Ltd., bringing with him decades of Leadership in Human Resource Strategy, Organizational Development and Executive Coaching. With a distinguished background, he held the position of Senior Vice President – HR at Samtel Group, followed by his impactful role as Whole-Time Director & CHRO with Omax Group, where he championed people-centric transformation and corporate governance. Beyond the corporate arena, Dr. Jhuraney has played pivotal roles in key industry bodies, having served as Chairman of the HR & IR Committee of CII (Northern Region) and Vice President of the Delhi Management Association (DMA). These positions underscore his commitment to elevating HR practices and leadership standards across industries. Renowned for his deep insights into Leadership Mentoring, Talent Engagement and Building High-Performance Cultures, Dr. Jhuraney guides NextGenTrip\'s people, culture and business roadmap with a sharp ethical compass and strategic foresight. His guidance is instrumental in nurturing a value-driven, inclusive and innovation-led environment as the company scales its presence in the Global Travel Industry.'
+}
 ];
 
 export default function OurLeadersPage() {

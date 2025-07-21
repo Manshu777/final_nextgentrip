@@ -39,6 +39,14 @@ const Page = () => {
 
   return (
     <>
+      <head>
+        <title>Book Hotels Online | Exclusive Deals on NextGenTrip</title>
+        <meta
+          name="description"
+          content="Plan your perfect stay with NextGenTrip. Explore exclusive hotel deals, compare prices, read verified reviews, and book trusted stays instantly for your trip"
+        />
+        
+      </head>
       <HotelsComp />
       <div className="hidden md:block">
         <CustomSlider />
@@ -57,12 +65,11 @@ const Page = () => {
             >
               <div className="flex gap-4 p-4">
                 <div className="w-2/3 relative">
-
-                <img
-            src={`${imgurl}/${hotel?.hotel_img[0]}`}
-            alt={hotel?.hotel_img[0]}
-            className="rounded-md w-full h-52 object-cover"
-          /> 
+                  <img
+                    src={`${imgurl}/${hotel?.hotel_img[0]}`}
+                    alt={hotel?.hotel_img[0]}
+                    className="rounded-md w-full h-52 object-cover"
+                  />
                   <div className="absolute top-2 right-2 bg-white opacity-80 px-2 py-1 rounded-full text-xs font-semibold text-gray-700">
                     {hotel.rating} <FaStar className="inline text-yellow-500" />
                   </div>
@@ -86,9 +93,11 @@ const Page = () => {
                     <div dangerouslySetInnerHTML={{ __html: hotel.address }} />
                   </p>
                   <div className="flex gap-1 text-yellow-500">
-                    {Array.from({ length: hotel.rating }).map((_, starIndex) => (
-                      <FaStar key={starIndex} className="text-lg" />
-                    ))}
+                    {Array.from({ length: hotel.rating }).map(
+                      (_, starIndex) => (
+                        <FaStar key={starIndex} className="text-lg" />
+                      )
+                    )}
                   </div>
 
                   <div className="flex flex-col items-end mt-4">

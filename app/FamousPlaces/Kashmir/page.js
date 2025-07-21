@@ -226,6 +226,13 @@ const page = () => {
 
   return (
     <>
+<head>
+  <title>Kashmir Tour Packages – Gulmarg, Pahalgam | NextGenTrip</title>
+  <meta
+    name="description"
+    content="Explore Kashmir’s scenic beauty with NextGenTrip. Visit Gulmarg, Pahalgam, Sonamarg & more. Safe cabs, easy booking & unforgettable experiences await!"
+  />
+</head>
       <section className="px-5 sm:px-5 md:px-10 lg:px-20 py-8">
         <div className="flex flex-col gap-5 ">
           <div>

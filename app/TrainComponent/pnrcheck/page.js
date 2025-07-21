@@ -15,7 +15,6 @@ import { MdTrain } from "react-icons/md"; // Live train status icon
 // import { FaCheckCircle } from "react-icons/fa"; // IRCTC partner icon
 
 const page = () => {
-
   const [isLoading, setLoading] = useState(true);
   const [showLoader, setshowLoader] = useState(false);
 
@@ -123,15 +122,13 @@ const page = () => {
   };
 
   const handleSearch = async () => {
-    setshowLoader(true)
-     
+    setshowLoader(true);
 
-    
     if (pnr.length !== 10) {
       setError("Please enter a valid 10-digit PNR number.");
       return;
     }
-    setLoading(true)
+    setLoading(true);
 
     try {
       setError(null); // Reset errors
@@ -150,10 +147,10 @@ const page = () => {
       const response = await axios.request(options);
 
       setPnrData(response.data); // Store API response
-      setLoading(false)
+      setLoading(false);
     } catch (err) {
       setError("Failed to fetch PNR status. Please try again later.");
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -167,12 +164,18 @@ const page = () => {
     passengerList,
     dateOfJourney,
   } = pnrData?.data || {};
-  
 
   return (
     <>
+      <head>
+        <title>Check Train PNR Status Online Instantly – NextGenTrip</title>
+        <meta
+          name="description"
+          content="Verify your train ticket status with NextGenTrip’s PNR tool. Instantly check reservation updates, seat and berth info, and live travel schedule details."
+        />
+      </head>
       <div className="relative pt-6 lg:pt-0">
-          <div className="relative h-60 bg-[#011F48] "></div>
+        <div className="relative h-60 bg-[#011F48] "></div>
 
         <div className="absolute bottom-10 left-0 right-0 text-center pb-6">
           <h1 className="text-white text-2xl lg:text-4xl font-bold">
@@ -206,239 +209,248 @@ const page = () => {
       </div>
 
       <div className=" bg-[#f2f2f2] px-5 md:px-24 py-5">
-       
-       {showLoader? <div className="bg-slate-100 px-3 py-10 lg:px-36 space-y-4 ">
-          {isLoading ? (
-            // Skeleton Loader for PNR Info
-            <div class="bg-white p-4 rounded-md">
-            <div class="skeleton h-6 w-1-2 mb-2"></div>
-            <div class="skeleton h-4 w-1-4"></div>
-          </div>
-          ) : (
-            <div className="bg-white flex items-center justify-between p-4 rounded-md">
-              <div>
-                <h2 className="font-normal text-lg">PNR {pnrNumber}</h2>
-                <div className="bg-[#e9f6ea] flex items-center justify-between px-1 gap-2 text-[#2bac36]">
-                  <span className="text-[13px]">
-                    {chartStatus?.toUpperCase()}
-                  </span>
-                </div>
-              </div>
-              <div className="bg-white rounded-lg shadow flex flex-col items-center py-1 px-2">
-                <span className="text-[13px] text-[#2276e3]">Print</span>
-              </div>
-            </div>
-          )}
-
-        
-          {isLoading ? (
-            // Skeleton Loader for Passenger Cards
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              {Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <div
-                    key={index}
-                    className="psngr-card p-4 rounded-md bg-white "
-                  >
-                    <div className="h-6 skeleton bg-slate-300 rounded-md w-1/2 mb-2"></div>
-                    <div className="h-4 skeleton bg-slate-200 rounded-md w-3/4"></div>
-                    <div className="mt-4 flex justify-between text-[13px]">
-                      <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
-                      <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
-                      <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
-                    </div>
-                  </div>
-                ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-              {passengerList.map((passenger) => (
-                <div
-                  key={passenger.passengerSerialNumber}
-                  className="psngr-card p-4 rounded-md bg-white"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-base font-bold text-black">
-                      <img
-                        src="/passengeruser.png"
-                        alt={`passenger${passenger.passengerSerialNumber}`}
-                        className="w-8 h-8"
-                      />
-                      Passenger {passenger.passengerSerialNumber}
-                    </div>
-                    <div className="text-[13px] text-gray-600">
-                      Quota:{" "}
-                      <span className="font-bold text-black">
-                        {passenger.passengerQuota}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center mb-1">
-                    <div className="text-[13px] text-gray-600">
-                      Current Status&nbsp;&nbsp;
-                      <span className="text-base font-bold text-[#417505]">
-                        {passenger.bookingStatusDetails}
-                      </span>
-                    </div>
-                    <div className="text-[13px] bg-slate-100 px-2 py-1">
-                      <span className="text-gray-600 mr-1">
-                        Booking status:
-                      </span>
-                      <span className="text-[13px] font-semibold text-[#417505]">
-                        {passenger.bookingStatusDetails}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between text-[13px] text-gray-600">
-                    <div>
-                      Class:
-                      <span className="font-bold text-black ml-1">
-                        {pnrData.data.journeyClass}
-                      </span>
-                    </div>
-                    <span>|</span>
-                    <div>
-                      Seat no:
-                      <span className="font-bold text-black ml-1">
-                        {passenger.bookingBerthNo}
-                      </span>
-                    </div>
-                    <span>|</span>
-                    <div>
-                      Coach no:
-                      <span className="font-bold text-black ml-1">
-                        {passenger.bookingCoachId}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <section className="">
-            <h2 className="text-lg font-bold mb-2 text-gray-800">
-              Boarding details
-            </h2>
+        {showLoader ? (
+          <div className="bg-slate-100 px-3 py-10 lg:px-36 space-y-4 ">
             {isLoading ? (
-              // Skeleton Loader for Boarding Details
-              <div className="p-4  bg-gray-50 rounded-md shadow-md ">
-                <div className="h-6 skeleton bg-slate-300 rounded-md w-1/3 mb-2"></div>
-                <div className="h-4 skeleton bg-slate-200 rounded-md w-2/3"></div>
+              // Skeleton Loader for PNR Info
+              <div class="bg-white p-4 rounded-md">
+                <div class="skeleton h-6 w-1-2 mb-2"></div>
+                <div class="skeleton h-4 w-1-4"></div>
               </div>
             ) : (
-              <div className="p-4 bg-gray-50 rounded-md shadow-md">
-                <div className="flex items-center mb-2">
-                  <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1">
-                    <IoMdTrain className="text-lg" />
-                    {trainNumber} {trainName}
-                  </h2>
-                </div>
-                <div className="md:flex items-stretch justify-between">
-                  <div className="flex justify-between items-start md:items-center w-full">
-                    <div className="flex-1 mb-4 md:mb-0 space-y-1">
-                      <span className="text-white font-semibold bg-black text-xs py-[3px] px-[6px] rounded">
-                        Boarding Station
-                      </span>
-                      <div className="text-gray-800 font-bold text-sm">
-                        {sourceStation},{" "}
-                        <span className="font-normal">New Delhi</span>
-                      </div>
-                      <div className="text-gray-800 text-sm">
-                        {dateOfJourney}
-                      </div>
-                    </div>
-                    <div className="text-center text-slate-900 text-xs bg-slate-200 py-[3px] px-2 font-normal">
-                      4h 53m
-                    </div>
-                    <div className="flex-1 text-right pl-4 space-y-1">
-                      <span className="text-white font-semibold bg-black text-xs py-[3px] px-[6px] rounded">
-                        Destination Station
-                      </span>
-                      <div className="text-gray-800 font-bold text-sm">
-                        {destinationStation},{" "}
-                        <span className="font-normal">Chandigarh</span>
-                      </div>
-                    </div>
+              <div className="bg-white flex items-center justify-between p-4 rounded-md">
+                <div>
+                  <h2 className="font-normal text-lg">PNR {pnrNumber}</h2>
+                  <div className="bg-[#e9f6ea] flex items-center justify-between px-1 gap-2 text-[#2bac36]">
+                    <span className="text-[13px]">
+                      {chartStatus?.toUpperCase()}
+                    </span>
                   </div>
+                </div>
+                <div className="bg-white rounded-lg shadow flex flex-col items-center py-1 px-2">
+                  <span className="text-[13px] text-[#2276e3]">Print</span>
                 </div>
               </div>
             )}
-          </section>
-        </div>:''}
 
-       <section className="">
-  <h2 className="text-2xl font-bold mb-4 text-center">
-    Why Check PNR Status with Next Gen?
-  </h2>
+            {isLoading ? (
+              // Skeleton Loader for Passenger Cards
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {Array(3)
+                  .fill(0)
+                  .map((_, index) => (
+                    <div
+                      key={index}
+                      className="psngr-card p-4 rounded-md bg-white "
+                    >
+                      <div className="h-6 skeleton bg-slate-300 rounded-md w-1/2 mb-2"></div>
+                      <div className="h-4 skeleton bg-slate-200 rounded-md w-3/4"></div>
+                      <div className="mt-4 flex justify-between text-[13px]">
+                        <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
+                        <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
+                        <div className="h-4 skeleton bg-slate-200 rounded-md w-1/4"></div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                {passengerList.map((passenger) => (
+                  <div
+                    key={passenger.passengerSerialNumber}
+                    className="psngr-card p-4 rounded-md bg-white"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-base font-bold text-black">
+                        <img
+                          src="/passengeruser.png"
+                          alt={`passenger${passenger.passengerSerialNumber}`}
+                          className="w-8 h-8"
+                        />
+                        Passenger {passenger.passengerSerialNumber}
+                      </div>
+                      <div className="text-[13px] text-gray-600">
+                        Quota:{" "}
+                        <span className="font-bold text-black">
+                          {passenger.passengerQuota}
+                        </span>
+                      </div>
+                    </div>
 
-  {/* <div className="flex items-center justify-center mb-6">
+                    <div className="flex justify-between items-center mb-1">
+                      <div className="text-[13px] text-gray-600">
+                        Current Status&nbsp;&nbsp;
+                        <span className="text-base font-bold text-[#417505]">
+                          {passenger.bookingStatusDetails}
+                        </span>
+                      </div>
+                      <div className="text-[13px] bg-slate-100 px-2 py-1">
+                        <span className="text-gray-600 mr-1">
+                          Booking status:
+                        </span>
+                        <span className="text-[13px] font-semibold text-[#417505]">
+                          {passenger.bookingStatusDetails}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-between text-[13px] text-gray-600">
+                      <div>
+                        Class:
+                        <span className="font-bold text-black ml-1">
+                          {pnrData.data.journeyClass}
+                        </span>
+                      </div>
+                      <span>|</span>
+                      <div>
+                        Seat no:
+                        <span className="font-bold text-black ml-1">
+                          {passenger.bookingBerthNo}
+                        </span>
+                      </div>
+                      <span>|</span>
+                      <div>
+                        Coach no:
+                        <span className="font-bold text-black ml-1">
+                          {passenger.bookingCoachId}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <section className="">
+              <h2 className="text-lg font-bold mb-2 text-gray-800">
+                Boarding details
+              </h2>
+              {isLoading ? (
+                // Skeleton Loader for Boarding Details
+                <div className="p-4  bg-gray-50 rounded-md shadow-md ">
+                  <div className="h-6 skeleton bg-slate-300 rounded-md w-1/3 mb-2"></div>
+                  <div className="h-4 skeleton bg-slate-200 rounded-md w-2/3"></div>
+                </div>
+              ) : (
+                <div className="p-4 bg-gray-50 rounded-md shadow-md">
+                  <div className="flex items-center mb-2">
+                    <h2 className="text-base font-semibold text-gray-900 flex items-center gap-1">
+                      <IoMdTrain className="text-lg" />
+                      {trainNumber} {trainName}
+                    </h2>
+                  </div>
+                  <div className="md:flex items-stretch justify-between">
+                    <div className="flex justify-between items-start md:items-center w-full">
+                      <div className="flex-1 mb-4 md:mb-0 space-y-1">
+                        <span className="text-white font-semibold bg-black text-xs py-[3px] px-[6px] rounded">
+                          Boarding Station
+                        </span>
+                        <div className="text-gray-800 font-bold text-sm">
+                          {sourceStation},{" "}
+                          <span className="font-normal">New Delhi</span>
+                        </div>
+                        <div className="text-gray-800 text-sm">
+                          {dateOfJourney}
+                        </div>
+                      </div>
+                      <div className="text-center text-slate-900 text-xs bg-slate-200 py-[3px] px-2 font-normal">
+                        4h 53m
+                      </div>
+                      <div className="flex-1 text-right pl-4 space-y-1">
+                        <span className="text-white font-semibold bg-black text-xs py-[3px] px-[6px] rounded">
+                          Destination Station
+                        </span>
+                        <div className="text-gray-800 font-bold text-sm">
+                          {destinationStation},{" "}
+                          <span className="font-normal">Chandigarh</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+          </div>
+        ) : (
+          ""
+        )}
+
+        <section className="">
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            Why Check PNR Status with Next Gen?
+          </h2>
+
+          {/* <div className="flex items-center justify-center mb-6">
     <FaCheckCircle className="text-green-600 text-4xl mr-3" />
     <h4 className="text-lg font-semibold">IRCTC Authorised Partner</h4>
   </div> */}
 
-  <div className="block md:flex gap-8 mt-14">
-    {/* Ticket Check */}
-    <div className="text-center">
-      <MdConfirmationNumber className="text-blue-500 text-5xl mx-auto" />
-      <div>
-        <h4 className="text-lg font-bold my-3">PNR Status Indian Railways</h4>
-        <p className="text-sm">
-          Using PNR status 10 digit, you can check the latest PNR status
-          with ease on Next Gen or use the PNR Prediction feature and
-          avoid getting waitlisted.
-        </p>
-      </div>
-    </div>
+          <div className="block md:flex gap-8 mt-14">
+            {/* Ticket Check */}
+            <div className="text-center">
+              <MdConfirmationNumber className="text-blue-500 text-5xl mx-auto" />
+              <div>
+                <h4 className="text-lg font-bold my-3">
+                  PNR Status Indian Railways
+                </h4>
+                <p className="text-sm">
+                  Using PNR status 10 digit, you can check the latest PNR status
+                  with ease on Next Gen or use the PNR Prediction feature and
+                  avoid getting waitlisted.
+                </p>
+              </div>
+            </div>
 
-    {/* Support */}
-    <div className="text-center">
-      <MdSupportAgent className="text-yellow-500 text-5xl mx-auto" />
-      <div>
-        <h4 className="text-lg font-bold my-3">24x7 Support for Ticket Booking</h4>
-        <p className="text-sm">
-          Whatever your questions may be, Next Gen will provide 24x7
-          assistance. You can reach out to the Customer Support team by
-          clicking on the 'Contact Us' section on the Next Gen Trains app.
-        </p>
-      </div>
-    </div>
+            {/* Support */}
+            <div className="text-center">
+              <MdSupportAgent className="text-yellow-500 text-5xl mx-auto" />
+              <div>
+                <h4 className="text-lg font-bold my-3">
+                  24x7 Support for Ticket Booking
+                </h4>
+                <p className="text-sm">
+                  Whatever your questions may be, Next Gen will provide 24x7
+                  assistance. You can reach out to the Customer Support team by
+                  clicking on the 'Contact Us' section on the Next Gen Trains
+                  app.
+                </p>
+              </div>
+            </div>
 
-    {/* Cancellation */}
-    <div className="text-center">
-      <RiRefund2Fill className="text-red-500 text-5xl mx-auto" />
-      <div>
-        <h4 className="text-lg font-bold my-3">Free Cancellation on Train Tickets</h4>
-        <p className="text-sm">
-          Unsure of your travel plans? Opt for Assured Flex by paying a
-          nominal fee and modify your train bookings without any hassle!
-          Get an instant full train fare refund after cancellation with
-          Assured Flex.
-        </p>
-      </div>
-    </div>
+            {/* Cancellation */}
+            <div className="text-center">
+              <RiRefund2Fill className="text-red-500 text-5xl mx-auto" />
+              <div>
+                <h4 className="text-lg font-bold my-3">
+                  Free Cancellation on Train Tickets
+                </h4>
+                <p className="text-sm">
+                  Unsure of your travel plans? Opt for Assured Flex by paying a
+                  nominal fee and modify your train bookings without any hassle!
+                  Get an instant full train fare refund after cancellation with
+                  Assured Flex.
+                </p>
+              </div>
+            </div>
 
-    {/* Live Train */}
-    <div className="text-center">
-      <MdTrain className="text-green-600 text-5xl mx-auto" />
-      <div>
-        <h4 className="text-lg font-bold my-3">Check Live Train Running Status</h4>
-        <p className="text-sm">
-          Is your train running late? Check the live status of your
-          train on the Next Gen app or website. You can also see the
-          train route, coach position, and the expected delays along the
-          way.
-        </p>
+            {/* Live Train */}
+            <div className="text-center">
+              <MdTrain className="text-green-600 text-5xl mx-auto" />
+              <div>
+                <h4 className="text-lg font-bold my-3">
+                  Check Live Train Running Status
+                </h4>
+                <p className="text-sm">
+                  Is your train running late? Check the live status of your
+                  train on the Next Gen app or website. You can also see the
+                  train route, coach position, and the expected delays along the
+                  way.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-    </div>
-  </div>
-</section>
-      </div>
-
-    
     </>
   );
 };

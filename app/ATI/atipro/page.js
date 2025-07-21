@@ -78,6 +78,13 @@ export default function Page() {
 
   return (
     <>
+      <head>
+        <title>NextGen ATI Pro – World-Class Luxury Travel Curated</title>
+        <meta
+          name="description"
+          content="Discover the world in style with NextGenTrip Atipro. Customized luxury holidays, VIP access, and 24/7 support ensure an unforgettable premium travel experience."
+        />
+      </head>
       <div className="h-[50vh] bg-gradient-to-r from-[#10325a] to-[#45a183] text-white flex justify-center items-center px-5 md:px-16 lg:px-20">
         <div className="text-center lg:space-y-8">
           <h5 className="text-2xl md:text-3xl lg:text-4xl font-bold">
@@ -87,8 +94,8 @@ export default function Page() {
             Your Passport to incomparable sophistication and exceptional
             experiences. At NextGen, luxury is not only a style of traveling but
             also a way of living. For those who seek serenity in an overwater
-            villa, a bespoke city escape, or an unforgettable adventure in any of
-            the world's most luxurious destinations, we take care of all the
+            villa, a bespoke city escape, or an unforgettable adventure in any
+            of the world's most luxurious destinations, we take care of all the
             details. Come and elevate your travel experience with this affair of
             luxury—known no boundary.
           </p>
@@ -111,7 +118,9 @@ export default function Page() {
 
         {/* Elite Collection Section */}
         <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
-          <h3 className="text-2xl font-semibold">Our Elite Collection of Luxury Services</h3>
+          <h3 className="text-2xl font-semibold">
+            Our Elite Collection of Luxury Services
+          </h3>
           {eliteCollection.map((service, index) => (
             <div key={index} className="space-y-2">
               <h5 className="text-lg font-semibold">{service.title}</h5>
@@ -122,15 +131,17 @@ export default function Page() {
 
         {/* Experience the NextGen Difference Section */}
         <div className="space-y-2">
-          <h3 className="text-2xl font-semibold">Experience the NextGen Difference</h3>
+          <h3 className="text-2xl font-semibold">
+            Experience the NextGen Difference
+          </h3>
           <p>
             At NextGen, we redefine luxury travel through personalized service,
             exclusive access, and unparalleled luxury. Every moment of your trip
             is extraordinary.
           </p>
           <p>
-            From romantic shores in Italy to untouched beauty in New Zealand, our
-            global luxury options guarantee comfort and style at every step.
+            From romantic shores in Italy to untouched beauty in New Zealand,
+            our global luxury options guarantee comfort and style at every step.
           </p>
           <p>
             Your privacy and security are paramount. We offer high-security
@@ -141,7 +152,9 @@ export default function Page() {
 
         {/* Testimonials Section */}
         <div className="bg-white p-4 rounded-lg ">
-          <h3 className="text-2xl font-semibold">Our Clients’ Precious Moments</h3>
+          <h3 className="text-2xl font-semibold">
+            Our Clients’ Precious Moments
+          </h3>
           {testimonials.map((testimonial, index) => (
             <div key={index} className="space-y-2">
               <p className="text-base italic">"{testimonial.quote}"</p>
@@ -153,7 +166,9 @@ export default function Page() {
 
         {/* Contact Section */}
         <div className="bg-[#f0f7f5] p-4 rounded-lg ">
-          <h3 className="text-2xl font-semibold">Find Your Favorite Luxury Getaway</h3>
+          <h3 className="text-2xl font-semibold">
+            Find Your Favorite Luxury Getaway
+          </h3>
           <p>
             Ready to embark on your elite adventure? Whether planning a romantic
             escape, family holiday, or grand celebration, NextGen will surpass
@@ -169,25 +184,27 @@ export default function Page() {
         <div className="bg-[#f0f7f5] p-8 rounded-lg space-y-8">
           <h2 className="text-3xl font-semibold">About NextGen</h2>
           <p>
-            Luxury travel leader NextGen curates and delivers unparalleled access,
-            high-end experiences, and exceptional service for the discerning
-            traveler. From private beach resorts to extravagant city adventures,
-            NextGen is your trusted partner in luxury travel.
+            Luxury travel leader NextGen curates and delivers unparalleled
+            access, high-end experiences, and exceptional service for the
+            discerning traveler. From private beach resorts to extravagant city
+            adventures, NextGen is your trusted partner in luxury travel.
           </p>
 
           <h3 className="text-2xl font-semibold">Contact</h3>
-         <p>
-  <a href="tel:+919877579319" className="text-[#10325a]">
-    +(91) 9877579319
-  </a>
-</p>
-<p>
-  <a href="mailto:info@nextgentrip.com" className="text-[#10325a]">
-    info@nextgentrip.com
-  </a>
-</p>
+          <p>
+            <a href="tel:+919877579319" className="text-[#10325a]">
+              +(91) 9877579319
+            </a>
+          </p>
+          <p>
+            <a href="mailto:info@nextgentrip.com" className="text-[#10325a]">
+              info@nextgentrip.com
+            </a>
+          </p>
           <div className="space-y-4">
-            <h4 className="text-xl font-semibold">Follow us on our Luxury Journeys</h4>
+            <h4 className="text-xl font-semibold">
+              Follow us on our Luxury Journeys
+            </h4>
             <p>
               Stay inspired, stay connected—keep updated with the latest
               happenings in luxury travel, exclusive offers, and bespoke
@@ -206,7 +223,10 @@ export default function Page() {
               >
                 <FaXTwitter />
               </a>
-              <a target="_blank" href="https://www.youtube.com/@NextGenTrip-g5t">
+              <a
+                target="_blank"
+                href="https://www.youtube.com/@NextGenTrip-g5t"
+              >
                 <FaYoutube />
               </a>
               <a
@@ -223,8 +243,8 @@ export default function Page() {
               Discover the Art of Luxury Travel with NextGen
             </h4>
             <p>
-              Indulge in a limitless world. NextGen: Luxury travel is no longer a
-              dream but a reality.
+              Indulge in a limitless world. NextGen: Luxury travel is no longer
+              a dream but a reality.
             </p>
           </div>
         </div>

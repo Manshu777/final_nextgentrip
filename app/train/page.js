@@ -169,6 +169,13 @@ const page = () => {
   ];
   return (
     <>
+      <head>
+        <title>NextGenTrip – Easy & Affordable Train Ticket Booking</title>
+        <meta
+          name="description"
+          content="NextGenTrip offers easy online train bookings with live tracking, instant confirmations, and IRCTC-authorized access. Travel smart and book with confidence."
+        />
+      </head>
       {/* <TrainComp /> */}
 
       <div className="bg-[url(/images/TrainImg/trainBanner.webp)] min-h-[80vh] py-10 flex items-center relative bg-center bg-cover text-white px-5 md:px-16 xl:px-32  ">
@@ -345,11 +352,9 @@ const page = () => {
       </div>
 
       <MobileHeader />
-      
 
       <div className="content px-5 py-0 lg:px-40 lg:py-4">
         <h2 className="text-2xl font-semibold text-center mb-2 mt-5 sm:mt-0">
-
           Why Book Train Tickets with Next Gen?
         </h2>
         <ul className="block lg:flex items-center justify-center gap-20">
@@ -506,7 +511,7 @@ const page = () => {
           ))}
         </div>
       </div>
-  <CustomSlider />
+      <CustomSlider />
       <div className="py-3 px-5 md:px-20">
         <h2 className="text-2xl font-bold text-center mb-1 md:mb-3">
           How To Buy Cheap Train Tickets?
@@ -538,7 +543,7 @@ const page = () => {
           </ul>
         </div>
       </div>
-    
+
       <FAQSection />
     </>
   );

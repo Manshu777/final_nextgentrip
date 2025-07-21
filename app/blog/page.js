@@ -23,7 +23,7 @@ export default function page() {
       <head>
         <title>
 
-          Explore Travel Ideas & Tips | NextGenTrip Official Blog
+         Explore Travel Ideas & Tips | NextGenTrip Official Blog
         </title>
 
         <meta name="description" content="Explore hidden gems, top destinations, expert travel tips, and real experiences on the NextGenTrip blog—your go-to source for smart, inspiring travel content." />

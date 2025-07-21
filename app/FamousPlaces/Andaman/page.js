@@ -332,6 +332,17 @@ const page = () => {
 
   return (
     <>
+
+    <head>
+  <title>
+   Andaman Tour Packages – Havelock, Neil & More | NextGenTrip
+  </title>
+
+  <meta
+    name="description"
+    content="Discover Andaman's pristine beaches, vibrant marine life, and rich history with NextGenTrip. Book customizable packages for an unforgettable island getaway!."
+  />
+</head>
       <section className="px-5 sm:px-5 md:px-10 lg:px-20 py-8">
         <div className="flex flex-col gap-5 ">
           <div>

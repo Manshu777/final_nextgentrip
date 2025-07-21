@@ -9,7 +9,7 @@ const PrivacyPolicy = () => {
         <title>
           NextGenTrip Privacy Policy – Your Data, Our Priority
         </title>
-        <meta name="description" content="Learn how NextGenTrip, in partnership with Razorpay, collects, uses, and protects your personal data. Understand our privacy practices for secure travel bookings." />
+        <meta name="description" content="Your privacy matters to us. Review the NextGenTrip Privacy Policy to understand how your data is collected, stored, protected, and used during your journey." />
       </head>
 
       <section className="bg-gray-50 py-4">

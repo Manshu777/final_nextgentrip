@@ -190,6 +190,13 @@ const page = () => {
 
   return (
     <>
+      <head>
+        <title>NextGenTrip – Book Private Jet & Helicopter Charters</title>
+        <meta
+          name="description"
+          content="NextGenTrip Web Check-In lets you select seats and download your boarding pass in advance. Skip airport lines and enjoy a faster, smoother travel experience."
+        />
+      </head>
       <div className='HeroImage h-40 bg-[url("/images/airplane-flying-colorful.webp")] bg-no-repeat bg-cover bg-center flex flex-col justify-center gap-5'>
         <div className="px-5 sm:px-8 md:px-12 lg:px-20 py-8 text-left space-y-8">
           <h3 className="text-sm md:text-3xl lg:text-4xl font-bold text-white">
@@ -201,7 +208,10 @@ const page = () => {
         <p className="font-bold bg-[#fff3cd] px-3 py-2 rounded">
           Important Information:
           <span className="font-normal text-sm">
-            &nbsp; Airlines can modify their rules at discretion without notice, please see airline policies for the latest update. You will be charged for any changes and cancellations according to the current airline policy.
+            &nbsp; Airlines can modify their rules at discretion without notice,
+            please see airline policies for the latest update. You will be
+            charged for any changes and cancellations according to the current
+            airline policy.
           </span>
         </p>
 
@@ -234,13 +244,12 @@ const page = () => {
             <div className="space-y-4">{tabData[activeTabFirst]?.content}</div>
           </div>
 
-      
           <div className="flex-1 lg:flex lg:flex-col border p-4">
             <div className="flex-shrink-0  lg:mb-0 w-full h-28">
               <img
                 src="/images/indigo-logo.webp"
                 alt="AirAsia"
-                 className="mx-auto mb-0 md:mb-4 "
+                className="mx-auto mb-0 md:mb-4 "
               />
             </div>
             <div className="flex gap-2 sm:gap-4 mb-4 flex-wrap justify-center lg:justify-start">

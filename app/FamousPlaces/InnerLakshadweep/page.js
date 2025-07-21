@@ -202,6 +202,16 @@ const page = () => {
 
   return (
     <>
+      <head>
+        <title>
+         Lakshadweep Tour Packages – Explore Islands | NextGenTrip
+        </title>
+
+        <meta
+          name="description"
+          content="Discover Lakshadweep’s hidden paradise with NextGenTrip. Swim in turquoise waters, explore coral reefs, and relax on serene beaches. Your island escape awaits!."
+        />
+      </head>
       <section className="px-5 sm:px-5 md:px-10 lg:px-20 py-8">
         <div className="flex flex-col gap-5 ">
           <div>

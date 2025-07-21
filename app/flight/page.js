@@ -20,31 +20,39 @@ const Page = () => {
     const currentYear = new Date().getFullYear(); // Get the current year
     const currentDate = new Date(); // Get the current date and time
     const daysInMonth = new Date(currentYear, monthIndex + 1, 0).getDate(); // Get number of days in the month
-  
+
     // Generate a random day within the month
     let randomDay = Math.floor(Math.random() * daysInMonth) + 1;
     let date = new Date(currentYear, monthIndex, randomDay);
-  
+
     // If the generated date is in the past, adjust it to be in the future
     if (date < currentDate) {
       // Add the difference in days to ensure the date is in the future
-      const differenceInDays = Math.ceil((currentDate - date) / (1000 * 60 * 60 * 24));
+      const differenceInDays = Math.ceil(
+        (currentDate - date) / (1000 * 60 * 60 * 24)
+      );
       randomDay += differenceInDays;
       date = new Date(currentYear, monthIndex, randomDay);
     }
-  
+
     return date.toISOString().split("T")[0]; // Format as YYYY-MM-DD
   };
   // Function to generate flight deals for a given month
   const generateDealsForMonth = (monthIndex) => {
-    const destinations = ["Mumbai", "Bangalore", "GOA", "Pune", "Ahmedabad", "Lucknow"];
+    const destinations = [
+      "Mumbai",
+      "Bangalore",
+      "GOA",
+      "Pune",
+      "Ahmedabad",
+      "Lucknow",
+    ];
     const airlines = ["Indigo", "Air India", "SpiceJet", "Vistara"];
 
     return destinations.map((destination) => {
       const date = getRandomDate(monthIndex);
       const returnDate = getRandomDate(monthIndex); // Random return date
       const price = Math.floor(Math.random() * (10000 - 4000 + 1)) + 4000; // Random price between 4000 and 10000
-        
 
       // Generate flight link
       const flightLink = `flightto=BOM&from=DEL&date=${date}T00:00:00&prfdate=${date}T00:00:00&JourneyType=1&adultcount=1&childCount=0&infantCount=0&selectedClass=1&returndate=${returnDate}T00:00:00&PreferredAirlines=null`;
@@ -115,14 +123,18 @@ const Page = () => {
 
   return (
     <>
-     <head>
-      <meta
+      <head>
+        <title>Fly Anywhere, Anytime | Book Flights on NextGenTrip</title>
+        <meta
+          name="description"
+          content="Fly smarter with NextGenTrip. Search, compare, and book flights instantly with great deals, flexible options, secure booking, and seamless travel support."
+        />
+        <meta
           name="keywords"
           content="best travel agency, budget hotels, tour agency in India, travel company in India, flight booking, international flight tickets to India, flight ticket booking near me, Air India ticket price, business class flights, first class flights, flight booking sites, online ticket booking, cheap plane tickets, air travel, flight status, cruise booking, bus booking site, hotel booking, train ticket booking, charter plane, travel insurance"
         />
-     </head>
+      </head>
       <Header />
-      
 
       <div className="">
         <h2 className="text-lg lg:text-3xl mb-1 lg:mb-0 font-bold text-black text-center py-0 lg:py-5">
@@ -159,9 +171,12 @@ const Page = () => {
               <div className="flex border rounded text-sm lg:text-base border-black">
                 {[0, 1, 2].map((monthOffset) => {
                   const monthIndex = (currentMonthIndex + monthOffset) % 12;
-                  const monthName = new Date(2024, monthIndex).toLocaleString("default", {
-                    month: "short",
-                  });
+                  const monthName = new Date(2024, monthIndex).toLocaleString(
+                    "default",
+                    {
+                      month: "short",
+                    }
+                  );
                   return (
                     <button
                       key={monthOffset}
@@ -179,16 +194,18 @@ const Page = () => {
               </div>
             </div>
           </div>
-          <ul className="px-0 list-none lg:px-20">{renderDeals(selectedMonth)}</ul>
+          <ul className="px-0 list-none lg:px-20">
+            {renderDeals(selectedMonth)}
+          </ul>
         </div>
       </div>
-   
+
       <div className="px-5 lg:px-20 py-5 lg:py-2">
         <h6 className="text-lg lg:text-xl font-semibold">{t("memorable")}</h6>
         <p className="mt-5 text-justify">{t("memorable_1")}</p>
         <p className="mt-5 text-justify">{t("memorable_2")}</p>
       </div>
- <CustomSlider />
+      <CustomSlider />
       <FAQSection />
     </>
   );

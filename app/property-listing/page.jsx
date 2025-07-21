@@ -135,7 +135,15 @@ export default function page() {
     }
   };
 
-  return (<>
+  return (
+  <>
+  <head>
+  <title>Become a Partner Property Today | Join NextGenTrip OTA</title>
+  <meta
+    name="description"
+    content="Partner with NextGenTrip to showcase your property. Gain global visibility, attract more travelers, and increase bookings through our trusted platform."
+  />
+</head>
     <div className={`fixed h-screen w-screen top-0 flex justify-center items-center left-0  bg-[#00000074] z-50 ${sendOtp ? "scale-100" : "scale-0"} duration-200`}>
       <div className='bg-white px-10 py-10 flex flex-col gap-5 relative '>
         <p className='text-green-600  text-center font-semibold text-xl my-3'>Otp Sent</p>

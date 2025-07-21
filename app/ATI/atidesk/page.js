@@ -156,7 +156,15 @@ const Page = () => {
   };
 
   return (
-    <div className="space-y-10 text-[#10325a]">
+    <>
+    <head>
+  <title>NextGenTrip – Plan, Manage & Save on Business Travel</title>
+  <meta
+    name="description"
+    content="NextGenTrip Atidesk: Your partner in corporate travel. Enjoy hassle-free bookings, real-time analytics, smart approvals, and streamlined expense control."
+  />
+</head>
+     <div className="space-y-10 text-[#10325a]">
       <section className="px-5 md:px-16 lg:px-20">
         <div className="bg-gradient-to-bl from-[#10325a] to-[#45a183] text-white px-5 py-12 space-y-6 rounded-lg">
           {corporateTravelInfo.map((info, index) => (
@@ -210,6 +218,8 @@ const Page = () => {
         </div>
       </section>
     </div>
+    </>
+   
   );
 };
 

@@ -6,9 +6,9 @@ const TermsAndConditions = () => {
     <>
       <head>
         <title>
-          NextGenTrip User Terms – Safe & Secure Travel Bookings
+         NextGenTrip User Terms – Safe & Clear Bookings
         </title>
-        <meta name="description" content="By using NextGenTrip, you agree to our Terms & Conditions, including Razorpay payment policies. Learn about service usage, booking policies, cancellations, and user obligations." />
+        <meta name="description" content="By using NextGenTrip, you agree to our Terms & Conditions. Learn about service usage, booking policies, cancellations, user rights, and legal obligations." />
       </head>
 
       <div className="container mx-auto px-4 py-10">

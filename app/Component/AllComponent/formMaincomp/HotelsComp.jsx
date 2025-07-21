@@ -23,16 +23,24 @@ const HotelsComp = () => {
 
   // Initialize Check In to current date
   const [arivitime, setarivitime] = useState(() => {
-    const savedCheckIn = JSON.parse(localStorage.getItem("hotelItems"))?.checkIntime;
-    return savedCheckIn && new Date(savedCheckIn) >= currentDate.toDate(localTimeZone)
+    const savedCheckIn = JSON.parse(
+      localStorage.getItem("hotelItems")
+    )?.checkIntime;
+    return savedCheckIn &&
+      new Date(savedCheckIn) >= currentDate.toDate(localTimeZone)
       ? new Date(savedCheckIn)
       : currentDate.toDate(localTimeZone);
   });
 
   // Initialize Check Out to next day or saved date
   const [checkOut, setcheckOut] = useState(() => {
-    const savedCheckOut = JSON.parse(localStorage.getItem("hotelItems"))?.checkouttime;
-    if (savedCheckOut && new Date(savedCheckOut) > currentDate.toDate(localTimeZone)) {
+    const savedCheckOut = JSON.parse(
+      localStorage.getItem("hotelItems")
+    )?.checkouttime;
+    if (
+      savedCheckOut &&
+      new Date(savedCheckOut) > currentDate.toDate(localTimeZone)
+    ) {
       return new Date(savedCheckOut);
     }
     const nextDay = currentDate.toDate(localTimeZone);
@@ -41,7 +49,11 @@ const HotelsComp = () => {
   });
 
   const [isVisible, setIsVisible] = useState("");
-  const [city, setCity] = useState({ Name: "delhi", Code: "130443", isHotel: false });
+  const [city, setCity] = useState({
+    Name: "delhi",
+    Code: "130443",
+    isHotel: false,
+  });
   const [adultcount, setadultcount] = useState(1);
   const [childcount, setchildcount] = useState(0);
   const [numberOfRoom, setNumberOfRoom] = useState(1);
@@ -50,6 +62,8 @@ const HotelsComp = () => {
   const [countrySearch, setCountrySearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
+
+  
   // Fetch countries from Redux store
   const countries = useSelector((state) => state.citysearch.countries) || [];
 
@@ -106,7 +120,8 @@ const HotelsComp = () => {
     try {
       const items = JSON.parse(localStorage.getItem(key)) || [];
       const updatedItems = items.filter(
-        (item) => item.Code !== newItem.Code && item.hotelCode !== newItem.hotelCode
+        (item) =>
+          item.Code !== newItem.Code && item.hotelCode !== newItem.hotelCode
       );
       updatedItems.unshift(newItem);
       if (updatedItems.length > maxItems) updatedItems.pop();
@@ -205,7 +220,12 @@ const HotelsComp = () => {
       return;
     }
 
-    if (!arivitime || !checkOut || isNaN(new Date(arivitime)) || isNaN(new Date(checkOut))) {
+    if (
+      !arivitime ||
+      !checkOut ||
+      isNaN(new Date(arivitime)) ||
+      isNaN(new Date(checkOut))
+    ) {
       alert("Please provide valid check-in and check-out dates.");
       return;
     }
@@ -222,7 +242,12 @@ const HotelsComp = () => {
     localStorage.setItem(
       "hotelItems",
       JSON.stringify({
-        place: { Name: city.Name, Code: city.Code, isHotel: city.isHotel, cityCode: city.cityCode },
+        place: {
+          Name: city.Name,
+          Code: city.Code,
+          isHotel: city.isHotel,
+          cityCode: city.cityCode,
+        },
         checkIntime: arivitime,
         checkouttime: checkOut,
         adultcount,
@@ -243,16 +268,27 @@ const HotelsComp = () => {
     const isHotel = city.isHotel;
     const nameKey = isHotel ? "hotelName" : "cityName";
     const nameValue = encodeURIComponent(city.Name);
-    const codeValue = encodeURIComponent(city.isHotel ? city.cityCode : city.Code);
+    const codeValue = encodeURIComponent(
+      city.isHotel ? city.cityCode : city.Code
+    );
 
-    console.log("Selected Name:", city.Name, "Is Hotel:", isHotel, "City Code:", codeValue);
+    console.log(
+      "Selected Name:",
+      city.Name,
+      "Is Hotel:",
+      isHotel,
+      "City Code:",
+      codeValue
+    );
 
     router.push(
       `/hotels/${nameKey}=${nameValue}&citycode=${codeValue}&checkin=${encodeURIComponent(
         checkInDate
-      )}&checkout=${encodeURIComponent(checkOutDate)}&adult=${encodeURIComponent(
-        adultcount
-      )}&child=${encodeURIComponent(childcount)}${childAgesQuery}&rooms=${encodeURIComponent(
+      )}&checkout=${encodeURIComponent(
+        checkOutDate
+      )}&adult=${encodeURIComponent(adultcount)}&child=${encodeURIComponent(
+        childcount
+      )}${childAgesQuery}&rooms=${encodeURIComponent(
         numberOfRoom
       )}&page=0&star=0`
     );
@@ -270,7 +306,6 @@ const HotelsComp = () => {
     saveToLocalStorage("SelectedCountry", { Code: code, Name: name }, 1);
   };
 
-
   return (
     <div className="header relative md:px-5 lg:px-12 xl:px-24">
       <div className="bg-[#002043] h-[12rem] absolute inset-0 -z-10" />
@@ -286,39 +321,49 @@ const HotelsComp = () => {
             <div className="relative w-full lg:w-[20%]" ref={dropdownRef}>
               <div
                 onClick={() => handleClick("country")}
-                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black"
+                className="relative rounded gap-3 h-full min-h-[3rem] flex items-center px-2 w-full border border-slate-400 text-black bg-white"
               >
                 <IoLocationSharp className="text-xl" />
-                <span className="text-[12px] md:text-xl text-black font-bold capitalize">
-                  {countries.find((c) => c.Code === cnCoide)?.Name || "Select Country"}
-                </span>
-              </div>
-              {isVisible === "country" && (
-                <div className="absolute w-full top-full bg-white rounded-lg shadow-md z-50 p-2 max-h-[300px] overflow-y-auto">
+                {isVisible === "country" ? (
                   <input
                     type="text"
+                    autoFocus
                     value={countrySearch}
                     onChange={(e) => setCountrySearch(e.target.value)}
                     placeholder="Search country..."
-                    className="w-full p-2 mb-2 border border-slate-300 rounded text-black"
-                    aria-label="Search for a country"
+                    className="flex-1 text-[12px] md:text-base outline-none bg-white text-black"
                   />
+                ) : (
+                  <span className="text-[12px] md:text-xl text-black font-bold capitalize">
+                    {countries.find((c) => c.Code === cnCoide)?.Name ||
+                      "Select Country"}
+                  </span>
+                )}
+              </div>
+
+              {isVisible === "country" && (
+                <div className="absolute w-full top-full bg-white rounded-lg shadow-md z-50 p-2 max-h-[300px] overflow-y-auto">
                   {filteredCountries.length > 0 ? (
                     filteredCountries.map((country) => (
                       <div
                         key={country.Code}
-                        onClick={() => handleCountrySelect(country.Code, country.Name)}
+                        onClick={() =>
+                          handleCountrySelect(country.Code, country.Name)
+                        }
                         className="px-2 py-1 hover:bg-gray-100 cursor-pointer text-black"
                       >
                         {country.Name}
                       </div>
                     ))
                   ) : (
-                    <div className="px-2 py-1 text-gray-500">No countries found</div>
+                    <div className="px-2 py-1 text-gray-500">
+                      No countries found
+                    </div>
                   )}
                 </div>
               )}
             </div>
+
             {/* City/Hotel Input */}
             <div className="relative w-full lg:w-[30%]">
               <div
@@ -332,7 +377,7 @@ const HotelsComp = () => {
                   </span>
                 </div>
               </div>
-              {isVisible === "city" && (
+              {isVisible == "city" && (
                 <AutoSearchcity
                   value="From"
                   handleClosed={handleVisibilityChange}
@@ -356,7 +401,9 @@ const HotelsComp = () => {
                           {arivitime.getDate()}
                         </span>
                         <span className="text-sm font-semibold">
-                          {arivitime.toLocaleString("default", { month: "short" })}
+                          {arivitime.toLocaleString("default", {
+                            month: "short",
+                          })}
                         </span>
                         <span className="text-sm font-semibold">
                           {arivitime.getFullYear()}
@@ -395,7 +442,9 @@ const HotelsComp = () => {
                           {checkOut.getDate()}
                         </span>
                         <span className="text-sm font-semibold">
-                          {checkOut.toLocaleString("default", { month: "short" })}
+                          {checkOut.toLocaleString("default", {
+                            month: "short",
+                          })}
                         </span>
                         <span className="text-sm font-semibold">
                           {checkOut.getFullYear()}
@@ -428,14 +477,18 @@ const HotelsComp = () => {
               >
                 <div className="flex items-center gap-2">
                   <div>
-                    <h5 className="font-bold text-lg text-black">{adultcount + childcount}</h5>
+                    <h5 className="font-bold text-lg text-black">
+                      {adultcount + childcount}
+                    </h5>
                     <p className="text-slate-400 text-xs">Travellers</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <MdOutlineMeetingRoom className="text-xl" />
                   <div>
-                    <h5 className="font-bold text-lg text-black">{numberOfRoom}</h5>
+                    <h5 className="font-bold text-lg text-black">
+                      {numberOfRoom}
+                    </h5>
                     <p className="text-slate-400 text-xs">Rooms</p>
                   </div>
                 </div>
@@ -467,7 +520,9 @@ const HotelsComp = () => {
                         >
                           -
                         </button>
-                        <p className="px-2 border text-gray-700">{adultcount}</p>
+                        <p className="px-2 border text-gray-700">
+                          {adultcount}
+                        </p>
                         <button
                           className="px-2 text-black border"
                           onClick={() => {
@@ -509,7 +564,9 @@ const HotelsComp = () => {
                         >
                           -
                         </button>
-                        <p className="px-2 border text-gray-700">{childcount}</p>
+                        <p className="px-2 border text-gray-700">
+                          {childcount}
+                        </p>
                         <button
                           className="px-2 text-black border"
                           onClick={() => {
@@ -535,7 +592,10 @@ const HotelsComp = () => {
                         <p className="text-gray-700">Child Ages</p>
                         {Array.from({ length: childcount }).map((_, index) => (
                           <div key={index} className="flex items-center gap-2">
-                            <label className="text-gray-700" htmlFor={`child-age-${index}`}>
+                            <label
+                              className="text-gray-700"
+                              htmlFor={`child-age-${index}`}
+                            >
                               Child {index + 1} Age:
                             </label>
                             <input
@@ -545,8 +605,13 @@ const HotelsComp = () => {
                               onChange={(e) => {
                                 const value = e.target.value;
                                 const newAges = [...childAges];
-                                if (value === "" || (parseInt(value) >= 1 && parseInt(value) <= 18)) {
-                                  newAges[index] = value === "" ? 0 : parseInt(value);
+                                if (
+                                  value === "" ||
+                                  (parseInt(value) >= 1 &&
+                                    parseInt(value) <= 18)
+                                ) {
+                                  newAges[index] =
+                                    value === "" ? 0 : parseInt(value);
                                   setChildAges(newAges);
                                 } else {
                                   alert("Child age must be between 1 and 18.");
@@ -580,7 +645,9 @@ const HotelsComp = () => {
                         >
                           -
                         </button>
-                        <p className="px-2 border text-gray-700">{numberOfRoom}</p>
+                        <p className="px-2 border text-gray-700">
+                          {numberOfRoom}
+                        </p>
                         <button
                           className="px-2 text-black border"
                           onClick={() => {

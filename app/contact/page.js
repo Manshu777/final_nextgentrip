@@ -19,6 +19,14 @@ import Link from "next/link";
 export default function Page() {
   return (
     <>
+      <head>
+        <title>Contact NextGenTrip – 24/7 Travel Support & Assistance</title>
+
+        <meta
+          name="description"
+          content="Need assistance with your travel plans? Contact NextGenTrip for 24/7 support, expert advice, and seamless booking experiences. We're here to help you!."
+        />
+      </head>
       <section className="text-white py-20 h-80 w-full bg-image-contact hidden md:flex">
         {/* This section appears to be a background image placeholder */}
       </section>
@@ -94,12 +102,16 @@ export default function Page() {
                 </p>
                 <p className="font-medium text-base">
                   Registered Office:{" "}
-                  <span className="text-gray-800">SCO-371, Sector 34-A, Chandigarh</span>
+                  <span className="text-gray-800">
+                    SCO-371, Sector 34-A, Chandigarh
+                  </span>
                 </p>
                 <p className="pt-3 text-sm text-gray-600 leading-relaxed">
-                  We are a <span className="font-semibold">Registered Trademark</span> and an{" "}
-                  <span className="font-semibold">IATA-approved</span> company, ensuring trust,
-                  quality, and responsibility in every service we offer.
+                  We are a{" "}
+                  <span className="font-semibold">Registered Trademark</span>{" "}
+                  and an <span className="font-semibold">IATA-approved</span>{" "}
+                  company, ensuring trust, quality, and responsibility in every
+                  service we offer.
                 </p>
               </div>
             </div>

@@ -113,7 +113,15 @@ setloader(true)
   };
 
   return (
-    <div className="min-h-[70vh] bg-[rgba(212,212,212,0.52)] flex justify-center items-center ">
+    <>
+    <head>
+  <title>Access Travel Dashboard | Login to NextGenTrip Now</title>
+  <meta
+    name="description"
+    content="Welcome back to NextGenTrip! Log in to continue planning your adventures, manage existing bookings, and access exclusive member benefits effortlessly."
+  />
+</head>
+     <div className="min-h-[70vh] bg-[rgba(212,212,212,0.52)] flex justify-center items-center ">
       <div className="relative">
         
         <div
@@ -321,6 +329,8 @@ setloader(true)
         </div>
       </div>
     </div>
+    </>
+   
   );
 };
 

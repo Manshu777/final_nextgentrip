@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation,Pagination } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import 'swiper/css/navigation';
+import "swiper/css/navigation";
 import ActivitiesSlider from "../Component/AllComponent/ActivitiesSlider";
 import { FaArrowRight, FaClock, FaMapPin } from "react-icons/fa";
 import Link from "next/link";
@@ -12,9 +12,8 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 
 const Page = () => {
-  const t=useTranslations("activities")
+  const t = useTranslations("activities");
   const slides = [
-   
     { src: "/images/activity6.webp", title: "Singapore", tours: "300+ Tours" },
     { src: "/images/activity7.webp", title: "Roma", tours: "400+ Tours" },
     { src: "/images/activity8.webp", title: "Bangkok", tours: "100+ Tours" },
@@ -60,7 +59,7 @@ const Page = () => {
       id: 3,
       image: "/images/3.webp",
       location: "London, UK",
-      title:  t("title3"),
+      title: t("title3"),
       rating: 4.8,
       reviews: 243,
       duration: "4 days",
@@ -82,7 +81,7 @@ const Page = () => {
       id: 5,
       image: "/images/5.webp",
       location: "Paris, France",
-      title:  t("title5"),
+      title: t("title5"),
       rating: 4.8,
       reviews: 243,
       duration: "4 days",
@@ -93,7 +92,7 @@ const Page = () => {
       id: 6,
       image: "/images/6.webp",
       location: "New York, USA",
-      title:  t("title6"),
+      title: t("title6"),
       rating: 4.8,
       reviews: 243,
       duration: "4 days",
@@ -104,7 +103,7 @@ const Page = () => {
       id: 7,
       image: "/images/7.webp",
       location: "London, UK",
-      title:  t("title7"),
+      title: t("title7"),
       rating: 4.8,
       reviews: 243,
       duration: "4 days",
@@ -115,7 +114,7 @@ const Page = () => {
       id: 8,
       image: "/images/9.webp",
       location: "London, UK",
-      title:  t("title7"),
+      title: t("title7"),
       rating: 4.8,
       reviews: 243,
       duration: "4 days",
@@ -126,6 +125,13 @@ const Page = () => {
 
   return (
     <>
+      <head>
+        <title>NextGenTrip – Plan Unforgettable Travel Activities</title>
+        <meta
+          name="description"
+          content="Discover top activities and things to do with NextGenTrip. Book adventures, tours, and cultural experiences for solo, group, or family travel worldwide."
+        />
+      </head>
       <ActivitiesSlider />
 
       <div className="px-5 md:px-20 py-5">
@@ -150,51 +156,51 @@ const Page = () => {
         </div>
 
         <Swiper
-  spaceBetween={30}
-  slidesPerView={8}
-  loop={true}
-  slideToClickedSlide={true} 
-  pagination={{
+          spaceBetween={30}
+          slidesPerView={8}
+          loop={true}
+          slideToClickedSlide={true}
+          pagination={{
             clickable: true,
             el: ".swiper-pagination",
             type: "bullets",
           }}
-  breakpoints={{
-    0: {
-      slidesPerView: 2,
-    },
-    640: {
-      slidesPerView: 2,
-    },
-    768: {
-      slidesPerView: 4,
-    },
-    1024: {
-      slidesPerView: 7,
-    },
-  }}
-  navigation={true}
-  modules={[Navigation,Pagination]}
-  className=" px-8"
-  style={{padding:"0px 40px"}}
->
-  {slides.map((slide, index) => (
-    <SwiperSlide key={index} className="w-32 cursor-pointer">
-      <Link href="#" className="block text-center">
-        <div className="mx-auto rounded-full">
-          <img
-            alt={slide.title}
-            loading="lazy"
-            className="w-32 h-32 mx-auto object-cover rounded-full"
-            src={slide.src}
-          />
-        </div>
-        <h3 className="text-lg font-semibold mt-4">{slide.title}</h3>
-        <p className="text-sm">{slide.tours}</p>
-      </Link>
-    </SwiperSlide>
-  ))}
-</Swiper>
+          breakpoints={{
+            0: {
+              slidesPerView: 2,
+            },
+            640: {
+              slidesPerView: 2,
+            },
+            768: {
+              slidesPerView: 4,
+            },
+            1024: {
+              slidesPerView: 7,
+            },
+          }}
+          navigation={true}
+          modules={[Navigation, Pagination]}
+          className=" px-8"
+          style={{ padding: "0px 40px" }}
+        >
+          {slides.map((slide, index) => (
+            <SwiperSlide key={index} className="w-32 cursor-pointer">
+              <Link href="#" className="block text-center">
+                <div className="mx-auto rounded-full">
+                  <img
+                    alt={slide.title}
+                    loading="lazy"
+                    className="w-32 h-32 mx-auto object-cover rounded-full"
+                    src={slide.src}
+                  />
+                </div>
+                <h3 className="text-lg font-semibold mt-4">{slide.title}</h3>
+                <p className="text-sm">{slide.tours}</p>
+              </Link>
+            </SwiperSlide>
+          ))}
+        </Swiper>
         <div className="swiper-pagination custom-pagination"></div>
       </div>
 
@@ -232,7 +238,9 @@ const Page = () => {
                 <p className="text-gray-600 mb-2 flex gap-2 items-center">
                   <FaMapPin /> {tour.location}
                 </p>
-                <Link href="/ActivitiesComp/holidays"><h3 className="text-lg font-medium mb-2">{tour.title}</h3></Link> 
+                <Link href="/ActivitiesComp/holidays">
+                  <h3 className="text-lg font-medium mb-2">{tour.title}</h3>
+                </Link>
                 <div className="flex items-center text-sm mb-2">
                   <span className="text-yellow-500"> {tour.rating}</span>
                   <span className="ml-2">({tour.reviews} reviews)</span>

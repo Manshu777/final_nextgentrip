@@ -443,6 +443,17 @@ const page = () => {
 
   return (
     <>
+
+    <head>
+        <title>
+       Bali Tour Packages – Ubud, Seminyak & More | NextGenTrip
+        </title>
+
+        <meta
+          name="description"
+          content="Experience Bali's enchanting beauty with NextGenTrip. Explore serene temples, lush rice terraces, and pristine beaches. Book your dream getaway today!."
+        />
+      </head>
       <section className="px-5 sm:px-5 md:px-10 lg:px-20 py-8">
         <div className="flex flex-col gap-5 ">
           <div>

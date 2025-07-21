@@ -176,6 +176,13 @@ const page = () => {
   ];
   return (
     <>
+      <head>
+        <title>NextGenTrip Holiday Deals – Explore More, Pay Less</title>
+        <meta
+          name="description"
+          content="Find the perfect holiday package with NextGenTrip. Whether it’s a romantic escape, family vacation, or group tour, we offer trips for every budget and style."
+        />
+      </head>
       <HeroSlider />
       {/* <div className="relative overflow-hidden px-5 lg:px-20 ">
         <div className="text-center pb-4 ">
@@ -289,10 +296,9 @@ const page = () => {
         </div>
       </div> */}
 
-      
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 px-5 lg:px-20 pb-1">
-  <PackageCompo />
-</div>  
+        <PackageCompo />
+      </div>
       <FAQSection />
     </>
   );

@@ -19,7 +19,7 @@ import { FaHotel } from "react-icons/fa6";
 import { FaUserCircle } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { getCurrencyDef } from "./Store/slices/currencySlice";
-import { useTranslations } from 'next-intl';
+import { useTranslations } from "next-intl";
 
 const Topbar = () => {
   const router = useRouter();
@@ -30,7 +30,7 @@ const Topbar = () => {
   const [selectedLang, setSelectedLang] = useState("en");
   const [topDropdown, setTopDropdown] = useState(null);
   const [activeLink, setActiveLink] = useState("");
-  const t = useTranslations('Navbar');
+  const t = useTranslations("Navbar");
   useEffect(() => {
     // Set the initial state from cookies (if available)
     const localeFromCookie = Cookies.get("locale");
@@ -68,10 +68,7 @@ const Topbar = () => {
   const [showIcons, setShowIcons] = useState(false);
 
   useEffect(() => {
-   
-
     const handleScroll = () => {
-  
       if (window.scrollY > 180) {
         setShowIcons(true);
       } else {
@@ -320,14 +317,15 @@ const Topbar = () => {
     setdefaultcurrency(info);
     setcurrencyappled(false);
     window.location.reload();
-
   };
   const getLangAbbreviation = (name) => {
     const parts = name.split(" "); // Split by space
     const firstPart = parts[0]; // Get "Hindi" or "English"
-    return firstPart.charAt(0).toUpperCase() + (firstPart.charAt(1) || "").toUpperCase(); // First two letters in uppercase
+    return (
+      firstPart.charAt(0).toUpperCase() +
+      (firstPart.charAt(1) || "").toUpperCase()
+    ); // First two letters in uppercase
   };
-
 
   const icons = [
     {
@@ -344,20 +342,18 @@ const Topbar = () => {
     },
 
     {
-      name: 'eSIM',
+      name: "eSIM",
       className: "meuicowidth esimimg",
       class: "esim",
       link: "/e-sim",
     },
 
     {
-      name: 'Visa',
+      name: "Visa",
       className: "meuicowidth passportimg",
       class: "eVisa",
       link: "https://www.visanextgen.com/",
     },
-
-
 
     // {
     //   name: t("flightHotel"),
@@ -385,16 +381,12 @@ const Topbar = () => {
     //   link: "/cabs",
     // },
 
-
-
     // {
     //   name: t("activities"),
     //   className: "meuicowidth actvitymenuico",
     //   class: "activity-icon",
     //   link: "/activities",
     // },
-
-
 
     {
       name: t("insurance"),
@@ -410,7 +402,6 @@ const Topbar = () => {
       link: "/cruise",
     },
 
-
     {
       name: t("charter"),
       className: "meuicowidth charterimg",
@@ -424,8 +415,6 @@ const Topbar = () => {
       class: "trains-icon",
       link: "/train",
     },
-
-
   ];
 
   return (
@@ -435,71 +424,72 @@ const Topbar = () => {
           <div
             className="flex   lg:hidden flex-col  justify-center cursor-pointer"
             onClick={openNav3}
-          >
-
-          </div>
+          ></div>
           <Link href="/">
-            <img src="/images/NextGenTrip.png" alt="" className="h-[35px] md:h-[60px]" />
+            <img
+              src="/images/NextGenTrip.png"
+              alt=""
+              className="h-[35px] md:h-[60px]"
+            />
           </Link>
           <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
         </div>
 
-
         {showIcons && (
           <div className="hidden md:flex gap-4 items-center ">
-             <div
-          className={`container  relative custom-nav  grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
-        >
-          {icons.map((item, index) => (
-            <Link
-              href={item.link}
-              key={index}
-              onClick={() => setActiveLink(item.link)}
-              className={` flex justify-center flex-col items-center mt-2 gap-1 p-3  text-center  rounded-md hover:bg-[#ECF5FE] hover:text-white transition-colors duration-300 ${activeLink === item.link
-                  ? "bg-[#ECF5FE] text-white"
-                  : "hover:bg-[#ECF5FE] hover:text-white"
-                }`}
+            <div
+              className={`container  relative custom-nav  grid grid-cols-3 md:flex gap-3 md:gap-6 lg:gap-0 transition-all duration-100 items-center overflow-auto `}
             >
+              {icons.map((item, index) => (
+                <Link
+                  href={item.link}
+                  key={index}
+                  onClick={() => setActiveLink(item.link)}
+                  className={` flex justify-center flex-col items-center mt-2 gap-1 p-3  text-center  rounded-md hover:bg-[#ECF5FE] hover:text-white transition-colors duration-300 ${
+                    activeLink === item.link
+                      ? "bg-[#ECF5FE] text-white"
+                      : "hover:bg-[#ECF5FE] hover:text-white"
+                  }`}
+                >
+                  <div
+                    src={item.icon}
+                    alt={`${item.name} icon`}
+                    className={`w-8 h-8 ${item.className}`}
+                    style={index === 0 ? { transform: "rotate(312deg)" } : {}}
+                  />
 
-              <div
-                src={item.icon}
-                alt={`${item.name} icon`}
-                className={`w-8 h-8 ${item.className}`}
-                style={index === 0 ? { transform: "rotate(312deg)" } : {}}
-              />
-
-              <span className="text-black font-semibold text-[12px]">
-                {item.name}
-              </span>
-            </Link>
-          ))}
-        </div>
+                  <span className="text-black font-semibold text-[12px]">
+                    {item.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 
-
-
-
         <div className="Contact-county-login-singnup flex items-center gap-1 lg:gap-4">
-         
+          {!showIcons && (
+            <>
+              <Link
+                href="/last-update"
+                className="hidden md:flex justify-center items-center gap-2 mx-2 px-6 py-2 bg-[#45a183] text-white font-semibold rounded-full shadow-md transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+              >
+                🔥 Today’s Hot Deals
+              </Link>
 
-          
-        {!showIcons && (
-        <Link
-          href="/property-listing"
-         className="hidden md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-[#10325a] text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
-
-        >
-          <FaHotel />
-          List Your Property
-        </Link>
-      )}
+              <Link
+                href="/property-listing"
+                className="hidden md:flex justify-center items-center gap-3 mx-4 px-8 py-3 bg-[#10325a] text-white font-semibold rounded-full shadow-lg transform hover:scale-105 hover:shadow-xl hover:opacity-90 transition-all duration-300 text-sm"
+              >
+                <FaHotel />
+                List Your Property
+              </Link>
+            </>
+          )}
 
           <a href="tel:+9877579319" className="hidden">
             <div className="border border-gray-300 rounded-full  text-white px-4 text-center shadow-md cursor-pointer transition duration-300 flex items-center gap-4 relative">
-
               <IoMdCall className="text-green-500  z-20 topPhoneRingingAnime absolute bottom-0 left-1  text-xl animate-pulse" />
-
 
               <div className="flex-shrink-0">
                 <img
@@ -508,7 +498,6 @@ const Topbar = () => {
                   className=" topPhoneRingingAnime rounded-full h-10 w-10 border-2 border-white"
                 />
               </div>
-
 
               <p className="text-sm  font-semibold">
                 Book Now - Call us 24/7:{" "}
@@ -523,67 +512,66 @@ const Topbar = () => {
           
           </a> */}
 
-
           <div className=" flex justify-center items-center ">
             <div
               className="flex items-center gap-2 cursor-pointer"
               onClick={() => setcurrencyappled(true)}
             >
-              <p className="text-xl lg:text-2xl font-semibold">{defaultcurrency.symble}</p>
+              <p className="text-xl lg:text-2xl font-semibold">
+                {defaultcurrency.symble}
+              </p>
               <p>{defaultcurrency.code}</p>
             </div>
           </div>
 
-          {
-            currencyappled && (
-              <div className="fixed flex justify-center items-center bg-[rgba(0,0,0,0.6)] inset-0 p-4">
-                <div onClick={(e) => e.stopPropagation()} className="h-[32rem] w-[700px] rounded-xl p-6 bg-white shadow-lg overflow-y-scroll">
+          {currencyappled && (
+            <div className="fixed flex justify-center items-center bg-[rgba(0,0,0,0.6)] inset-0 p-4">
+              <div
+                onClick={(e) => e.stopPropagation()}
+                className="h-[32rem] w-[700px] rounded-xl p-6 bg-white shadow-lg overflow-y-scroll"
+              >
+                <div className="text-center mb-6 flex justify-between ">
+                  <h3 className="text-xl font-semibold text-gray-800">
+                    Select Your Currency
+                  </h3>
+                  <button onClick={() => setcurrencyappled(false)} className="">
+                    <RxCross2 />
+                  </button>
+                </div>
 
-                  <div className="text-center mb-6 flex justify-between ">
-                    <h3 className="text-xl font-semibold text-gray-800">Select Your Currency</h3>
+                <div className="flex flex-wrap justify-center gap-4 ">
+                  {currency.map((currency) => (
                     <button
-                      onClick={() => setcurrencyappled(false)}
-                      className=""
+                      key={currency.code}
+                      onClick={() => handelCurrencySEt(currency)}
+                      className={`flex items-center gap-3 px-3 py-2 lg:px-5 lg:py-3 text-sm font-medium border rounded-lg lg:rounded-full shadow-sm transition duration-300 ${
+                        currency.code === defaultcurrency.code
+                          ? "bg-blue-500 text-white  border-blue-500"
+                          : "bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-300"
+                      }`}
                     >
-                      <RxCross2 />
-                    </button>
-                  </div>
+                      <span className="w-5 h-5 hidden   rounded-full bg-gray-300 lg:flex items-center justify-center text-xs">
+                        🌍
+                      </span>
 
-
-                  <div className="flex flex-wrap justify-center gap-4 ">
-                    {currency.map((currency) => (
-                      <button
-                        key={currency.code}
-                        onClick={() => handelCurrencySEt(currency)}
-                        className={`flex items-center gap-3 px-3 py-2 lg:px-5 lg:py-3 text-sm font-medium border rounded-lg lg:rounded-full shadow-sm transition duration-300 ${currency.code === defaultcurrency.code
-                            ? "bg-blue-500 text-white  border-blue-500"
-                            : "bg-gray-50 text-gray-700 hover:bg-gray-100 border-gray-300"
-                          }`}
-                      >
-
-                        <span className="w-5 h-5 hidden   rounded-full bg-gray-300 lg:flex items-center justify-center text-xs">
-                          🌍
-                        </span>
-
-                        <div className={`${currency.code === defaultcurrency.code
+                      <div
+                        className={`${
+                          currency.code === defaultcurrency.code
                             ? " !text-white  "
                             : " text-gray-700 "
-                          }`}  >
-                          <p>{currency.symble} - {currency.code}</p>
-                          <p className="text-xs ">{currency.country}</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                        }`}
+                      >
+                        <p>
+                          {currency.symble} - {currency.code}
+                        </p>
+                        <p className="text-xs ">{currency.country}</p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </div>
-
-
-            )
-          }
-
-
-
+            </div>
+          )}
 
           <div className="flex  justify-between items-center   ">
             <div className="flex items-center space-x-2">
@@ -602,13 +590,16 @@ const Topbar = () => {
                           className="w-6 h-6   md:w-8 md:h-8 rounded-full object-fill max-w-full"
                           alt=""
                         />
-                        <span className="text-nowrap hidden lg:block">{lang.name} </span>
+                        <span className="text-nowrap hidden lg:block">
+                          {lang.name}{" "}
+                        </span>
                         <span className="text-nowrap  block lg:hidden ">
                           {getLangAbbreviation(lang.name)}
                         </span>
                         <FaChevronDown
-                          className={`${countryOpner && "rotate-180"
-                            } hidden md:block`}
+                          className={`${
+                            countryOpner && "rotate-180"
+                          } hidden md:block`}
                         />
                       </button>
                     )
@@ -775,8 +766,8 @@ const Topbar = () => {
               {!userlogin && (
                 <Link className="relative" href={"/user/login"}>
                   <div className="bg-[#10325a] text-white px-3 lg:px-6 py-2 font-semibold rounded-full text-sm transition-all duration-300 transform hover:scale-105 hover:shadow-lg hover:shadow-[#10325a]/50 cursor-pointer">
-
-                  <span className="inline lg:hidden">Login</span>  <span className="hidden md:inline"> Signup</span>
+                    <span className="inline lg:hidden">Login</span>{" "}
+                    <span className="hidden md:inline"> Signup</span>
                   </div>
                   {/* 
                 {openDropdown === "signUp" && (

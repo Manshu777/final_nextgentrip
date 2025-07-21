@@ -1,76 +1,47 @@
-"use client"
-import axios from 'axios'
-import React, { useEffect ,useState} from 'react'
-import { apilink, imgurl } from '../Component/common'
-import { IoMdArrowDropdown ,IoMdArrowDropup} from "react-icons/io";
+"use client";
+import React from "react";
 
-const page = () => {
-const [updatedData,setUpdatedDate]=useState()
-const [showDes,setShowDes]=useState(null)
+// ✅ Manually added flyers (editable)
+const flyers = [
+  { image: "/images/dailyupdates/Dubai.webp" },
+  { image: "/images/dailyupdates/bali.webp" },
+  { image: "/images/dailyupdates/Europe.webp" },
+  { image: "/images/dailyupdates/Thailand.webp" },
+];
 
-useEffect(()=>{
-const fetchapi=async()=>{
-
-const data=await axios.get(`${apilink}/latestUpdate`)
-setUpdatedDate(data.data)
-
-}
-fetchapi()
-
-},[ ])
-
+const Page = () => {
   return (
-    <div>
+    <div className="bg-gradient-to-br from-[#e8f4ff] to-[#f4fcff] py-12 px-5 md:px-20 min-h-screen">
+      {/* ✅ Heading Section */}
+      <div className="text-center mb-10">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-[#10325a] drop-shadow-sm mb-4 tracking-tight">
+          📣 Grab <span className="text-[#ff4d4d]">Limited-Time</span> Travel
+          Offers — <span className="text-[#00b894]">Act Fast!</span>
+        </h1>
+        <p className="text-lg text-gray-700 max-w-3xl mx-auto  font-medium">
+          ✨ Missed moments don’t return — but the deals are here now. Book your
+          perfect escape with{" "}
+          <strong className="text-[#00b894]">NextGenTrip</strong> today!
+        </p>
+      </div>
 
- 
-
-
-      {updatedData && <div className=' p-10  px-20'>
-        <h2 className='mb-[1rem] text-2xl font-bold'>Daily Update on Site</h2>
-           {updatedData.map((info,index)=>
-            <div  key={index} className=' my-4'>
-           
-           <div className='flex w-full items-center justify-between p-3 shadow-lg  rounded-md border border-cyan-600'>
-<div className='flex items-center gap-9 w-full'>
-<img src={`${imgurl}/storage/${info.image}`} alt=""  className='w-28 rounded-full '/>
-<p className='text-2xl font-bold'>{info.title.toUpperCase()}</p>
-</div>
-<div className='flex items-center gap-3 '>
-  <p className='text-nowrap p-2 px-3 bg-[#ffff6f9c] rounded-lg border border-blue-500 '>{info.updated_at.split("T")[0]}</p>
-  {showDes !=index&& <div className=' text-4xl text-cyan-600 cursor-pointer ' onClick={()=>setShowDes(index)}><IoMdArrowDropdown  /></div>}
-  {showDes ==index&& <div className=' text-4xl text-cyan-600 cursor-pointer '  onClick={()=>setShowDes(null)}><IoMdArrowDropup  /></div>}
-
-  
-</div>
-<div>
-
-</div>
-
-</div>     
-
-{showDes==index &&
-
-  <div className=' p-3 grid grid-cols-2 items-center gap-4 shadow-lg  rounded-md border border-cyan-600 w-full mt-4 '>
-<div>
-<img src={`${imgurl}/storage/${info.image}`} alt=""  className=' w-full h-[25rem] '/>
-
-</div>
-<div className='mt-2 ' dangerouslySetInnerHTML={{__html:info.des}}>
-
-</div>
-  </div>
-
-}
-
-  </div>)}
-
-
-
-        
-        
-        </div>}
+      {/* ✅ Flyer Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-10">
+        {flyers.map((flyer, i) => (
+          <div
+            key={i}
+            className="rounded-xl overflow-hidden shadow-2xl bg-white border border-blue-100"
+          >
+            <img
+              src={flyer.image}
+              alt={`Flyer ${i + 1}`}
+              className="w-full h-[32rem] object-cover"
+            />
+          </div>
+        ))}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default page
+export default Page;

@@ -78,7 +78,6 @@ const MiniNav = () => {
                 list: "Membership & Loyalty Program",
               },
     
-    
               {
                 link: "/condition/privacy-policy",
                 list: "Privacy Policy",

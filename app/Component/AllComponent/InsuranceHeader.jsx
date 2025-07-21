@@ -137,7 +137,7 @@ export default function InsuranceHeader() {
             </div>
 
             <div className="col-span-1 relative">
-              <label className="block text-[12px] font-semibold text-gray-700 mb-1">No. of Passengers</label>
+              <label className="block text-[12px] font-semibold text-gray-700 mb-1">Passengers</label>
               <div
                 className="flex justify-between items-center p-2 border border-gray-300 rounded-md hover:border-blue-500 bg-white cursor-pointer"
                 onClick={() => setIsVisible(!isVisible)}

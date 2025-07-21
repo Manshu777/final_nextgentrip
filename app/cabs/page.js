@@ -62,6 +62,15 @@ const page = () => {
 
   return (
     <>
+
+    <head>
+  <title>NextGenTrip – Ride Smart, Book Your Cab in Seconds</title>
+  <meta
+    name="description"
+    content="NextGenTrip offers easy cab bookings for local, airport & outstation travel. Enjoy safe rides, 24/7 support, best prices, and global service—travel hassle-free!"
+  />
+  
+</head>
       <CabsComp />
       <MobileHeader />
       

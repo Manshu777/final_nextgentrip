@@ -21,19 +21,22 @@ const page = () => {
     redirect("/maintenance");
   }
 
-
   return (
     <>
       <head>
         <title>
-          Best Travel Agency in India | Budget Hotels & Tour Packages
+          NextGenTrip: Flight Booking, Hotels, Holidays, Visa & eSIM
         </title>
 
+        <meta
+          name="description"
+          content="NextGenTrip offers flight booking, hotels, holiday deals, visa services & eSIMs. Enjoy a seamless travel experience with trusted support & great savings."
+        />
         <meta
           name="keywords"
           content="best travel agency, budget hotels, tour agency in India, travel company in India, flight booking online, cruise booking, bus booking site, hotel booking, train ticket booking, charter plane, travel insurance"
         />
-          <script
+        <script
           data-noptimize="1"
           data-cfasync="false"
           data-wpfc-render="false"
@@ -51,13 +54,13 @@ const page = () => {
       </head>
       <Header />
 
-      <MineHolidayPkgComp/>   
-     <Service/> 
+      <MineHolidayPkgComp />
+      <Service />
       <div className="hidden md:block">
         <CustomSlider />
-      </div>  
- <TopFlight /> 
- <TipsTricks />
+      </div>
+      <TopFlight />
+      <TipsTricks />
       <Book />
       <Reviews />
     </>

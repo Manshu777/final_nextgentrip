@@ -57,6 +57,14 @@ const Page = () => {
 
   return (
     <>
+
+    <head>
+  <title>ATI Mate by NextGenTrip – Simplifying Travel Needs</title>
+  <meta
+    name="description"
+    content="NextGenTrip Atimate offers smart travel solutions with custom itineraries, live updates, and seamless bookings to ensure a smooth, stress-free journey."
+  />
+</head>
       <div className="bg-[#f0f7f5] min-h-[50vh] flex justify-center items-center  md:py-5 px-5">
         <div className="text-center max-w-4xl space-y-5">
           <h2 className="text-3xl font-semibold text-[#10325a] md:text-4xl">
