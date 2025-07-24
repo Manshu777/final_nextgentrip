@@ -173,7 +173,7 @@ const SelectSeaCompo = ({ slug }) => {
     const offeredPrice = Number(price || 0);
     const priceString = offeredPrice.toFixed(2);
     const [integerPart, decimalPart] = priceString.split(".");
-    return `${defaultcurrency.symble} ${integerPart},${decimalPart || "00"}`;
+    return `${defaultcurrency.symble} ${integerPart} .${decimalPart || ""}`;
   };
 
   return (

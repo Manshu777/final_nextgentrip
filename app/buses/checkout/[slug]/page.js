@@ -1,12 +1,12 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import React, { useState, useEffect, useCallback } from "react";
-import { GiAirplaneDeparture } from "react-icons/gi";
+import React, { useState, useEffect } from "react";
 import { FaLock, FaRupeeSign, FaSpinner, FaBusAlt } from "react-icons/fa";
 import { apilink } from "../../../Component/common";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 const CheckoutPage = () => {
   const searchParams = useSearchParams();
@@ -14,20 +14,31 @@ const CheckoutPage = () => {
   const [bookingData, setBookingData] = useState(null);
   const [boardingData, setBoardingData] = useState(null);
   const [selectedBusData, setSelectedBusData] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [passengers, setPassengers] = useState([]);
+  const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
-  const [isDataLoaded, setIsDataLoaded] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [countdown, setCountdown] = useState(300); // 5 minutes in seconds
 
+  // Load Razorpay script
   useEffect(() => {
-    if (isDataLoaded) return;
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
+  // Initialize booking data
+  useEffect(() => {
     let source = "none";
     try {
       const storedBookingData = localStorage.getItem("busBookingData");
       const storedBoardingData = localStorage.getItem("busBoardingData");
       const storedSelectedBus = localStorage.getItem("selectedBus");
+
       if (storedBookingData && storedBoardingData && storedSelectedBus) {
         const parsedBooking = JSON.parse(storedBookingData);
         const parsedBoarding = JSON.parse(storedBoardingData);
@@ -36,78 +47,36 @@ const CheckoutPage = () => {
         setBoardingData(parsedBoarding);
         setSelectedBusData(parsedSelectedBus);
 
-        console.log("Parsed booking data from localStorage:", parsedBooking);
         if (parsedBooking.Seats && Array.isArray(parsedBooking.Seats)) {
           setPassengers(
             parsedBooking.Seats.map((seat, index) => ({
               Title: "",
               FirstName: "",
               LastName: "",
-              Email: index === 0 ? "" : undefined,
-              Phoneno: "",
               Gender: "",
-              IdType: "",
-              IdNumber: "",
+              DateOfBirth: "",
               Address: index === 0 ? "" : undefined,
-              Age: 0,
+              City: index === 0 ? "" : undefined,
+              ContactNo: "",
+              Email: index === 0 ? "" : undefined,
               Seat: {
-                SeatIndex: seat.SeatIndex || 0,
-                SeatName: seat.SeatName || "",
-                SeatType: seat.SeatType || 1,
-                IsLadiesSeat: seat.IsLadiesSeat || false,
-                IsMalesSeat: seat.IsMalesSeat || false,
-                IsUpper: seat.IsUpper || false,
-                RowNo: seat.RowNo || "000",
-                SeatStatus: seat.SeatStatus || true,
-                SeatFare: seat.SeatFare || 0,
-                ColumnNo: seat.ColumnNo || "000",
+                SeatIndex: seat.SeatIndex || (index + 1).toString(),
+                SeatName: seat.SeatName || (index + 1).toString(),
+                Price: seat.Price || { PublishedPrice: seat.SeatFare || 0 },
               },
-              Price: {
-                CurrencyCode: seat.Price?.CurrencyCode || "INR",
-                BasePrice: seat.Price?.BasePrice || 0,
-                Tax: seat.Price?.Tax || 0,
-                OtherCharges: seat.Price?.OtherCharges || 0,
-                Discount: seat.Price?.Discount || 0,
-                PublishedPrice: seat.Price?.PublishedPrice || 0,
-                PublishedPriceRoundedOff: seat.Price?.PublishedPriceRoundedOff || 0,
-                OfferedPrice: seat.Price?.OfferedPrice || 0,
-                OfferedPriceRoundedOff: seat.Price?.OfferedPriceRoundedOff || 0,
-                AgentCommission: seat.Price?.AgentCommission || 0,
-                AgentMarkUp: seat.Price?.AgentMarkUp || 0,
-                TDS: seat.Price?.TDS || 0,
-                GST: {
-                  CGSTAmount: seat.Price?.GST?.CGSTAmount || 0,
-                  CGSTRate: seat.Price?.GST?.CGSTRate || 0,
-                  CessAmount: seat.Price?.GST?.CessAmount || 0,
-                  CessRate: seat.Price?.GST?.CessRate || 0,
-                  IGSTAmount: seat.Price?.GST?.IGSTAmount || 0,
-                  IGSTRate: seat.Price?.GST?.IGSTRate || 0,
-                  SGSTAmount: seat.Price?.GST?.SGSTAmount || 0,
-                  SGSTRate: seat.Price?.GST?.SGSTRate || 0,
-                  TaxableAmount: seat.Price?.GST?.TaxableAmount || 0,
-                },
-              },
-              LeadPassenger: index === 0,
             }))
           );
         } else {
           setError("No valid seat data found in booking");
         }
-        console.log("Data from localStorage - bookingData:", parsedBooking);
-        console.log("Data from localStorage - busBoardingData:", parsedBoarding);
-        console.log("Data from localStorage - selectedBus:", parsedSelectedBus);
         source = "localStorage";
-        setIsDataLoaded(true);
-        return;
       }
     } catch (error) {
       console.error("Error parsing localStorage data:", error);
       setError("Error retrieving data from localStorage");
-      setIsDataLoaded(true);
     }
 
     const data = searchParams.get("data");
-
     if (data) {
       try {
         const decodedData = decodeURIComponent(data.replace(/\/$/, ""));
@@ -115,87 +84,73 @@ const CheckoutPage = () => {
           const parsed = JSON.parse(decodedData);
           setBookingData(parsed);
 
-          console.log("Parsed booking data from query:", parsed);
           if (parsed.Seats && Array.isArray(parsed.Seats)) {
             setPassengers(
               parsed.Seats.map((seat, index) => ({
                 Title: "",
                 FirstName: "",
                 LastName: "",
-                Email: index === 0 ? "" : undefined,
-                Phoneno: "",
                 Gender: "",
-                IdType: "",
-                IdNumber: "",
+                DateOfBirth: "",
                 Address: index === 0 ? "" : undefined,
-                Age: 0,
+                City: index === 0 ? "" : undefined,
+                ContactNo: "",
+                Email: index === 0 ? "" : undefined,
                 Seat: {
-                  SeatIndex: seat.SeatIndex || 0,
-                  SeatName: seat.SeatName || "",
-                  SeatType: seat.SeatType || 1,
-                  IsLadiesSeat: seat.IsLadiesSeat || false,
-                  IsMalesSeat: seat.IsMalesSeat || false,
-                  IsUpper: seat.IsUpper || false,
-                  RowNo: seat.RowNo || "000",
-                  SeatStatus: seat.SeatStatus || true,
-                  SeatFare: seat.SeatFare || 0,
-                  ColumnNo: seat.ColumnNo || "000",
+                  SeatIndex: seat.SeatIndex || (index + 1).toString(),
+                  SeatName: seat.SeatName || (index + 1).toString(),
+                  Price: seat.Price || { PublishedPrice: seat.SeatFare || 0 },
                 },
-                Price: {
-                  CurrencyCode: seat.Price?.CurrencyCode || "INR",
-                  BasePrice: seat.Price?.BasePrice || 0,
-                  Tax: seat.Price?.Tax || 0,
-                  OtherCharges: seat.Price?.OtherCharges || 0,
-                  Discount: seat.Price?.Discount || 0,
-                  PublishedPrice: seat.Price?.PublishedPrice || 0,
-                  PublishedPriceRoundedOff: seat.Price?.PublishedPriceRoundedOff || 0,
-                  OfferedPrice: seat.Price?.OfferedPrice || 0,
-                  OfferedPriceRoundedOff: seat.Price?.OfferedPriceRoundedOff || 0,
-                  AgentCommission: seat.Price?.AgentCommission || 0,
-                  AgentMarkUp: seat.Price?.AgentMarkUp || 0,
-                  TDS: seat.Price?.TDS || 0,
-                  GST: {
-                    CGSTAmount: seat.Price?.GST?.CGSTAmount || 0,
-                    CGSTRate: seat.Price?.GST?.CGSTRate || 0,
-                    CessAmount: seat.Price?.GST?.CessAmount || 0,
-                    CessRate: seat.Price?.GST?.CessRate || 0,
-                    IGSTAmount: seat.Price?.GST?.IGSTAmount || 0,
-                    IGSTRate: seat.Price?.GST?.IGSTRate || 0,
-                    SGSTAmount: seat.Price?.GST?.SGSTAmount || 0,
-                    SGSTRate: seat.Price?.GST?.SGSTRate || 0,
-                    TaxableAmount: seat.Price?.GST?.TaxableAmount || 0,
-                  },
-                },
-                LeadPassenger: index === 0,
               }))
             );
           } else {
             setError("No valid seat data found in query parameter");
           }
-          console.log("Data from query:", parsed);
           source = "query";
           localStorage.setItem("busBookingData", JSON.stringify(parsed));
-          console.log("Stored query data in localStorage:", parsed);
-          setIsDataLoaded(true);
         } else {
           setError("Invalid JSON format in query parameter");
-          console.error("Invalid JSON format:", decodedData);
-          setIsDataLoaded(true);
         }
       } catch (error) {
         setError("Error parsing query data: " + error.message);
-        console.error("Error parsing query data:", error.message, error.stack);
-        setIsDataLoaded(true);
       }
     } else {
       setError("No booking data available");
-      console.log("No query data available");
-      setIsDataLoaded(true);
     }
     console.log("Data source:", source);
-  }, [searchParams, isDataLoaded]);
+  }, [searchParams]);
 
-  const handleChange = useCallback((e, index) => {
+  // Countdown timer for session expiration
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          router.push("/bus");
+          Swal.fire({
+            icon: "error",
+            title: "Session Expired",
+            text: "Your session has expired. Please search for a bus again.",
+            confirmButtonText: "OK",
+          });
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [router]);
+
+  // Format countdown time
+  const formatCountdown = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
+  };
+
+  // Handle input changes
+  const handleChange = (e, index) => {
     const { name, value } = e.target;
     setPassengers((prev) => {
       const updated = [...prev];
@@ -203,7 +158,7 @@ const CheckoutPage = () => {
       return updated;
     });
 
-    if (!value && name !== "IdNumber" && !(name === "Email" && index !== 0) && !(name === "Address" && index !== 0)) {
+    if (!value) {
       setErrors((prev) => ({
         ...prev,
         [`${name}_${index}`]: `${name} is required`,
@@ -215,10 +170,10 @@ const CheckoutPage = () => {
         return updatedErrors;
       });
     }
-  }, []);
+  };
 
-  const calculateAge = useCallback((dob) => {
-    if (!dob) return 0;
+  // Calculate age for passenger
+  const calculateAge = (dob) => {
     const birthDate = new Date(dob);
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
@@ -227,129 +182,316 @@ const CheckoutPage = () => {
       age--;
     }
     return age;
-  }, []);
+  };
 
-  const validatePassengers = useCallback(() => {
+  // Validate passenger data
+  const validateForm = () => {
     const validationErrors = {};
     passengers.forEach((passenger, index) => {
-      ["Title", "FirstName", "LastName", "Phoneno", "Gender", "Age"].forEach((field) => {
-        if (!passenger[field] || (field === "Age" && passenger[field] <= 0)) {
+      const requiredFields = [
+        "Title",
+        "FirstName",
+        "LastName",
+        "Gender",
+        "DateOfBirth",
+        "ContactNo",
+      ];
+      if (index === 0) {
+        requiredFields.push("Address", "City", "Email");
+      }
+      requiredFields.forEach((field) => {
+        if (!passenger[field]) {
           validationErrors[`${field}_${index}`] = `${field} is required`;
         }
       });
-      if (index === 0 && !passenger.Email) {
-        validationErrors[`Email_${index}`] = `Email is required for lead passenger`;
+
+      // Validate Date of Birth
+      if (passenger.DateOfBirth) {
+        const dob = new Date(passenger.DateOfBirth);
+        const today = new Date();
+        if (dob > today) {
+          validationErrors[`DateOfBirth_${index}`] = "Date of Birth cannot be in the future";
+        } else {
+          const age = calculateAge(passenger.DateOfBirth);
+          if (age < 0 || age > 100) {
+            validationErrors[`DateOfBirth_${index}`] = "Invalid Date of Birth";
+          }
+        }
       }
-      if (index === 0 && !passenger.Address) {
-        validationErrors[`Address_${index}`] = `Address is required for lead passenger`;
+
+      // Validate Contact Number
+      if (passenger.ContactNo && !/^\d{10}$/.test(passenger.ContactNo)) {
+        validationErrors[`ContactNo_${index}`] = "Contact Number must be 10 digits";
       }
-      if (!passenger.IdType) {
-        validationErrors[`IdType_${index}`] = `IdType is required`;
-      }
-      if (!passenger.IdNumber) {
-        validationErrors[`IdNumber_${index}`] = `IdNumber is required`;
+
+      // Validate Email
+      if (
+        index === 0 &&
+        passenger.Email &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(passenger.Email)
+      ) {
+        validationErrors[`Email_${index}`] = "Invalid Email Address";
       }
     });
-    setErrors((prev) => ({ ...prev, ...validationErrors }));
+
+    setErrors(validationErrors);
     return Object.keys(validationErrors).length === 0;
-  }, [passengers]);
+  };
 
-  console.log("Query parameter data:", passengers);
-
+  // Handle booking and payment
   const handleBooking = async () => {
-    // Validation is commented out in the provided code, but UI relies on it
-    // if (!validatePassengers()) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Validation Error",
-    //     text: "Please fill out all required fields and ensure all passengers have assigned seats.",
-    //   });
-    //   return;
-    // }
-
-    setIsLoading(true);
-
-    try {
-      const mappedPassengers = passengers.map((passenger, index) => ({
-        LeadPassenger: index === 0,
-        Title: passenger.Title,
-        FirstName: passenger.FirstName,
-        LastName: passenger.LastName,
-        Email: passenger.Email || "null",
-        Phoneno: passenger.Phoneno,
-        Gender: passenger.Gender === "Male" ? 1 : passenger.Gender === "Female" ? 2 : 3,
-        IdType: passenger.IdType || "null",
-        IdNumber: passenger.IdNumber || "null",
-        Address: passenger.Address || "null",
-        Age: passenger.Age,
-        Seat: passenger.Seat,
-        Price: passenger.Price,
-      }));
-
-      const blockPayload = {
-        EndUserIp: bookingData?.EndUserIp || "223.178.213.196",
-        TokenId: bookingData?.TokenId || "fb8f5b1a-6d20-4238-b7de-d78e61d2e386",
-        TraceId: bookingData?.TraceId || "7cbdcb28-c0c0-4b0f-9c3f-5bd5bbb4b3e9",
-        ResultIndex: parseInt(bookingData?.ResultIndex || selectedBusData?.ResultIndex || "194"),
-        BoardingPointId: bookingData?.BoardingPointId || boardingData?.BoardingPointsDetails[0]?.CityPointIndex || 1,
-        DroppingPointId: bookingData?.DropingPointId || boardingData?.DroppingPointsDetails[0]?.CityPointIndex || 1,
-        Passenger: mappedPassengers,
-      };
-
-      const blockResponse = await axios.post(`${apilink}/bus/busblock`, blockPayload);
-      if (blockResponse.data.ResponseStatus !== 1) {
-        throw new Error(blockResponse.data.Error.ErrorMessage || "Failed to block bus seats");
-      }
-
-      const bookPayload = {
-        ...blockPayload,
-        BlockKey: blockResponse.data.BlockResult?.BlockKey,
-        BookingId: blockResponse.data.BlockResult?.BookingId,
-        InventoryItems: blockResponse.data.BlockResult?.InventoryItems,
-      };
-
-         console.log("Booking Payload:", bookPayload);
-      const bookResponse = await axios.post(`${apilink}/bus/book`, bookPayload);
-      if (bookResponse.data.BookResult.ResponseStatus !== 1) {
-        throw new Error(bookResponse.data.BookResult.Error.ErrorMessage || "Booking failed");
-      }
-
-      Swal.fire({
-        icon: "success",
-        title: "Booking Confirmed",
-        text: `Booking ID: ${bookResponse.data.BookResult?.BookingId || "N/A"}\nTicket No: ${bookResponse.data.BookResult.TicketNo}`,
-      });
-
-      localStorage.removeItem("busBookingData");
-      localStorage.removeItem("busBoardingData");
-      localStorage.removeItem("selectedBus");
-      localStorage.removeItem("selectedSeatDetails");
-      router.push("/booking-confirmation");
-    } catch (error) {
-      console.error("Booking Error:", error);
+    if (!validateForm()) {
       Swal.fire({
         icon: "error",
-        title: "Booking Failed",
-        text: error.message || "Please contact support.",
+        title: "Validation Error",
+        text: "Please fill out all required fields and fix the errors before submitting.",
+        confirmButtonText: "OK",
       });
-    } finally {
+      return;
+    }
+
+    // Assume PublishedPrice is in paise
+    const totalAmount = passengers.reduce(
+      (total, p) => total + (p.Seat?.Price?.PublishedPrice || 0),
+      0
+    );
+
+    if (totalAmount <= 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Amount",
+        text: "The total amount is invalid. Please reselect your seats.",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    const requestId = uuidv4();
+    const requestLog = {
+      requestId,
+      timestamp: new Date().toISOString(),
+      endpoint: "",
+      payload: {},
+      response: null,
+    };
+
+    try {
+      const leadPassenger = passengers[0];
+
+      // Log seat prices for debugging
+      console.log("Seat Prices:", passengers.map(p => ({
+        SeatName: p.Seat.SeatName,
+        PublishedPrice: p.Seat.Price.PublishedPrice,
+        PublishedPriceInRupees: (p.Seat.Price.PublishedPrice / 100).toFixed(2),
+      })));
+      console.log("Total Amount (paise):", totalAmount);
+      console.log("Total Amount (rupees):", (totalAmount / 100).toFixed(2));
+
+      // Create Razorpay order
+      const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
+        amount: totalAmount, // In paise
+        currency: "INR",
+        receipt: `bus_booking_${Date.now()}`,
+        user_email: leadPassenger.Email,
+        user_name: `${leadPassenger.FirstName} ${leadPassenger.LastName || ""}`,
+        user_phone: leadPassenger.ContactNo || "9999999999",
+      });
+
+      const { order_id } = orderResponse.data;
+
+      const options = {
+        key: "rzp_live_GHQAKE32vCoZBA", // Live Razorpay key
+        amount: totalAmount, // In paise
+        currency: "INR",
+        name: "Next Gen Trip Pvt Ltd",
+        description: "Bus Booking Payment",
+        order_id,
+        handler: async (response) => {
+          try {
+            const mappedPassengers = passengers.map((passenger, index) => ({
+              LeadPassenger: index === 0,
+              PassengerId: 0,
+              Title: passenger.Title,
+              Address: passenger.Address || "",
+              Age: calculateAge(passenger.DateOfBirth),
+              Email: passenger.Email || "",
+              FirstName: passenger.FirstName,
+              Gender: passenger.Gender === "Male" ? 1 : passenger.Gender === "Female" ? 2 : 3,
+              IdNumber: passenger.PassportNo || "null",
+              IdType: passenger.PassportNo ? 10 : 0,
+              LastName: passenger.LastName,
+              Phoneno: passenger.ContactNo,
+              Seat: {
+                ColumnNo: passenger.Seat?.ColumnNo || "000",
+                Height: 1,
+                IsLadiesSeat: passenger.Seat?.IsLadiesSeat || false,
+                IsMalesSeat: passenger.Seat?.IsMalesSeat || false,
+                IsUpper: passenger.Seat?.IsUpper || false,
+                RowNo: passenger.Seat?.RowNo || "000",
+                SeatIndex: passenger.Seat?.SeatIndex || (index + 1).toString(),
+                SeatName: passenger.Seat?.SeatName || (index + 1).toString(),
+                SeatStatus: true,
+                SeatType: passenger.Seat?.SeatType || 1,
+                Width: 1,
+                Price: passenger.Seat?.Price || { PublishedPrice: 0 },
+              },
+            }));
+
+            const blockPayload = {
+              EndUserIp: "223.178.213.196",
+              ResultIndex: bookingData?.ResultIndex || selectedBusData?.ResultIndex || 16,
+              TraceId: bookingData?.TraceId || "9a76f39f-dd53-4431-b010-0e4208d74422",
+              BoardingPointId: bookingData?.BoardingPointId || 1,
+              DroppingPointId: bookingData?.DroppingPointId || 1,
+              Passenger: mappedPassengers,
+            };
+
+            requestLog.endpoint = `${apilink}/bus/busblock`;
+            requestLog.payload = blockPayload;
+
+            const blockResponse = await axios.post(`${apilink}/bus/busblock`, blockPayload);
+
+            if (!blockResponse.data?.status) {
+              throw new Error(blockResponse.data?.message || "Failed to block bus seats");
+            }
+
+            const blockResult = blockResponse.data;
+
+            const bookPayload = {
+              ...blockPayload,
+              BlockKey: blockResult?.BlockKey,
+              BookingId: blockResult?.BookingId,
+              InventoryItems: blockResult?.InventoryItems,
+            };
+
+            requestLog.endpoint = `${apilink}/bus/book`;
+            requestLog.payload = bookPayload;
+
+            const bookResponse = await axios.post(`${apilink}/bus/book`, bookPayload);
+
+            if (!bookResponse.data?.status) {
+              throw new Error(bookResponse.data?.message || "Booking failed");
+            }
+
+            const bookResult = bookResponse.data;
+
+            // Capture payment
+            await axios.post(`${apilink}/capture-razorpay-payment`, {
+              payment_id: response.razorpay_payment_id,
+              amount: totalAmount / 100, // Convert to rupees
+            });
+
+            requestLog.response = bookResponse.data;
+            localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+            // Send invoice
+            const busTicket = {
+              boarding_point: boardingData?.BoardingPointsDetails[0]?.CityPointName,
+              dropping_point: boardingData?.DroppingPointsDetails[0]?.CityPointName,
+              boarding_time: boardingData?.BoardingPointsDetails[0]?.CityPointTime,
+              dropping_time: boardingData?.DroppingPointsDetails[0]?.CityPointTime,
+              passenger_name: `${passengers[0].Title} ${passengers[0].FirstName} ${passengers[0].LastName}`,
+              email: passengers[0].Email,
+              booking_id: bookResult?.BookingId || bookingData?.TraceId,
+              route: `${boardingData?.BoardingPointsDetails[0]?.CityPointName} → ${boardingData?.DroppingPointsDetails[0]?.CityPointName}`,
+              date: new Date(boardingData?.BoardingPointsDetails[0]?.CityPointTime).toLocaleDateString(),
+              total_bdt: (totalAmount / 100).toFixed(2), // Convert to rupees
+              payment_status: "Completed",
+            };
+
+            await axios.post("http://your-laravel-api/send-invoice", busTicket);
+
+            Swal.fire({
+              icon: "success",
+              title: "Booking and Payment Successful",
+              text: `Booking ID: ${bookResult?.BookingId || "N/A"}\nPayment ID: ${response.razorpay_payment_id}`,
+              confirmButtonText: "OK",
+            });
+
+            localStorage.removeItem("busBookingData");
+            localStorage.removeItem("busBoardingData");
+            localStorage.removeItem("selectedBus");
+            router.push("/booking-confirmation");
+          } catch (err) {
+            console.error("Booking Error:", err);
+            requestLog.response = { error: err.message };
+            localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+            Swal.fire({
+              icon: "error",
+              title: "Booking Failed",
+              text: err.message || "Please contact support.",
+              confirmButtonText: "OK",
+            });
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        prefill: {
+          name: `${leadPassenger.FirstName} ${leadPassenger.LastName || ""}`,
+          email: leadPassenger.Email || "",
+          contact: leadPassenger.ContactNo || "",
+        },
+        theme: {
+          color: "#0086da",
+        },
+        modal: {
+          ondismiss: () => {
+            setIsLoading(false);
+            Swal.fire({
+              icon: "error",
+              title: "Payment Cancelled",
+              text: "The payment was cancelled. Please try again.",
+              confirmButtonText: "OK",
+            });
+          },
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", (response) => {
+        setIsLoading(false);
+        requestLog.response = { error: response.error.description };
+        localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+        Swal.fire({
+          icon: "error",
+          title: "Payment Failed",
+          text: response.error.description || "Payment was not successful. Please try again.",
+          confirmButtonText: "OK",
+        });
+      });
+
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment Initialization Error:", error);
+      requestLog.response = { error: error.message };
+      localStorage.setItem(`apiLog_${requestId}`, JSON.stringify(requestLog));
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || error.message || "Something went wrong during payment.",
+        confirmButtonText: "OK",
+      });
       setIsLoading(false);
     }
   };
 
+  // Render
   return (
-    <div className="max-w-[100rem] mx-auto grid grid-cols-1 md:grid-cols-3 gap-4 px-4 lg:px-[5%]">
-      {error && (
-        <div className="col-span-1 md:col-span-3 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-          {error}
+    <div className="grid max-w-[100rem] mx-auto grid-cols-1 md:grid-cols-2 gap-4 p-4">
+      <div className="FirstChild border rounded-lg shadow-lg md:col-span-1">
+        <div className="flex justify-end mb-4">
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-lg">
+            Time Left: {formatCountdown(countdown)}
+          </div>
         </div>
-      )}
-
-      <div className="border rounded-lg shadow-lg md:col-span-2 bg-white">
         <div className="bg-[#D5EEFE] py-3 px-4 rounded-t-lg">
           <div className="flex items-center gap-3">
             <div className="border-4 bg-white border-orange-100 h-10 w-10 flex justify-center items-center text-2xl rounded-full">
-              <GiAirplaneDeparture />
+              <FaBusAlt />
             </div>
             <div>
               <span className="text-sm md:text-xl font-medium">Traveller Details</span>
@@ -365,65 +507,56 @@ const CheckoutPage = () => {
                 {boardingData?.BoardingPointsDetails[0]?.CityPointName || "Unknown"} ➜{" "}
                 {boardingData?.DroppingPointsDetails[0]?.CityPointName || "Unknown"}
               </p>
-              <p className="text-sm text-gray-500">{selectedBusData?.BusType || "Express AC Bus"} - Approx. 6h</p>
+              <p className="text-sm text-gray-500">Express AC Bus - Approx. 6h</p>
             </div>
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-600">
               Departure:{" "}
               {boardingData?.BoardingPointsDetails[0]?.CityPointTime
-                ? new Date(boardingData.BoardingPointsDetails[0].CityPointTime).toLocaleString()
+                ? new Date(boardingData.BoardingPointsDetails[0].CityPointTime).toLocaleTimeString()
                 : "N/A"}
             </p>
             <p className="text-sm text-gray-600">
               Arrival:{" "}
               {boardingData?.DroppingPointsDetails[0]?.CityPointTime
-                ? new Date(boardingData.DroppingPointsDetails[0].CityPointTime).toLocaleString()
+                ? new Date(boardingData.DroppingPointsDetails[0].CityPointTime).toLocaleTimeString()
                 : "N/A"}
             </p>
           </div>
         </div>
 
         <div className="p-4">
-          <h3 className="text-lg font-semibold mb-4">Passenger Details</h3>
-          {passengers.map((passenger, index) => (
-            <div key={index} className="mb-6 p-4 border rounded-lg shadow-md bg-gray-50">
-              <h4 className="text-md font-semibold text-gray-700 mb-3">
-                Passenger {index + 1} {index === 0 ? "(Lead Passenger)" : ""} - Seat: {passenger.Seat?.SeatName || "Not assigned"}
-              </h4>
-              <form className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h3 className="text-lg font-semibold">ADULT</h3>
+          {passengers?.map((passenger, index) => (
+            <div key={index} className="m-4 rounded-lg shadow-lg border-2 bg-white">
+              <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 border rounded-md shadow-lg">
                 {[
-                  { name: "Title", type: "select", options: ["Mr", "Ms", "Mrs"], required: true },
-                  { name: "FirstName", type: "text", placeholder: "Enter first name", required: true },
-                  { name: "LastName", type: "text", placeholder: "Enter last name", required: true },
-                  { name: "Gender", type: "select", options: ["Male", "Female", "Other"], required: true },
-                  { name: "DateOfBirth", type: "date", placeholder: "Select date of birth", required: true },
-                  { name: "Address", type: "text", placeholder: "Enter address", required: index === 0 },
-                  { name: "Phoneno", type: "tel", placeholder: "Enter contact number", required: true },
-                  { name: "Email", type: "email", placeholder: "Enter email", required: index === 0 },
-                  {
-                    name: "IdType",
-                    type: "select",
-                    options: ["PAN card", "Voter ID", "Passport"],
-                    required: true,
-                  },
-                  { name: "IdNumber", type: "text", placeholder: "Enter ID number", required: true },
+                  { name: "Title", type: "select", options: ["Mr", "Ms", "Mrs"] },
+                  { name: "FirstName", type: "text" },
+                  { name: "LastName", type: "text" },
+                  { name: "Gender", type: "select", options: ["Male", "Female", "Other"] },
+                  { name: "DateOfBirth", type: "date" },
+                  { name: "Address", type: "text", required: index === 0 },
+                  { name: "City", type: "text", required: index === 0 },
+                  { name: "ContactNo", type: "text" },
+                  { name: "Email", type: "email", required: index === 0 },
                 ].map((field) => (
                   <div key={field.name}>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      {field.name} {field.required && <span className="text-red-500">*</span>}
-                    </label>
+                    <label className="block text-[10px] font-bold text-gray-900 mb-1">{field.name}</label>
                     {field.type === "select" ? (
                       <select
                         name={field.name}
                         value={passenger[field.name] || ""}
                         onChange={(e) => handleChange(e, index)}
-                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                        required={field.required}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                        required={field.required !== undefined ? field.required : true}
                       >
-                        <option value="">{`Select ${field.name}`}</option>
+                        <option value="">Select {field.name}</option>
                         {field.options.map((opt) => (
-                          <option key={opt} value={opt}>{opt}</option>
+                          <option key={opt} value={opt}>
+                            {opt}
+                          </option>
                         ))}
                       </select>
                     ) : (
@@ -432,13 +565,12 @@ const CheckoutPage = () => {
                         name={field.name}
                         value={passenger[field.name] || ""}
                         onChange={(e) => handleChange(e, index)}
-                        placeholder={field.placeholder}
-                        className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
-                        required={field.required}
+                        className="w-full border border-gray-300 rounded-md p-2"
+                        required={field.required !== undefined ? field.required : true}
                       />
                     )}
                     {errors[`${field.name}_${index}`] && (
-                      <p className="text-red-500 text-xs mt-1">{errors[`${field.name}_${index}`]}</p>
+                      <p className="text-red-500 text-sm">{errors[`${field.name}_${index}`]}</p>
                     )}
                   </div>
                 ))}
@@ -452,57 +584,34 @@ const CheckoutPage = () => {
         </div>
       </div>
 
-      <div className="w-full md:col-span-1 space-y-4">
+      <div className="rightSide space-y-4 md:px-4 md:col-span-1">
         <div className="sticky top-4">
-          <div className="border rounded-lg shadow-lg bg-white">
-            <div className="bg-[#D1EAFF] px-4 py-3 rounded-t-lg">
-              <h3 className="text-lg font-semibold">Price Summary</h3>
+          <div className="priceBoxAndDetails border rounded shadow-lg">
+            <div className="border rounded-t flex items-center px-3 py-2 bg-[#D1EAFF]">
+              <h3>Price Summary</h3>
             </div>
-            <div className="p-4 space-y-3">
-              <div className="flex justify-between text-sm">
-                <p>Adult x {passengers.length}</p>
-                <p className="flex items-center font-bold">
-                  <FaRupeeSign />
-                  {passengers.reduce((total, p) => total + (p.Price?.OfferedPriceRoundedOff || 0), 0)}
-                </p>
-              </div>
-              {passengers.map((p, index) => (
-                <div key={index} className="flex justify-between text-sm text-gray-600">
-                  <p>Seat {p.Seat?.SeatName || "N/A"} (Fare: {p.Seat?.SeatFare || 0})</p>
-                  <p className="flex items-center">
-                    <FaRupeeSign />
-                    {p.Price?.OfferedPriceRoundedOff || 0}
-                  </p>
-    </div>
-              ))}
-              <div className="border-t pt-2 flex justify-between font-bold text-sm">
-                <p>Total</p>
+            <div className="flex justify-between px-3 py-3 text-sm border-b">
+              <p>Adult x {passengers?.length}</p>
+              <p className="flex items-center font-bold text-xs">
+                <FaRupeeSign />
+                {passengers.reduce((total, p) => total + (p.Seat?.Price?.PublishedPrice || 0), 0).toLocaleString("en-IN")}
+              </p>
+            </div>
+            {passengers.map((p, index) => (
+              <div key={index} className="flex justify-between px-3 py-2 text-sm text-gray-600 border-b">
+                <p>Seat {p.Seat?.SeatName || "N/A"}</p>
                 <p className="flex items-center">
                   <FaRupeeSign />
-                  {passengers.reduce((total, p) => total + (p.Price?.OfferedPriceRoundedOff || 0), 0)}
+                  {(p.Seat?.Price?.PublishedPrice || 0).toLocaleString("en-IN")}
                 </p>
               </div>
-            </div>
+            ))}
           </div>
 
-          <div className="border rounded-lg shadow-lg bg-white">
-            <div className="bg-[#2196F3] px-4 py-2 text-white rounded-t-lg">Offers and Promo Codes</div>
-            <div className="p-4">
-              <input
-                type="text"
-                placeholder="Enter promo code"
-                className="w-full border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-300 focus:outline-none"
-              />
-              <button className="mt-2 w-full bg-blue-500 text-white rounded-md py-2 hover:bg-blue-600 transition">
-                Apply Promo
-              </button>
-            </div>
-          </div>
-
-          <div className="flex justify-center mt-4">
+          <div className="booking flex justify-center items-center mt-3">
             <button
-              className={`bg-[#DA5200] text-white rounded-full w-full py-3 flex justify-center items-center font-semibold ${
-                isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-[#b54300] transition"
+              className={`bg-[#DA5200] text-sm lg:text-lg tracking-normal text-white rounded-full w-full md:w-[80%] py-2 flex justify-center items-center ${
+                isLoading ? "opacity-75 cursor-not-allowed" : ""
               }`}
               onClick={handleBooking}
               disabled={isLoading}

@@ -58,7 +58,7 @@ const Page = () => {
           PassportNo: "",
           MajorDestination: "INDIA",
           PassportCountry: "IN",
-          RelationToBeneficiary: "", // Initialize as empty to require user selection
+          RelationToBeneficiary: "",
           IsLeadPax: index === 0,
         }));
       setPassengers(initialPassengers);
@@ -128,16 +128,11 @@ const Page = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-
-
-  console.log('insuranceData', insuranceData?.Price?.PublishedPriceRoundedOff)
-
-
   const handleBookInsurance = async (e) => {
     e.preventDefault();
     const isValid = validateAllForms();
     const traceID = localStorage.getItem("selectedInsuranceTraceId");
-  
+
     if (!isValid) {
       Swal.fire({
         icon: "error",
@@ -146,13 +141,23 @@ const Page = () => {
       });
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const leadPassenger = passengers[0];
       const amount = insuranceData?.Price?.PublishedPriceRoundedOff;
-  
+
+      if (!amount || isNaN(amount)) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Invalid insurance amount. Please try again.",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       // 1. Create Razorpay Order
       const orderResponse = await axios.post(`${apilink}/create-razorpay-order`, {
         amount,
@@ -162,9 +167,9 @@ const Page = () => {
         user_name: `${leadPassenger.FirstName} ${leadPassenger.LastName}`,
         user_phone: leadPassenger.PhoneNumber || "9999999999",
       });
-  
+
       const { order_id } = orderResponse.data;
-  
+
       const options = {
         key: "rzp_live_GHQAKE32vCoZBA",
         amount,
@@ -203,17 +208,16 @@ const Page = () => {
                 IsLeadPax: passenger.IsLeadPax,
               })),
             };
-  
+
             const bookingRes = await axios.post(`${apilink}/insurance-book`, payload);
-  
             setBookingResponse(bookingRes.data);
-  
+            setShowModal(true); // Show modal only after successful booking
+
             Swal.fire({
               icon: "success",
               title: "Payment & Booking Successful",
               text: `Payment ID: ${response.razorpay_payment_id}`,
             });
-  
           } catch (bookingError) {
             console.error("Booking failed after payment:", bookingError);
             Swal.fire({
@@ -221,6 +225,8 @@ const Page = () => {
               title: "Booking Failed",
               text: "Payment succeeded, but booking failed. Please contact support.",
             });
+          } finally {
+            setIsLoading(false);
           }
         },
         prefill: {
@@ -231,12 +237,28 @@ const Page = () => {
         theme: {
           color: "#0086da",
         },
+        modal: {
+          ondismiss: () => {
+            Swal.fire({
+              icon: "error",
+              title: "Payment Cancelled",
+              text: "Payment was not completed. Please try again.",
+            });
+            setIsLoading(false);
+          },
+        },
       };
-  
+
       const razorpay = new window.Razorpay(options);
+      razorpay.on("payment.failed", (response) => {
+        Swal.fire({
+          icon: "error",
+          title: "Payment Failed",
+          text: response.error.description || "Payment failed. Please try again or contact support.",
+        });
+        setIsLoading(false);
+      });
       razorpay.open();
-      setShowModal(true);
-  
     } catch (error) {
       console.error("Error:", error);
       Swal.fire({
@@ -244,12 +266,9 @@ const Page = () => {
         title: "Error",
         text: error?.response?.data?.message || "Something went wrong during payment initialization.",
       });
-    } finally {
       setIsLoading(false);
     }
   };
-  
-
 
   const closeModal = () => setShowModal(false);
 
@@ -417,7 +436,7 @@ const Page = () => {
                       name="DOB"
                       value={passenger.DOB}
                       onChange={(e) => handleChange(e, index)}
-                      max="2025-05-17" // Ensure DOB is before May 18, 2025
+                      max="2025-05-17"
                       className="w-full border p-2 rounded-md"
                       required
                     />
@@ -617,8 +636,7 @@ const Page = () => {
           </div>
           <div className="flex justify-center mt-3">
             <button
-              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${isLoading ? "opacity-75 cursor-not-allowed" : ""
-                }`}
+              className={`bg-[#DA5200] text-sm lg:text-lg text-white rounded-full w-1/2 md:w-[80%] py-2 flex justify-center items-center ${isLoading ? "opacity-75 cursor-not-allowed" : ""}`}
               onClick={handleBookInsurance}
               disabled={isLoading}
             >
