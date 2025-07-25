@@ -7,28 +7,19 @@ import Providerfile from "./Component/Store/Providerfile";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
 import { development } from "./Component/common";
-import { redirect } from "next/navigation";
 import Maintenance from "./Component/AllComponent/Maintenance";
 import { Montserrat } from "next/font/google";
 import LayoutCompo from "./LayoutCompo";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// const montserrat = Montserrat({
-//   subsets: ["latin"],
-//   weight: ["400", "500", "600", "700"], // Add more weights if needed
-//   display: "swap",
-// });
-
 export default async function RootLayout({ children }) {
   const locale = await getLocale();
-
   const messages = await getMessages();
 
   return (
     <html lang={locale}>
       <head>
-       
         {/* FontAwesome */}
         <link
           rel="stylesheet"
@@ -40,9 +31,94 @@ export default async function RootLayout({ children }) {
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-7F46NND7PG"
         ></script>
-        {/* <script src="//code.tidio.co/qax8zccmcolbvbfbok6i36osfpwvwjp1.js" async></script> */}
-        <link rel="canonical" href="https://nextgentrip.com" />
 
+        {/* Canonical URL */}
+        <link rel="canonical" href="https://www.nextgentrip.com" />
+
+        {/* ✅ JSON-LD Schema Markup */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "Organization",
+                "name": "Next Gen Trip Pvt. Ltd.",
+                "url": "https://www.nextgentrip.com",
+                "logo": "https://www.nextgentrip.com/logo.png",
+                "foundingDate": "2023",
+                "sameAs": [
+                  "https://www.facebook.com/profile.php?id=61573763406606",
+                  "https://www.instagram.com/nextgentrip/",
+                  "https://x.com/NextGenTrip"
+                ],
+                "contactPoint": {
+                  "@type": "ContactPoint",
+                  "telephone": "+91 98775 79319",
+                  "contactType": "Customer Support",
+                  "areaServed": "IN",
+                  "availableLanguage": ["English", "Hindi"]
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "WebSite",
+                "name": "NextGenTrip",
+                "url": "https://www.nextgentrip.com",
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://www.nextgentrip.com/search?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "LocalBusiness",
+                "name": "Next Gen Trip Pvt. Ltd.",
+                "image": "https://www.nextgentrip.com/logo.png",
+                "address": {
+                  "@type": "PostalAddress",
+                  "streetAddress": "SCO 371, 372, 373 Sector 34-A",
+                  "addressLocality": "Chandigarh",
+                  "addressRegion": "Chandigarh",
+                  "postalCode": "160022",
+                  "addressCountry": "IN"
+                },
+                "telephone": "+91 98775 79319",
+                "url": "https://www.nextgentrip.com",
+                "priceRange": "₹₹",
+                "openingHours": "Mo-Sa 10:00-18:00",
+                "sameAs": [
+                  "https://www.facebook.com/profile.php?id=61573763406606",
+                  "https://www.instagram.com/nextgentrip/",
+                  "https://x.com/NextGenTrip"
+                ]
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "Service",
+                "serviceType": "Online Travel Agency",
+                "provider": {
+                  "@type": "Organization",
+                  "name": "Next Gen Trip Pvt. Ltd.",
+                  "url": "https://www.nextgentrip.com"
+                },
+                "areaServed": {
+                  "@type": "Place",
+                  "name": "Worldwide"
+                },
+                "availableChannel": {
+                  "@type": "ServiceChannel",
+                  "serviceUrl": "https://www.nextgentrip.com"
+                },
+                "description":
+                  "Book flights, hotels, holiday packages, visas, buses, cabs, cruises, and eSIM globally with NextGenTrip – your trusted IATA-certified travel partner."
+              }
+            ])
+          }}
+        />
+
+        {/* Google Analytics Config */}
         <script
           id="google-analytics"
           strategy="afterInteractive"
@@ -52,7 +128,7 @@ export default async function RootLayout({ children }) {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-7F46NND7PG');
-            `,
+            `
           }}
         />
 
@@ -70,10 +146,11 @@ export default async function RootLayout({ children }) {
                   r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                   a.appendChild(r);
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-            `,
+            `
           }}
         />
 
+        {/* Google Tag Manager */}
         <script
           id="google-tag-manager"
           strategy="afterInteractive"
@@ -84,10 +161,11 @@ export default async function RootLayout({ children }) {
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
               })(window,document,'script','dataLayer','GTM-P6DBCLHP');
-            `,
+            `
           }}
         />
 
+        {/* Facebook Pixel */}
         <script
           id="facebook-pixel"
           strategy="afterInteractive"
@@ -103,12 +181,12 @@ export default async function RootLayout({ children }) {
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '905109698255955');
               fbq('track', 'PageView');
-            `,
+            `
           }}
         />
       </head>
 
-      <body >
+      <body>
         <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-P6DBCLHP"
@@ -127,14 +205,15 @@ export default async function RootLayout({ children }) {
           />
         </noscript>
 
-        {development != "production" && (
+        {development !== "production" ? (
           <NextIntlClientProvider messages={messages}>
             <Providerfile>
               <LayoutCompo>{children}</LayoutCompo>
             </Providerfile>
           </NextIntlClientProvider>
+        ) : (
+          <Maintenance />
         )}
-        {development == "production" && <Maintenance />}
       </body>
     </html>
   );

@@ -7,7 +7,7 @@ import Link from "next/link";
 import "react-day-picker/style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { getTopAirPorts } from "../Store/slices/topPortsSlice";
-import { useRouter, useSearchParams } from "next/navigation"; // Import useSearchParams
+import { useRouter, useSearchParams } from "next/navigation";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { getip } from "../Store/slices/ipslice";
 import { toast, Bounce } from "react-toastify";
@@ -39,7 +39,7 @@ const Header = () => {
   const [activeTab, setActiveTab] = useState(1);
   const ipstate = useSelector((state) => state.ipslice);
   const route = useRouter();
-  const searchParams = useSearchParams(); // To parse URL query parameters
+  const searchParams = useSearchParams();
   const [fromCity, setFromCity] = useState({
     id: 26555,
     ident: "VIDP",
@@ -85,8 +85,6 @@ const Header = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [preferredAirline, setPreferredAirline] = useState(null);
   const t = useTranslations("Navbar2");
-
-  // New state to store the selected date for display
   const [displayDate, setDisplayDate] = useState("");
 
   const months = [
@@ -116,17 +114,12 @@ const Header = () => {
 
   const handleDateChange = (date) => {
     setSelected(date);
-    setDateOfJourney(
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-        date.getDate()
-      ).padStart(2, "0")}T00:00:00`
-    );
+    const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}T00:00:00`;
+    setDateOfJourney(formattedDate);
+    setDisplayDate(formattedDate);
     setIsVisible(false);
-    setDisplayDate(
-      `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-        date.getDate()
-      ).padStart(2, "0")}T00:00:00`
-    ); // Update display date
   };
 
   const handleReturnDateChange = (date) => {
@@ -160,20 +153,37 @@ const Header = () => {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const getedate = localStorage.getItem("defaultflight");
-      let today = new Date();
       if (getedate) {
         try {
-          const parsedDate = JSON.parse(getedate).timeDate;
-          const parsedDate2 = JSON.parse(getedate).retuntime;
+          const parsedData = JSON.parse(getedate);
+          const parsedDate = parsedData.timeDate;
+          const parsedDate2 = parsedData.retuntime;
           const storedDate = new Date(parsedDate);
           const storedDate2 = new Date(parsedDate2);
-          setSelected(today);
           if (!isNaN(storedDate)) {
-            if (!isNaN(storedDate2)) {
-              setSelectedReturn(storedDate2);
-            }
+            setSelected(storedDate);
+            const formattedDate = `${storedDate.getFullYear()}-${String(storedDate.getMonth() + 1).padStart(2, "0")}-${String(
+              storedDate.getDate()
+            ).padStart(2, "0")}T00:00:00`;
+            setDateOfJourney(formattedDate);
+            setDisplayDate(formattedDate);
+          } else {
+            setSelected(new Date());
+            setDateOfJourney(getCurrentDateTime());
+            setDisplayDate(getCurrentDateTime());
           }
-        } catch (error) {}
+          if (!isNaN(storedDate2)) {
+            setSelectedReturn(storedDate2);
+          }
+        } catch (error) {
+          setSelected(new Date());
+          setDateOfJourney(getCurrentDateTime());
+          setDisplayDate(getCurrentDateTime());
+        }
+      } else {
+        setSelected(new Date());
+        setDateOfJourney(getCurrentDateTime());
+        setDisplayDate(getCurrentDateTime());
       }
     }
   }, []);
@@ -229,27 +239,41 @@ const Header = () => {
   };
 
   const handelSearch = () => {
-    localStorage.setItem(
-      "defaultflight",
-      JSON.stringify({
-        from: fromCity,
-        to: toCity,
-        timeDate: selected,
-        retuntime: selectedReturn,
-        journytype: JourneyType,
-      })
-    );
+    if (!selected) {
+      toast.warn("Please select a departure date", {
+        position: "top-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
 
     const date = new Date(selected);
-    date.setHours(0, 0, 0, 0);
     const localFormattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
       2,
       "0"
     )}-${String(date.getDate()).padStart(2, "0")}T00:00:00`;
 
+    localStorage.setItem(
+      "defaultflight",
+      JSON.stringify({
+        from: fromCity,
+        to: toCity,
+        timeDate: localFormattedDate,
+        retuntime: selectedReturn ? selectedReturn.toISOString() : null,
+        journytype: JourneyType,
+      })
+    );
+
     let searchUrl;
     if (JourneyType === 1) {
-      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&PreferredAirlines=${preferredAirline}`;
+      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&PreferredAirlines=${preferredAirline || ''}`;
     } else if (JourneyType === 2) {
       if (!selectedReturn) {
         toast.warn("Select Return Date", {
@@ -266,14 +290,12 @@ const Header = () => {
         return;
       }
       const returnDate = new Date(selectedReturn);
-      returnDate.setHours(0, 0, 0, 0);
       const returnFormattedDate = `${returnDate.getFullYear()}-${String(
         returnDate.getMonth() + 1
       ).padStart(2, "0")}-${String(returnDate.getDate()).padStart(2, "0")}T00:00:00`;
-      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&returndate=${returnFormattedDate}&PreferredAirlines=${preferredAirline}`;
+      searchUrl = `/flightto=${fromCity.iata}&from=${toCity.iata}&date=${localFormattedDate}&prfdate=${localFormattedDate}&JourneyType=${JourneyType}&adultcount=${adultCount}&childCount=${childCount}&infantCount=${infantCount}&selectedClass=${selectedClass}&returndate=${returnFormattedDate}&PreferredAirlines=${preferredAirline || ''}`;
     }
 
-    // Update display date after search
     setDisplayDate(localFormattedDate);
     route.push(searchUrl);
   };
@@ -435,10 +457,10 @@ const Header = () => {
     }).format(amount);
   }
 
-  // Function to format date for display
   const formatDisplayDate = (dateString) => {
     if (!dateString) return "No date selected";
     const date = new Date(dateString);
+    if (isNaN(date)) return "Invalid date";
     return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
@@ -452,20 +474,6 @@ const Header = () => {
         <div className="bg-[#002043] h-[15rem] absolute inset-0 -z-10" />
         <MiniNav />
         <TypeWriterHeaderEffect />
-
-        {/* New section to display the selected date */}
-        {/* {displayDate && (
-          <div className="bg-white p-4 rounded-lg shadow-md mb-4 text-center">
-            <p className="text-black font-semibold">
-              Selected Departure Date: {formatDisplayDate(displayDate)}
-            </p>
-            {selectedReturn && JourneyType === 2 && (
-              <p className="text-black font-semibold">
-                Selected Return Date: {formatDisplayDate(selectedReturn)}
-              </p>
-            )}
-          </div>
-        )} */}
 
         <div className="flex flex-col bg-white lg:block rounded-lg text-white">
           <div className="bg-gray-200 rounded-sm shadow">
@@ -587,31 +595,12 @@ const Header = () => {
                     className="flex items-center h-[4rem] gap-2 px-4 py-1 border-2 border-slate-200 rounded-md cursor-pointer"
                   >
                     <div className="text-slate-400">
-                      {selectedReturn ? (
-                        <>
-                          <div className="flex items-baseline text-black">
-                            <span className="text-xl py-1 pr-1 text-black font-bold">
-                              {selectedReturn.getDate()}
-                            </span>
-                            <span className="text-xs font-semibold">
-                              {selectedReturn.toLocaleString("default", { month: "short" })}'
-                            </span>
-                            <span className="text-xs font-semibold">
-                              {selectedReturn.getFullYear()}
-                            </span>
-                          </div>
-                          <p className="text-black text-xs pb-2">
-                            {selectedReturn.toLocaleDateString()}
-                          </p>
-                        </>
-                      ) : (
-                        <div className="text-black">
-                          <p className="text-[10px] font-bold">Return Date</p>
-                          <p className="text-[11px] text-slate-400 -mt-1">
-                            Tap to add a Return date
-                          </p>
-                        </div>
-                      )}
+                      <div className="text-black">
+                        <p className="text-[10px] font-bold">Return Date</p>
+                        <p className="text-[11px] text-slate-400 -mt-1">
+                          Tap to add a Return date
+                        </p>
+                      </div>
                     </div>
                   </div>
                   {isVisible && selectedOption === "return" && (

@@ -22,7 +22,7 @@ const TypeWriterHeaderEffect = () => {
       {/* First Typewriter for "Book affordable" */}
       <h2>
         <Typewriter
-          words={["Dream Explore Book Affordable "]}
+          words={["Dream Big Explore More Book -"]}
           loop={1}
           typeSpeed={50}
           deleteSpeed={0}
@@ -33,7 +33,7 @@ const TypeWriterHeaderEffect = () => {
       <h2>
         {isAffordableComplete && (
           <Typewriter
-            words={["Flights!", "Hotels!", "Cruises!", "Buses!"]}
+            words={["Flights", "Hotels","Holiday Packages","eSIM", "Buses","Visa","Cab","Insurence","Join Marriages","Cruise","Charter", "Trains"]}
             loop={Infinity}
             typeSpeed={50}
             deleteSpeed={60}
