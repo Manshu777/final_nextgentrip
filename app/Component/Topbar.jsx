@@ -418,7 +418,7 @@ const Topbar = () => {
   ];
 
   return (
-    <div className="bg-red-400 border-b     relative md:sticky top-0 navbar-main pe-4 py-2 border-blue-100   md:px-8 lg:px-16 xl:px-20">
+    <div className="bg-red-400 border-b     relative md:sticky top-0 navbar-main pe-4 py-2 border-blue-100   md:px-6 lg:px-6 xl:px-6">
       <div className="container mx-auto flex py-0  flex-row justify-between items-center">
         <div className="flex gap-2 items-center space-x-2">
           <div
@@ -935,6 +935,7 @@ const Topbar = () => {
                 )} */}
                 </Link>
               )}
+             
             </div>
           </div>
         </div>

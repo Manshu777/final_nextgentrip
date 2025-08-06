@@ -168,7 +168,7 @@ const CustomSlider = ({ isLoading, children }) => {
         {
           // false &&
           !sliderdata.isLoading &&
-          <div className=" flex  flex-col lg:flex-row md:px-4 lg:px-28 justify-end md:gap-4 w-full mt-3 ">
+          <div className=" flex  flex-col lg:flex-row md:px-6 lg:px-6 justify-end md:gap-4 w-full mt-3 ">
             <Swiper
               className=" w-full  lg:w-3/6 h-[200px] lg:h-[300px] "
 

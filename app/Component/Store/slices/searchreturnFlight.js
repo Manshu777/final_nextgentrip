@@ -22,24 +22,11 @@ export const searchreturnflightapi = createAsyncThunk(
     PreferredDepartureTime2,
 
   }) => {
-
-
-    
-
-
-
-
-
-
-
-
-  
     const data = await axios.post(`${apilink}/search-return-flights`,{EndUserIp,AdultCount,ChildCount,InfantCount,DirectFlight,OneStopFlight
      ,JourneyType ,PreferredAirlines,Origin,Destination,FlightCabinClass,PreferredDepartureTime,PreferredArrivalTime,PreferredDepartureTime2});
 
 
     return data.data;
-
   }
 );
 

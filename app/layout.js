@@ -43,78 +43,79 @@ export default async function RootLayout({ children }) {
               {
                 "@context": "https://schema.org",
                 "@type": "Organization",
-                "name": "Next Gen Trip Pvt. Ltd.",
-                "url": "https://www.nextgentrip.com",
-                "logo": "https://www.nextgentrip.com/logo.png",
-                "foundingDate": "2023",
-                "sameAs": [
+                name: "Next Gen Trip Pvt. Ltd.",
+                url: "https://www.nextgentrip.com",
+                logo: "https://www.nextgentrip.com/logo.png",
+                foundingDate: "2023",
+                sameAs: [
                   "https://www.facebook.com/profile.php?id=61573763406606",
                   "https://www.instagram.com/nextgentrip/",
-                  "https://x.com/NextGenTrip"
+                  "https://x.com/NextGenTrip",
                 ],
-                "contactPoint": {
+                contactPoint: {
                   "@type": "ContactPoint",
-                  "telephone": "+91 98775 79319",
-                  "contactType": "Customer Support",
-                  "areaServed": "IN",
-                  "availableLanguage": ["English", "Hindi"]
-                }
+                  telephone: "+91 98775 79319",
+                  contactType: "Customer Support",
+                  areaServed: "IN",
+                  availableLanguage: ["English", "Hindi"],
+                },
               },
               {
                 "@context": "https://schema.org",
                 "@type": "WebSite",
-                "name": "NextGenTrip",
-                "url": "https://www.nextgentrip.com",
-                "potentialAction": {
+                name: "NextGenTrip",
+                url: "https://www.nextgentrip.com",
+                potentialAction: {
                   "@type": "SearchAction",
-                  "target": "https://www.nextgentrip.com/search?q={search_term_string}",
-                  "query-input": "required name=search_term_string"
-                }
+                  target:
+                    "https://www.nextgentrip.com/search?q={search_term_string}",
+                  "query-input": "required name=search_term_string",
+                },
               },
               {
                 "@context": "https://schema.org",
                 "@type": "LocalBusiness",
-                "name": "Next Gen Trip Pvt. Ltd.",
-                "image": "https://www.nextgentrip.com/logo.png",
-                "address": {
+                name: "Next Gen Trip Pvt. Ltd.",
+                image: "https://www.nextgentrip.com/logo.png",
+                address: {
                   "@type": "PostalAddress",
-                  "streetAddress": "SCO 371, 372, 373 Sector 34-A",
-                  "addressLocality": "Chandigarh",
-                  "addressRegion": "Chandigarh",
-                  "postalCode": "160022",
-                  "addressCountry": "IN"
+                  streetAddress: "SCO 371, 372, 373 Sector 34-A",
+                  addressLocality: "Chandigarh",
+                  addressRegion: "Chandigarh",
+                  postalCode: "160022",
+                  addressCountry: "IN",
                 },
-                "telephone": "+91 98775 79319",
-                "url": "https://www.nextgentrip.com",
-                "priceRange": "₹₹",
-                "openingHours": "Mo-Sa 10:00-18:00",
-                "sameAs": [
+                telephone: "+91 98775 79319",
+                url: "https://www.nextgentrip.com",
+                priceRange: "₹₹",
+                openingHours: "Mo-Sa 10:00-18:00",
+                sameAs: [
                   "https://www.facebook.com/profile.php?id=61573763406606",
                   "https://www.instagram.com/nextgentrip/",
-                  "https://x.com/NextGenTrip"
-                ]
+                  "https://x.com/NextGenTrip",
+                ],
               },
               {
                 "@context": "https://schema.org",
                 "@type": "Service",
-                "serviceType": "Online Travel Agency",
-                "provider": {
+                serviceType: "Online Travel Agency",
+                provider: {
                   "@type": "Organization",
-                  "name": "Next Gen Trip Pvt. Ltd.",
-                  "url": "https://www.nextgentrip.com"
+                  name: "Next Gen Trip Pvt. Ltd.",
+                  url: "https://www.nextgentrip.com",
                 },
-                "areaServed": {
+                areaServed: {
                   "@type": "Place",
-                  "name": "Worldwide"
+                  name: "Worldwide",
                 },
-                "availableChannel": {
+                availableChannel: {
                   "@type": "ServiceChannel",
-                  "serviceUrl": "https://www.nextgentrip.com"
+                  serviceUrl: "https://www.nextgentrip.com",
                 },
-                "description":
-                  "Book flights, hotels, holiday packages, visas, buses, cabs, cruises, and eSIM globally with NextGenTrip – your trusted IATA-certified travel partner."
-              }
-            ])
+                description:
+                  "Book flights, hotels, holiday packages, visas, buses, cabs, cruises, and eSIM globally with NextGenTrip – your trusted IATA-certified travel partner.",
+              },
+            ]),
           }}
         />
 
@@ -128,7 +129,7 @@ export default async function RootLayout({ children }) {
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', 'G-7F46NND7PG');
-            `
+            `,
           }}
         />
 
@@ -146,7 +147,7 @@ export default async function RootLayout({ children }) {
                   r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                   a.appendChild(r);
               })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-            `
+            `,
           }}
         />
 
@@ -161,7 +162,7 @@ export default async function RootLayout({ children }) {
               j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
               })(window,document,'script','dataLayer','GTM-P6DBCLHP');
-            `
+            `,
           }}
         />
 
@@ -181,7 +182,7 @@ export default async function RootLayout({ children }) {
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '905109698255955');
               fbq('track', 'PageView');
-            `
+            `,
           }}
         />
       </head>
@@ -204,16 +205,17 @@ export default async function RootLayout({ children }) {
             src="https://www.facebook.com/tr?id=905109698255955&ev=PageView&noscript=1"
           />
         </noscript>
-
-        {development !== "production" ? (
-          <NextIntlClientProvider messages={messages}>
-            <Providerfile>
-              <LayoutCompo>{children}</LayoutCompo>
-            </Providerfile>
-          </NextIntlClientProvider>
-        ) : (
-          <Maintenance />
-        )}
+       
+          {development !== "production" ? (
+            <NextIntlClientProvider messages={messages}>
+              <Providerfile>
+                <LayoutCompo>{children}</LayoutCompo>
+              </Providerfile>
+            </NextIntlClientProvider>
+          ) : (
+            <Maintenance />
+          )}
+       
       </body>
     </html>
   );

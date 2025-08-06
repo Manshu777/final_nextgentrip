@@ -603,7 +603,7 @@ const togglePopup = async (id, ResultIndex) => {
                      </div>
                    </p>
                  </div>
-   
+                       
                  {srrFairdata.Results?.Segments[0]?.length !== 2 || index !== 0 ? (
                    <div className="mt-6 flex flex-col justify-between  gap-4">
                      <div className="mb-4 sm:mb-0">
@@ -694,7 +694,7 @@ const togglePopup = async (id, ResultIndex) => {
       )}
 
       <Header />
-      <div className="block md:flex px-0 lg:px-28 items-start gap-6 my-5  ">
+      <div className="block md:flex px-0 lg:px-6 items-start gap-6 my-5  ">
         <div className="hidden md:block  sticky top-6 w-1/5">
           <FlightFliter
             airlines={airlines}
@@ -741,7 +741,7 @@ const togglePopup = async (id, ResultIndex) => {
                       <div className="h-8 bg-gray-300 rounded-full w-20"></div>
                     </div>
                   </div>
-
+            
                   <div className="my-4 p-2 bg-yellow-100 h-5 w-full"></div>
 
                   <div className="hidden md:flex justify-between items-center text-sm card-footer-v2">

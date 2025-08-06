@@ -44,7 +44,7 @@ const MineHolidayPkgComp = () => {
        <div className="max-w-7xl mx-auto my-5 lg:my-4 px-4 ">
     <div className="relative">
         {/* Heading Section */}
-        <div className="mb-6 px-4 sm:px-12 lg:px-28">
+        <div className="mb-6 px-4 sm:px-6 lg:px-6 xl:px-6">
             <h2 className="text-2xl font-bold">Top Travel Picks by Next Gen Trip</h2>
             <p className="text-gray-500">
                 Handpicked escapes to inspire your next getaway.
@@ -52,7 +52,7 @@ const MineHolidayPkgComp = () => {
         </div>
 
         {/* Carousel Section */}
-        <div className="relative px-4 sm:px-12 lg:px-28">
+        <div className="relative px-6 sm:px-6 lg:px-6">
             {loader ? (
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>

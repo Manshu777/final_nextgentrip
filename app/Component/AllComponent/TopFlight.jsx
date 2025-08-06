@@ -147,10 +147,10 @@ const TopFlight = () => {
       name: "Jaipur",
       image: "/images/jaipur.webp",
       isNew: true,
-      link: "/FamousPlaces/InnerLakshadweep",
+      link: "/FamousPlaces/Jaipur",
     },
     { name: "Bali", image: "/images/bali.webp", link: "/FamousPlaces/Bali" },
-    { name: "Goa", image: "/images/goa1.webp", link: "/FamousPlaces/Andaman" },
+    { name: "Andaman", image: "/images/goa1.webp", link: "/FamousPlaces/Andaman" },
     {
       name: "Australia",
       image: "/images/austrailia (1).webp",
@@ -158,14 +158,14 @@ const TopFlight = () => {
     },
     { name: "Dubai", image: "/images/dubai.webp", link: "/FamousPlaces/Dubai" },
     {
-      name: "Paris",
+      name: "Goa",
       image: "/images/paris.webp",
-      link: "/FamousPlaces/Jaipur",
+      link: "/FamousPlaces/Goa",
     },
     {
       name: "Kashmir",
       image: "/images/kashmir.webp",
-      link: "/FamousPlaces/Bengaluru",
+      link: "/FamousPlaces/Kashmir",
     },
     {
       name: "Singapore",
@@ -174,9 +174,9 @@ const TopFlight = () => {
     },
     { name: "Leh", image: "/images/leh.webp", link: "/FamousPlaces/Leh" },
     {
-      name: "Singapore Alt",
+      name: "Vietnam",
       image: "/images/singapore2.webp",
-      link: "/FamousPlaces/Leh",
+      link: "/FamousPlaces/Vietnam",
     },
     { name: "France", image: "/images/france.webp", link: "/FamousPlaces/Leh" },
     { name: "Thar", image: "/images/thar.webp", link: "/FamousPlaces/Kerala" },
@@ -200,7 +200,7 @@ const TopFlight = () => {
   return (
     <>
       {/* FLIGHT & PACKAGE GRID */}
-      <div className="flight pt-0 lg:pt-1 px-0 md:px-10 lg:px-28 ">
+      <div className="flight pt-0 lg:pt-1 px-0 md:px-6 lg:px-6 ">
         <h2 className="text-center text-3xl font-bold mb-3 sm:mt-0">
           {t("mainheading")}
         </h2>

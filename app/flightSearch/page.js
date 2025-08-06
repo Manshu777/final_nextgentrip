@@ -233,10 +233,7 @@ const page = () => {
         state.data.Response.Results[0].filter(
           (info) => info.Segments[0][0].Airline.AirlineName == value
         );
-
       setstate2("rfr3fr3f3rf3f33", filterdata);
-
-     
     }
   };
 
